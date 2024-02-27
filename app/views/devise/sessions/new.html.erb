@@ -1,0 +1,30 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Home</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="login-page">
+    <div class="container">
+      <div class="center">
+          <h1>Login</h1>
+          <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+              <div class="txt_field">
+                  <%= f.email_field :email, autofocus: true, autocomplete: "email" %>
+                  <span></span>
+              </div>
+              <div class="txt_field">
+                  <%= f.password_field :password, autocomplete: "current-password" %>
+                  <span></span>
+              </div>
+              <%= f.submit "Log in" %>
+              <div class="signup_link">
+              </div>
+          <% end %>
+      </div>
+    </div>
+  </body>
+</html>
