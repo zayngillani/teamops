@@ -2,7 +2,9 @@
   <h1> Hi <%= current_user.name %> </h1>
 <div class="button-container">
 <%= button_to "Check-In", create_session_path, class: "sign-out-button", id: "checkInButton" %>
+<% if current_user.attendances.last.created_at.between?(Date.today.beginning_of_day, Date.today.end_of_day) && current_user.attendances.last.check_out_time.nil?%>
 <div id="timerDisplay"></div>
+<%end%>
 </div>
 <div class="button-container">
 <%= button_to "Check-Out", end_session_path, class: "sign-out-button", id: "checkOutButton" %>
