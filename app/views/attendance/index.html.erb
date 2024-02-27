@@ -1,0 +1,12 @@
+<div class="header">
+  <a href="#" class="logo">
+    <%= image_tag "logo.svg" %>
+  </a>
+  <%= button_to "Sign out", destroy_user_session_path, method: :delete, class: "sign-out-button" %>
+</div>
+<% if current_user.admin?%>
+<br>
+<%= render 'attendance/admin' %>
+<% else%>
+<%= render 'attendance/employee' %>
+<% end %>

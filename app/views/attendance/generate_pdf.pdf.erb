@@ -1,0 +1,31 @@
+<h1>Attendace Details</h1>
+ <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Date</th>
+        <th>Check In</th>
+        <th>Check Out</th>
+        <th>Total Hours</th>
+      </tr>
+    </thead>
+    <tbody>
+<% @user_sessions.each do |item| %>
+      <tr>
+        <td><%= item.user_id%></td>
+        <td><%= @user.name%></td>
+        <td><%= item.created_at.strftime("%Y-%m-%d ")%></td>
+        <td><%= item.check_in_time.strftime("%I:%M %p") %></td>
+        <td><%= item.check_out_time.present? ? item.check_out_time.strftime("%I:%M %p") : "N/A"%></td>
+        <td>
+          <% if item.total_hours.present? %>
+            <%= "#{item.total_hours / 3600} hours #{item.total_hours % 3600 / 60} minutes" %>
+          <% else %>
+            N/A
+          <% end %>
+        </td>
+      </tr>
+      <% end%>
+    </tbody>
+  </table>
