@@ -13,22 +13,22 @@
   <%= form_with(model: @user, url: admin_users_path, method: :post) do |form| %>
     <div class="form-group">
       <%= form.label :email, class: "label" %>
-      <%= form.email_field :email, class: "email-field" %>
+      <%= form.email_field :email, class: "email-field", required: true %>
     </div>
 
     <div class="form-group">
       <%= form.label :name, class: "label" %>
-      <%= form.text_field :name, class: "text-field" %>
+      <%= form.text_field :name, class: "text-field", required: true %>
     </div>
 
     <div class="form-group">
       <%= form.label :password, class: "label" %>
-      <%= form.password_field :password, class: "password-field" %>
+      <%= form.password_field :password, class: "password-field", required: true %>
     </div>
 
     <div class="form-group">
       <%= form.label :password_confirmation, class: "label" %>
-      <%= form.password_field :password_confirmation, class: "password-field" %>
+      <%= form.password_field :password_confirmation, class: "password-field", required: true %>
     </div>
 
     <div class="form-actions">
