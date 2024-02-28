@@ -2,12 +2,13 @@
 import "@hotwired/turbo-rails"
 import "controllers"
 
-document.addEventListener("turbo:load", function() {
+document.addEventListener("turbo:streams:loaded", function() {
     var intervalId; // Define intervalId for the timer
     var startTime; // Define startTime based on the provided created_at timestamp
 
     // Get the created_at timestamp from the data attribute of the timerDisplay element
     var createdAt = document.getElementById("timerDisplay").dataset.createdAt;
+    
     if (createdAt) {
         // Parse the createdAt timestamp to get the start time in milliseconds
         startTime = new Date(createdAt).getTime();

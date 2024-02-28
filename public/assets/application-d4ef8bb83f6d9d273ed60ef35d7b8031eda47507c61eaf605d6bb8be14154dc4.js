@@ -2,7 +2,7 @@
 import "@hotwired/turbo-rails"
 import "controllers"
 
-document.addEventListener("turbo:load", function() {
+document.addEventListener("DOMContentLoaded", function() {
     var intervalId; // Define intervalId for the timer
     var startTime; // Define startTime based on the provided created_at timestamp
 
