@@ -1,15 +1,11 @@
 class AttendanceController < ApplicationController
 
      def create_session
-          existing_session = Attendance.find_by(user_id: current_user.id, check_in_time: Date.today.beginning_of_day..Date.today.end_of_day)
-          if existing_session.present?
-            flash[:notice] = "You have already checked in for today."
-          else
             @session = Attendance.new
             @session.user_id = current_user.id
             @session.check_in_time = DateTime.now.strftime("%Y-%m-%d %H:%M:%S")
             @session.save!
-          end
+            redirect_to root_path
      end
 
      def end_session
@@ -19,6 +15,7 @@ class AttendanceController < ApplicationController
                session.update!(check_out_time: DateTime.now.strftime("%Y-%m-%d %H:%M:%S"))
                duration_seconds = session.check_out_time - session.check_in_time
                session.update!(total_hours: duration_seconds)
+               redirect_to root_path
           else
                flash[:notice] = "Attendance Not Marked"
 
