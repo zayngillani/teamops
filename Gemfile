@@ -37,6 +37,13 @@ gem 'wicked_pdf'
 
 gem 'wkhtmltopdf-binary'
 
+gem 'slack-ruby-client'
+
+gem 'async-websocket'
+
+gem 'dotenv-rails'
+
+
 
 # Use Kredis to get higher-level data types in Redis [https://github.com/rails/kredis]
 # gem "kredis"

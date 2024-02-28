@@ -11,8 +11,8 @@
       <% @session.each do |item| %>
       <tr>
         <td><%= item.created_at.strftime("%Y-%m-%d ")%></td>
-        <td><%= item.check_in_time.strftime("%I:%M %p") %></td>
-        <td><%= item.check_out_time.present? ? item.check_out_time.strftime("%I:%M %p") : "N/A"%></td>
+        <td><%= item.check_in_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") %></td>
+        <td><%= item.check_out_time.present? ? item.check_out_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A"%></td>
         <td>
           <% if item.total_hours.present? %>
             <%= "#{item.total_hours / 3600} hours #{item.total_hours % 3600 / 60} minutes" %>
