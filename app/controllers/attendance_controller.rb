@@ -5,18 +5,18 @@ class AttendanceController < ApplicationController
             @session.user_id = current_user.id
             @session.check_in_time = Time.now.utc
             @session.save!
-          #   SlackService.new(current_user, "Check In", @session.check_in_time).send_message
+            SlackService.new(current_user, "Checked In", @session.check_in_time).send_message
             redirect_to root_path
      end
 
      def end_session
           @user = current_user
-          session = Attendance.where(user_id: @user.id).last
-          if session.present? && session.check_in_time.present? && session.check_out_time.nil?
-               session.update!(check_out_time: Time.now.utc)
-               duration_seconds = session.check_out_time - session.check_in_time
-               session.update!(total_hours: duration_seconds)
-               # SlackService.new(current_user, "Check Out", @session.check_out_time).send_message
+          @session = Attendance.where(user_id: @user.id).last
+          if @session.present? && @session.check_in_time.present? && @session.check_out_time.nil?
+               @session.update!(check_out_time: Time.now.utc)
+               duration_seconds = @session.check_out_time - @session.check_in_time
+               @session.update!(total_hours: duration_seconds)
+               SlackService.new(current_user, "Checked Out", @session.check_out_time).send_message
                redirect_to root_path
           else
                flash[:notice] = "Attendance Not Marked"
