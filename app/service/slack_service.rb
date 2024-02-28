@@ -1,6 +1,5 @@
 class SlackService
      def initialize(user, message, time)
-          binding.pry
           @user = user
           @time = time
           @message = message
@@ -9,7 +8,6 @@ class SlackService
      end
 
      def send_message
-          binding.pry
-         @client.chat_postMessage(channel: @channel,text: "#{@message} by <@#{@user.slack_member_id}> at #{@time.in_time_zone("Asia/Karachi").strftime("%I:%M %p")}")
+         @client.chat_postMessage(channel: @channel,text: " <@#{@user.slack_member_id}> #{@message} at #{@time.in_time_zone('Asia/Karachi').strftime("%b %d, %I:%M%p %Z")}")
      end
 end
