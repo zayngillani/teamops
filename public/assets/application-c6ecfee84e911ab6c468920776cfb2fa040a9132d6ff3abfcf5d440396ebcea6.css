@@ -289,9 +289,10 @@
   }
   
   .close {
-    color: white;
+    color: #aaa;
     float: right;
-    font-size: 16px;
+    font-size: 28px;
+    font-weight: bold;
   }
   
   .close:hover,

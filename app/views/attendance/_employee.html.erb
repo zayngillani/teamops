@@ -40,6 +40,8 @@
     align-items: center;
   }
 
+  
+
   #timerDisplay {
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     font-size: 36px;
@@ -60,11 +62,11 @@
       <%= button_to "Check-In", create_session_path, class: "sign-out-button", id: "checkInButton" %>
     <% elsif current_user.attendances.last.check_out_time.nil? %>
       <% if current_user.attendances.last.created_at.between?(Date.today.beginning_of_day, Date.today.end_of_day) %>
-        <div id="timerDisplay"></div>
+        <% create_at = current_user.attendances.last.created_at %>
+        <div id="timerDisplay" data-created-at="<%= create_at || nil %>"></div>
       <% end %>
     <% end %>
   </div>
-
   <% if current_user.attendances.present? && current_user.attendances.last.created_at.between?(Date.today.beginning_of_day, Date.today.end_of_day) && current_user.attendances.last.check_out_time.nil? %>
     <div class="button-container">
       <button id="modal-btn" class="sign-out-button">Check Out</button>
