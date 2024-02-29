@@ -1,27 +1,29 @@
 class AttendanceController < ApplicationController
 
      def create_session
+          attendance = Attendance.where(check_out_time: nil , user_id: current_user.id)
+          if !attendance.present?
             @session = Attendance.new
             @session.user_id = current_user.id
             @session.check_in_time = Time.now.utc
             @session.save!
             SlackService.new(current_user, "Checked In", @session.check_in_time).send_message
             redirect_to root_path
+          else
+               flash[:alert] = "Already Checked In"
+          end
      end
 
      def end_session
           @user = current_user
-          @session = Attendance.where(user_id: @user.id).last
-          if @session.present? && @session.check_in_time.present? && @session.check_out_time.nil?
+          @session = Attendance.where(user_id: @user.id, check_out_time: nil)
                @session.update!(check_out_time: Time.now.utc)
-               duration_seconds = @session.check_out_time - @session.check_in_time
-               @session.update!(total_hours: duration_seconds)
-               SlackService.new(current_user, "Checked Out", @session.check_out_time).send_message
+               @session.each do |session|
+               duration_seconds = session.check_out_time - session.check_in_time
+               session.update!(total_hours: duration_seconds)
+               end
+               SlackService.new(current_user, "Checked Out", @session.last.check_out_time).send_message
                redirect_to root_path
-          else
-               flash[:notice] = "Attendance Not Marked"
-
-          end
      end
 
      def break_session
@@ -38,7 +40,7 @@ class AttendanceController < ApplicationController
 
      def generate_pdf
           @user = User.find(params[:id])
-          @user_sessions = Attendance.where(user_id: params[:id])
+          @user_sessions = Attendance.where(user_id: params[:id]).order(created_at: :asc)
           respond_to do |format|
                format.html
                format.pdf { render pdf: "#{@user.name}", layout: false } # Specify view and disable layout
