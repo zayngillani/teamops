@@ -58,14 +58,15 @@
 <div class="content">
   <h1> Hi <%= current_user.name %> </h1>
   <div class="button-container">
-    <% if current_user.attendances.empty? || current_user.attendances.last.check_out_time.present? %>
+  <% session = current_user.attendances.order(created_at: :asc).last%>
+    <% if session.present? && session.check_out_time.present? %>
 <%= button_to "Check-In", create_session_path, class: "sign-out-button", id: "checkInButton", onclick: "setTimeout(() => this.disabled = true, 0)" %>    <% elsif current_user.attendances.last.check_out_time.nil? %>
-        <% create_at = current_user.attendances.last.created_at %>
+        <% create_at = session.created_at %>
         <div id="timerDisplay" data-created-at="<%= create_at || nil %>"></div>
 
     <% end %>
   </div>
-  <% if current_user.attendances.present? && current_user.attendances.last.check_out_time.nil? %>
+  <% if session.present? && session.check_out_time.nil? %>
     <div class="button-container">
       <button id="modal-btn" class="sign-out-button">Check Out</button>
       <div id="myModal" class="modal">
