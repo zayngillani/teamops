@@ -4,8 +4,15 @@ class ApplicationController < ActionController::Base
      private
    
     def authenticate_user!
-     unless user_signed_in? || devise_controller?
-       redirect_to new_user_session_path, alert: 'You must be logged in to access this page.'
-     end
+      allowed_ip = "182.187.138.87"
+      client_ip = request.remote_ip
+        unless user_signed_in? || devise_controller?
+          redirect_to new_user_session_path
+        end
+      if client_ip != allowed_ip
+          file_path = Rails.root.join('app', 'views', 'devise', 'invalid_ip.html.erb')
+          html_content = File.read(file_path)
+          render html: html_content.html_safe
+      end
    end
 end
