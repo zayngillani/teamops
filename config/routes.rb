@@ -6,6 +6,7 @@ Rails.application.routes.draw do
   post '/break_session', :to => "attendance#break_session", as: 'break_session'
   post '/create_user', :to => "attendance#create_user", as: 'create_user'
   get '/generate_pdf', :to => "attendance#generate_pdf", as: 'generate_pdf'
+  get '/invalid_ip', to: 'devise#invalid_ip'
 
 
   namespace :admin do
