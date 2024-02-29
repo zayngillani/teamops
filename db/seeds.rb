@@ -7,7 +7,7 @@
 #   Character.create(name: "Luke", movie: movies.first)
 Attendance.all.destroy_all
 User.all.destroy_all
-User.create(email: "admin@techcreatix.com", name: "Techcreatix", password: "Techcre@tix@786", password_confirmation: "Techcreatix#2024", role: "admin")
+User.create(email: "admin@techcreatix.com", name: "Techcreatix", password: "Techcre@tix@786", password_confirmation: "Techcre@tix@786", role: "admin")
 User.create(email: "zain@techcreatix.com", name: "Syed Zain", password: "U9B7G0QAV", password_confirmation: "U9B7G0QAV", role: "user", slack_member_id: "U9B7G0QAV")
 User.create(email: "ali@techcreatix.com", name: "Ali Gillani", password: "U8XSA5J9W", password_confirmation: "U8XSA5J9W", role: "user", slack_member_id: "U8XSA5J9W")
 User.create(email: "saad@techcreatix.com", name: "Saad Siddique", password: "U01EJLEV9ED", password_confirmation: "U01EJLEV9ED", role: "user", slack_member_id: "U01EJLEV9ED")
