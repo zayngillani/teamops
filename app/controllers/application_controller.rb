@@ -11,9 +11,9 @@ class ApplicationController < ActionController::Base
     end
     
     def authenticate_ip!
-      allowed_ip = "182.187.138.87"
+      allowed_ip = ENV['IP_ADDRESS']
       client_ip = request.remote_ip
-      if client_ip != allowed_ip
+      unless allowed_ip.include?(client_ip)
         file_path = Rails.root.join('app', 'views', 'devise', 'invalid_ip.html.erb')
         html_content = File.read(file_path)
         render html: html_content.html_safe
