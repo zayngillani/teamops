@@ -1,5 +1,5 @@
 class ApplicationController < ActionController::Base
-     before_action :authenticate_ip!
+    #  before_action :authenticate_ip!
      before_action :authenticate_user!
    
      private
@@ -10,13 +10,13 @@ class ApplicationController < ActionController::Base
       end
     end
     
-    def authenticate_ip!
-      allowed_ip = "182.187.138.87"
-      client_ip = request.remote_ip
-      if client_ip != allowed_ip
-        file_path = Rails.root.join('app', 'views', 'devise', 'invalid_ip.html.erb')
-        html_content = File.read(file_path)
-        render html: html_content.html_safe
-      end
-    end
+    # def authenticate_ip!
+    #   allowed_ip = "182.187.138.87"
+    #   client_ip = request.remote_ip
+    #   if client_ip != allowed_ip
+    #     file_path = Rails.root.join('app', 'views', 'devise', 'invalid_ip.html.erb')
+    #     html_content = File.read(file_path)
+    #     render html: html_content.html_safe
+    #   end
+    # end
 end
