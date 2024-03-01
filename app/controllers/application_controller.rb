@@ -11,7 +11,7 @@ class ApplicationController < ActionController::Base
     end
     
     def authenticate_ip!
-      allowed_ip = ENV['IP_ADDRESS']
+      allowed_ip = ENV["IP_ADDRESS"]
       client_ip = request.remote_ip
       unless allowed_ip.split(',').include?(client_ip)
         file_path = Rails.root.join('app', 'views', 'devise', 'invalid_ip.html.erb')
