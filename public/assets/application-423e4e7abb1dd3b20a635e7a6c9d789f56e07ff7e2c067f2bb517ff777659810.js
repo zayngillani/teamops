@@ -37,9 +37,9 @@ document.addEventListener("DOMContentLoaded", function() {
       if (banner) {
         banner.classList.add("hide-banner");
         setTimeout(function() {
-          location.reload();
-        }, 1000);
+          location.reload(); // Refresh the page after hiding the banner
+        }, 1000); // Adjust the time as needed (in milliseconds)
       }
-    }, 5000);
+    }, 3000); // Adjust the time as needed (in milliseconds)
   });
   

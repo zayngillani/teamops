@@ -31,15 +31,10 @@ document.addEventListener("turbo:load", function() {
     }
 });
 
-document.addEventListener("DOMContentLoaded", function() {
+$(document).ready(function() {
+    // Auto-hide alert after 5 seconds
     setTimeout(function() {
-      var banner = document.getElementById("banner");
-      if (banner) {
-        banner.classList.add("hide-banner");
-        setTimeout(function() {
-          location.reload();
-        }, 1000);
-      }
-    }, 5000);
+      $('#banner .alert').fadeOut('slow');
+    }, 5000); // Adjust the time as needed (in milliseconds)
   });
   

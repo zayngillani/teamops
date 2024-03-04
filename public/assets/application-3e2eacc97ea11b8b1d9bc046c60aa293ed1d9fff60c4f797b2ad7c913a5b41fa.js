@@ -36,10 +36,7 @@ document.addEventListener("DOMContentLoaded", function() {
       var banner = document.getElementById("banner");
       if (banner) {
         banner.classList.add("hide-banner");
-        setTimeout(function() {
-          location.reload();
-        }, 1000);
       }
-    }, 5000);
+    }, 3000); // Adjust the time as needed (in milliseconds)
   });
   
