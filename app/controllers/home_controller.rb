@@ -14,4 +14,25 @@ class HomeController < ApplicationController
                end
           # end
      end
+
+     def change_password
+     end
+
+     def update_password
+          if params[:user][:password] == params[:user][:password_confirmation]
+               current_user.update(user_params)
+               bypass_sign_in(current_user)
+               redirect_to root_path
+               flash[:success] = "Password Successfully Changed"
+          else
+               redirect_to change_password_path
+               flash[:error] = "Passwords Don't Match"
+          end
+     end
+
+     private
+     
+     def user_params
+          params.require(:user).permit(:password, :password_confirmation)
+     end
 end

@@ -2,6 +2,8 @@ Rails.application.routes.draw do
   devise_for :users
   root  "home#index"
   get '/invalid_ip', to: 'devise#invalid_ip'
+  get 'change_password', to: 'home#change_password'
+  patch 'update_password', to: 'home#update_password'
   
   
   namespace :admin do
