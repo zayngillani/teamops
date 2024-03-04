@@ -30,16 +30,3 @@ document.addEventListener("turbo:load", function() {
         timerDisplay.textContent = hours + " hours " + minutes + " minutes " + seconds + " seconds";
     }
 });
-
-document.addEventListener("DOMContentLoaded", function() {
-    setTimeout(function() {
-      var banner = document.getElementById("banner");
-      if (banner) {
-        banner.classList.add("hide-banner");
-        setTimeout(function() {
-          location.reload();
-        }, 1000);
-      }
-    }, 5000);
-  });
-  
