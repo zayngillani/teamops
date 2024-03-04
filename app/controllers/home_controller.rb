@@ -8,10 +8,9 @@ class HomeController < ApplicationController
           #      render html: html_content.html_safe
           # else
                if current_user.admin?
-                    @session = User.where(role: "user").order(created_at: :desc)
+                    redirect_to admin_users_path
                else
-                    @session = current_user.attendances.order(created_at: :desc)
-                    @user = User.find(current_user.id)
+                    redirect_to attendance_index_path
                end
           # end
      end

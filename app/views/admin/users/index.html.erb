@@ -1,0 +1,28 @@
+<%= link_to "Create Employee", new_admin_user_path, class: "sign-out-button", id: "checkInButton", style: "float: right; margin-right: 20px; margin-bottom: 10px; margin-top: 15px;" %>
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Name</th>
+      <th>Email</th>
+      <th>IP Address </th>
+      <th>Attendance</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @session.each do |item| %>
+    <tr>
+      <td><%= item.id %></td>
+      <td><%= item.name %></td>
+      <td><%= item.email %></td>
+      <td><%= item.ip_address.present? ? item.ip_address : "N/A"%>
+      <td>
+      <span>
+      <%= link_to 'PDF', admin_generate_pdf_path(id: item.id, format: :pdf), class: 'styled-button' %>
+      </span>
+      </td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
+
