@@ -31,15 +31,7 @@ document.addEventListener("turbo:load", function() {
     }
 });
 
-document.addEventListener("DOMContentLoaded", function() {
-    setTimeout(function() {
-      var banner = document.getElementById("banner");
-      if (banner) {
-        banner.classList.add("hide-banner");
-        setTimeout(function() {
-          location.reload();
-        }, 1000);
-      }
-    }, 5000);
+$(document).ready(function() {
+    $('#banner .alert').delay(3000).fadeOut('slow');
   });
   

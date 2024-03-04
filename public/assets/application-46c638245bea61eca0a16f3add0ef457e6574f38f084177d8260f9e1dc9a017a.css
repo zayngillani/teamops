@@ -302,13 +302,17 @@
     cursor: pointer;
   }
   
-/* Banner */
-.banner {
+
+#banner {
+  background-color: #007bff;
   color: #fff;
   padding: 10px 20px;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 1000;
 }
 
-/* Flash Message Alerts */
 .alert {
   margin-bottom: 10px;
   border-radius: 5px;
@@ -317,34 +321,17 @@
 
 .alert-success {
   background-color: #28a745;
-  text-align: center;
 }
 
 .alert-danger {
   background-color: #dc3545;
-  text-align: center;
 }
 
 .alert-warning {
   background-color: #ffc107;
-  text-align: center;
 }
 
 .alert-info {
   background-color: #17a2b8;
-  text-align: center;
 }
 
-.hide-banner {
-  animation: slideUp 1s forwards;
-}
-
-@keyframes slideUp {
-  0% {
-    transform: translateY(0);
-  }
-  100% {
-    transform: translateY(-100%);
-    opacity: 0;
-  }
-}

@@ -12,6 +12,7 @@ class AttendanceController < ApplicationController
             @session.user_id = current_user.id
             @session.check_in_time = Time.now.utc
             @session.save!
+            flash[:success] = "Checked IN successfully"
           #   SlackService.new(current_user, "Checked In", @session.check_in_time).send_message
             redirect_to root_path
           else
@@ -27,6 +28,7 @@ class AttendanceController < ApplicationController
                duration_seconds = session.check_out_time - session.check_in_time
                session.update!(total_hours: duration_seconds)
                end
+            flash[:success] = "Checked OUT successfully"
                # SlackService.new(current_user, "Checked Out", @session.last.check_out_time).send_message
                redirect_to root_path
      end
