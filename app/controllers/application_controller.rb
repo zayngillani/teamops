@@ -19,11 +19,4 @@ class ApplicationController < ActionController::Base
     #     render html: html_content.html_safe
     #   end
     # end
-    def after_sign_in_path_for(resource)
-      if resource.user?
-        change_password_path
-      else
-        super
-      end
-    end
 end

@@ -111,6 +111,12 @@ form .button input:hover{
       <div class="wrapper">
         <div class="title"><span>Login</span></div>
         <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+          <% if notice %>
+            <div class="alert alert-success fading-out" id="banner"><%= notice %></div>
+          <% end %>
+          <% if alert %>
+            <div class="alert alert-danger fading-out" id="banner"><%= alert %></div>
+          <% end %>
           <div class="row">
             <i class="fas fa-user"></i>
               <%= f.email_field :email, autofocus: true, autocomplete: "email", placeholder: "Email", required: true %>

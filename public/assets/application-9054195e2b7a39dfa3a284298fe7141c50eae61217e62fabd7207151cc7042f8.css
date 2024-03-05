@@ -334,13 +334,3 @@
   background-color: #17a2b8;
   text-align: center;
 }
-
-#flash-message {
-  opacity: 1;
-  transition: opacity 3s ease-in-out;
-}
-
-#flash-message.fading-out {
-  opacity: 0;
-}
-

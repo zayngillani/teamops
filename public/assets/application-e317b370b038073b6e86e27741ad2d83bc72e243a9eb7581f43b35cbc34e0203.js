@@ -31,10 +31,11 @@ document.addEventListener("turbo:load", function() {
     }
 });
 
-document.addEventListener('turbo:load', function() {
-    const flashMessage = document.getElementById('banner');
+document.addEventListener('turbolinks:load', function() {
+    const flashMessage = document.getElementById('flash-message');
     flashMessage.classList.add('fading-out');
     setTimeout(function() {
       flashMessage.parentNode.removeChild(flashMessage);
     }, 3000);
   });
+  

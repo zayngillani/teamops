@@ -31,10 +31,8 @@ document.addEventListener("turbo:load", function() {
     }
 });
 
-document.addEventListener('turbo:load', function() {
-    const flashMessage = document.getElementById('banner');
-    flashMessage.classList.add('fading-out');
+$(document).ready(function() {
     setTimeout(function() {
-      flashMessage.parentNode.removeChild(flashMessage);
-    }, 3000);
+      $('#flash-message').slideUp();
+    }, 3000); // Remove after 3 seconds
   });

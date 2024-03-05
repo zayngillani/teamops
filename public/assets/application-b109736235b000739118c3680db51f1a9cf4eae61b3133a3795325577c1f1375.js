@@ -38,3 +38,12 @@ document.addEventListener('turbo:load', function() {
       flashMessage.parentNode.removeChild(flashMessage);
     }, 3000);
   });
+
+  $(document).ready(function(){
+    // Hide the notice after 5 seconds
+    setTimeout(function(){
+      $('.alert').fadeOut('slow');
+    }, 5000);
+  });
+  
+
