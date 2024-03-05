@@ -343,3 +343,11 @@
 #flash-message.fading-out {
   opacity: 0;
 }
+
+.edit-button {
+  background-color: #3498db;
+  color: #fff;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 5px;
+}
