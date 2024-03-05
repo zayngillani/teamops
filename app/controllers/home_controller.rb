@@ -21,6 +21,9 @@ class HomeController < ApplicationController
      end
 
      def change_password
+          unless current_user.user? && current_user.password_expired?
+               redirect_to root_path
+          end
      end
 
      def update_password

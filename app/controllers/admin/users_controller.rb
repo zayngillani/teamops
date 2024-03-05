@@ -19,6 +19,21 @@ class Admin::UsersController < ApplicationController
        end
      end
 
+     def edit
+      @user = User.find_by(id: params[:id]) if params[:id].present?
+    end
+    
+    def update
+      @user = User.find_by(id: params[:id])
+      if @user
+        @user.update(user_params)
+        flash[:success] = "User updated successfully"
+        redirect_to root_path
+      else
+        flash[:error] = "User not found"
+      end
+     end
+
      def generate_pdf
       @user = User.find(params[:id])
       @user_sessions = Attendance.where(user_id: params[:id]).order(created_at: :asc)
