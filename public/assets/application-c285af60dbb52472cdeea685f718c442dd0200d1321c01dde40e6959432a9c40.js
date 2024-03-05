@@ -38,3 +38,4 @@ document.addEventListener('turbo:load', function() {
       flashMessage.parentNode.removeChild(flashMessage);
     }, 3000);
   });
+  

@@ -10,8 +10,35 @@ class HomeController < ApplicationController
                if current_user.admin?
                     redirect_to admin_users_path
                else
-                    redirect_to attendance_index_path
+                    if current_user.password_expired?
+                         flash[:alert] = "Your password has expired. Please reset your password."
+                         redirect_to change_password_path
+                    else
+                         redirect_to attendance_index_path
+                    end
                end
           # end
+     end
+
+     def change_password
+     end
+
+     def update_password
+          if params[:user][:password] == params[:user][:password_confirmation]
+               current_user.update(user_params)
+               current_user.update(password_changed_at: DateTime.now)
+               bypass_sign_in(current_user)
+               redirect_to root_path
+               flash[:success] = "Password Successfully Changed"
+          else
+               redirect_to change_password_path
+               flash[:error] = "Passwords Don't Match"
+          end
+     end
+
+     private
+     
+     def user_params
+          params.require(:user).permit(:password, :password_confirmation)
      end
 end

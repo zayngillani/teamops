@@ -43,6 +43,7 @@ gem 'async-websocket'
 
 gem 'dotenv-rails'
 
+gem 'devise-security'
 
 
 # Use Kredis to get higher-level data types in Redis [https://github.com/rails/kredis]
