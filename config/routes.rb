@@ -7,7 +7,7 @@ Rails.application.routes.draw do
   
   
   namespace :admin do
-    resources :users, only: [:new, :create, :index]
+    resources :users, only: [:new, :create, :index, :edit, :update]
     get '/generate_pdf', :to => "users#generate_pdf", as: 'generate_pdf'
   end
   
