@@ -9,7 +9,7 @@ class Admin::UsersController < ApplicationController
    
      def create
        @user = User.new(user_params)
-       @user.ip_address = request.remote_ip
+       @user.ip_address = "#{request.headers['X-Forwarded-For']&.split(',')&.last&.strip} || " + "#{request.ip} || " + "#{request.remote_ip}"
        @user.role = "user"
        if @user.save
          flash[:success] = "User created successfully"

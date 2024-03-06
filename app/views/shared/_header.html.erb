@@ -2,5 +2,11 @@
   <a href="/" class="logo">
     <%= image_tag "logo.svg" %>
   </a>
-  <%= button_to "Sign out", destroy_user_session_path, method: :delete, class: "sign-out-button" %>
+  <div class="profile">
+  <%= image_tag "profile.svg", alt: "Profile Image", class: "profile-image" %>
+    <div class="dropdown-content">
+      <%= button_to "Edit Profile", edit_admin_user_path(current_user.id), method: :get %>
+      <%= button_to "Sign out", destroy_user_session_path, method: :delete %>
+    </div>
+  </div>
 </div>

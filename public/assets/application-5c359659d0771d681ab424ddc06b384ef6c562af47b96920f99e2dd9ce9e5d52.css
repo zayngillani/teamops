@@ -368,26 +368,23 @@
   position: fixed;
   background-color: #f9f9f9;
   min-width: 100px;
+  padding: 8px 0;
   z-index: 1;
   right: 0;
   margin-right: 11px;
 }
 
+.dropdown-content link {
+  display: block;
+  padding: 8px 16px;
+  text-decoration: none;
+  color: #333;
+}
+
+.dropdown-content link:hover {
+  background-color: #ddd;
+}
+
 .profile:hover .dropdown-content {
   display: block;
-}
-
-.dropdown-content button {
-  display: block;
-  width: 100%; /* Make button width same as parent container */
-  padding: 8px 16px;
-  background-color: #fff; /* Button background color */
-  border: 1px solid #ccc; /* Button border */
-  color: #333; /* Button text color */
-  cursor: pointer;
-  text-align: left; /* Align button text to left */
-}
-
-.dropdown-content button:hover {
-  background-color: #f0f0f0; /* Button background color on hover */
 }
