@@ -47,14 +47,19 @@ class Admin::UsersController < ApplicationController
      def generate_pdf
       @user = User.find(params[:id])
       @user_sessions = Attendance.where(user_id: params[:id]).order(created_at: :asc)
-      total_hrs = 0
-      @user_sessions.each do |attendance|
-        total_hrs += attendance.total_hours.to_i unless attendance.total_hours.nil?
-      end
-      @total_hours = total_hrs
-      respond_to do |format|
-           format.html
-           format.pdf { render pdf: "#{@user.name}", layout: false } # Specify view and disable layout
+      if @user_sessions.present?
+        total_hrs = 0
+        @user_sessions.each do |attendance|
+          total_hrs += attendance.total_hours.to_i unless attendance.total_hours.nil?
+        end
+        @total_hours = total_hrs
+        respond_to do |format|
+            format.html
+            format.pdf { render pdf: "#{@user.name}", layout: false } # Specify view and disable layout
+        end
+      else
+        flash[:error] = "Attendance Not Present"
+        redirect_to root_path
       end
  end
 
