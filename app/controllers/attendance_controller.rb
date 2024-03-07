@@ -6,8 +6,6 @@ class AttendanceController < ApplicationController
      end
 
      def create_session
-          attendance = Attendance.where(check_out_time: nil , user_id: current_user.id)
-          if !attendance.present?
             @session = Attendance.new
             @session.user_id = current_user.id
             @session.check_in_time = Time.now.utc
@@ -15,19 +13,14 @@ class AttendanceController < ApplicationController
             flash[:success] = "Checked IN successfully"
             SlackService.new(current_user, "Checked In", @session.check_in_time).send_message
             redirect_to root_path
-          else
-               flash[:alert] = "Already Checked In"
-          end
      end
 
      def end_session
           @user = current_user
-          @session = Attendance.where(user_id: @user.id, check_out_time: nil)
+          @session = Attendance.where(user_id: @user.id).last
                @session.update!(check_out_time: Time.now.utc)
-               @session.each do |session|
-               duration_seconds = session.check_out_time - session.check_in_time
-               session.update!(total_hours: duration_seconds)
-               end
+               duration_seconds = @session.check_out_time - @session.check_in_time
+               @session.update!(total_hours: duration_seconds)
                flash[:success] = "Checked OUT successfully"
                SlackService.new(current_user, "Checked Out", @session.last.check_out_time).send_message
                redirect_to root_path

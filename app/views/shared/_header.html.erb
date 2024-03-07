@@ -3,9 +3,9 @@
     <%= image_tag "logo.svg" %>
   </a>
   <div class="profile">
-  <%= image_tag "profile.svg", alt: "Profile Image", class: "profile-image" %>
+  <span class="initial"><%= current_user.name.split.first[0] + current_user.name.split.last[0] %></span>
     <div class="dropdown-content">
-      <%= button_to "Edit Profile", edit_admin_user_path(current_user.id), method: :get %>
+      <%= button_to "Profile", admin_user_profile_path(current_user.id), method: :get %>
       <%= button_to "Sign out", destroy_user_session_path, method: :delete %>
     </div>
   </div>

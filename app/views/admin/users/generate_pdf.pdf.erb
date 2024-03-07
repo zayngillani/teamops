@@ -11,17 +11,72 @@
 }
 
 .attendance-table th {
-  background-color: #f2f2f2;
+  background-color: #87CEEB;
   font-weight: bold;
 }
 
+.attendance-heading {
+  background-color: #87CEEB;
+  color: white; /* Set text color to ensure readability */
+  padding: 10px; /* Add padding for better appearance */
+}
+
+.user-info {
+  display: flex;
+  justify-content: space-between; /* Ensure space between left and right info */
+  align-items: center;
+}
+
+.left-info {
+  display: flex;
+  align-items: center;
+}
+
+.user-info p {
+  margin-right: 10px;
+}
+
+.username {
+  border-bottom: 3px dotted #000;
+  padding-bottom: 2px;
+}
+
+.right-info {
+  display: flex;
+  align-items: center;
+  margin-right: 30px;
+}
+
+.right-info p {
+  margin-left: 10px; /* Adjust margin to create space between left and right info */
+}
+
+
+
 </style>
 <h1 class="attendance-heading">Attendance Details</h1>
+<div class="user-info">
+  <div class="left-info">
+    <p>Employee:</p>
+    <span class="username"><strong><%= @user.name%></strong></span>
+  </div>
+  <div class="right-info">
+    <p>Month</p>
+      <span class="username"><%= @user_sessions.first.created_at.strftime("%b %d, %Y")%></span>
+  </div>
+</div>
+<div class="user-info">
+  <div class="left-info">
+  </div>
+  <div class="right-info">
+    <p>Regular Hours</p>
+      <span class="username">8</span>
+  </div>
+  </div>
+<br>
 <table class="attendance-table">
   <thead>
     <tr>
-      <th>ID</th>
-      <th>Name</th>
       <th>Date</th>
       <th>Check In</th>
       <th>Check Out</th>
@@ -31,9 +86,7 @@
   <tbody>
     <% @user_sessions.each do |item| %>
       <tr>
-        <td><%= item.user_id%></td>
-        <td><%= @user.name%></td>
-        <td><%= item.created_at.strftime("%Y-%m-%d ")%></td>
+        <td><%= item.created_at.strftime("%b %d, %Y")%></td>
         <td><%= item.check_in_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") %></td>
         <td><%= item.check_out_time.present? ? item.check_out_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A"%></td>
         <td>
@@ -45,5 +98,10 @@
         </td>
       </tr>
       <% end%>
+<td><strong>Total HRS</strong></td>
+      <td></td>
+      <td></td>
+<td><strong><%= "#{@total_hours / 3600 || 0} hours #{@total_hours % 3600 / 60 || 0} minutes" %></strong></td>
+</td>
     </tbody>
   </table>
