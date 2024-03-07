@@ -351,14 +351,14 @@
 }
 
 .profile {
-  width: 65px;
-  height: 65px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   background-color: #ccc;
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 25px;
+  font-size: 7px;
   color: #fff;
 }
 
@@ -378,7 +378,6 @@
   z-index: 1;
   right: 0;
   margin-right: 11px;
-  margin-top: 130px;
 }
 
 .profile:hover .dropdown-content {
@@ -398,11 +397,6 @@
 
 .dropdown-content button:hover {
   background-color: #f0f0f0; /* Button background color on hover */
-}
-
-.initial2 {
-  font-weight: bold;
-  font-size: 100px;
 }
 
 .initial {
@@ -435,5 +429,4 @@
   display: flex;
   align-items: center;
 }
-
 

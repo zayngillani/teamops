@@ -351,15 +351,8 @@
 }
 
 .profile {
-  width: 65px;
-  height: 65px;
-  border-radius: 50%;
-  background-color: #ccc;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 25px;
-  color: #fff;
+  position: relative;
+  display: inline-block;
 }
 
 .profile-image {
@@ -378,7 +371,6 @@
   z-index: 1;
   right: 0;
   margin-right: 11px;
-  margin-top: 130px;
 }
 
 .profile:hover .dropdown-content {
@@ -400,18 +392,13 @@
   background-color: #f0f0f0; /* Button background color on hover */
 }
 
-.initial2 {
-  font-weight: bold;
-  font-size: 100px;
-}
-
 .initial {
   font-weight: bold;
 }
 
 .profile-picture {
-  width: 185px;
-  height: 180px;
+  width: 100px;
+  height: 100px;
   border-radius: 50%;
   background-color: #ccc;
   display: flex;
@@ -419,21 +406,5 @@
   align-items: center;
   font-size: 24px;
   color: #fff;
+  margin-right: 20px; /* Adjust margin as needed */
 }
-
-.profile-fields {
-  margin-left: 90px;
-}
-
-.form-container2 {
-  width: 500px; /* Adjust width as needed */
-  margin: 0 auto; /* Center the form horizontally */
-  padding: 30px;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  margin-top: 53px;
-  display: flex;
-  align-items: center;
-}
-
-
