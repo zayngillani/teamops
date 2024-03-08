@@ -3,7 +3,11 @@ class SlackService
           @user = user
           @time = time
           @message = message
-          @channel = ENV["SLACK_CHANNEL"]
+          if @user.email.ends_with?("@gmail.com")
+               @channel = ENV["TEST_CHANNEL"]
+          else
+               @channel = ENV["SLACK_CHANNEL"]
+          end
           @client = Slack::Web::Client.new
      end
 
