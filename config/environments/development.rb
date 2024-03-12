@@ -19,6 +19,11 @@ Rails.application.configure do
 
   config.action_dispatch.trusted_proxies = ['render.com']
 
+  config.action_mailer.delivery_method = :letter_opener
+  
+  Rails.application.routes.default_url_options[:host] = 'localhost:3000'
+  
+
 
   # Enable/disable caching. By default caching is disabled.
   # Run rails dev:cache to toggle caching.

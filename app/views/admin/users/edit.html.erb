@@ -25,6 +25,17 @@
       <%= form.label :slack_Id, class: "label" %>
       <%= form.text_field :slack_member_id, class: "text-field", required: true %>
     </div>
+
+    <div class="form-group">
+      <%= form.label :password, class: "label" %>
+      <%= form.password_field :password, class: "password-field" %>
+    </div>
+
+    <div class="form-group">
+      <%= form.label :password_confirmation, class: "label" %>
+      <%= form.password_field :password_confirmation, class: "password-field" %>
+    </div>
+
     <div class="form-actions">
       <%= form.submit "Update User", class: "submit-button" %>
     </div>

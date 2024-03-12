@@ -12,7 +12,7 @@ class AttendanceController < ApplicationController
             @session.save!
             flash[:success] = "Checked IN successfully"
             SlackService.new(current_user, "Checked In", @session.check_in_time).send_message
-            redirect_to root_path
+            redirect_to attendance_index_path
      end
 
      def end_session

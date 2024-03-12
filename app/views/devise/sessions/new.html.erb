@@ -6,108 +6,9 @@
      <title>Login</title> 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"/>
   </head>
-  <style>
-  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600;700&display=swap');
-*{
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-  font-family: 'Poppins',sans-serif;
-}
-body{
-  background: linear-gradient(120deg, hsl(25, 100%, 50%), #f2eff0);
-  overflow: hidden;
-}
-::selection{
-  background: rgba(26,188,156,0.3);
-}
-.container{
-  max-width: 440px;
-  padding: 0 20px;
-  margin: 170px auto;
-}
-.wrapper{
-  width: 100%;
-  background: #fff;
-  border-radius: 5px;
-  box-shadow: 0px 4px 10px 1px rgba(0,0,0,0.1);
-}
-.wrapper .title{
-  height: 90px;
-  background: #ff6700;
-  border-radius: 5px 5px 0 0;
-  color: #fff;
-  font-size: 30px;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.wrapper form{
-  padding: 30px 25px 25px 25px;
-}
-.wrapper form .row{
-  height: 57px;
-  margin-bottom: 15px;
-  position: relative;
-}
-.wrapper form .row input{
-  height: 100%;
-  width: 100%;
-  outline: none;
-  padding-left: 60px;
-  border-radius: 5px;
-  border: 1px solid lightgrey;
-  font-size: 16px;
-  transition: all 0.3s ease;
-}
-form .row input:focus{
-  border-color: #ff6700;
-  box-shadow: #ff6700;
-}
-form .row input::placeholder{
-  color: #999;
-}
-.wrapper form .row i{
-  position: absolute;
-  width: 47px;
-  height: 100%;
-  color: #fff;
-  font-size: 18px;
-  background: #ff6700;
-  border: 1px solid #ff6700;
-  border-radius: 5px 0 0 5px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.wrapper form .pass{
-  margin: -8px 0 20px 0;
-}
-.wrapper form .pass a{
-  color: #ff6700;
-  font-size: 17px;
-  text-decoration: none;
-}
-.wrapper form .pass a:hover{
-  text-decoration: underline;
-}
-.wrapper form .button input{
-  color: #fff;
-  font-size: 20px;
-  font-weight: 500;
-  padding-left: 0px;
-  background: #ff6700;
-  border: 1px solid #ff6700;
-  cursor: pointer;
-}
-form .button input:hover{
-  background: #ff6700;
-}
 
-  </style>
-  <body>
-    <div class="container">
+<body class="special-background">
+  <div class="container">
       <div class="wrapper">
         <div class="title"><span>Login</span></div>
         <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
@@ -125,9 +26,10 @@ form .button input:hover{
             <i class="fas fa-lock"></i>
               <%= f.password_field :password, autocomplete: "current-password", placeholder: "Password", required: true %>
           </div>
-          <div class="row button">
-              <%= f.submit "Log in" %>
-          </div>
+              <%= f.submit "Log in", class: "sign-in-button" %>
+            <div class="doEnd">
+              <%= link_to "Forgot Your Password", new_user_password_path(resource_name), :class => "btn btn-link" %>
+            </div>
           <% end %>
       </div>
     </div>
