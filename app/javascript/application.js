@@ -19,9 +19,6 @@ document.addEventListener("turbo:load", function() {
         if (systemTime) {
             // Parse the createdAt timestamp to get the start time in milliseconds
             systemTime = new Date(systemTime).getTime();
-        } else {
-            // If systemTime is not provided, use the current time
-            systemTime = new Date().getTime();
         }
         // Update the timer display every second
         var elapsedTime = systemTime - startTime; // Calculate elapsed time
