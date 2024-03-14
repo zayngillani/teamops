@@ -19,8 +19,12 @@ class AttendanceController < ApplicationController
           @user = current_user
           @session = Attendance.where(user_id: @user.id).last
                @session.update!(check_out_time: Time.now.utc)
-               duration_seconds = @session.check_out_time - @session.check_in_time
-               @session.update!(total_hours: duration_seconds)
+               total_duration_seconds = @session.check_out_time - @session.check_in_time
+               if @session.break_in_time.present? && @session.break_out_time.present?
+               total_break = @session.break_out_time - @session.break_in_time
+               total_duration_seconds -= total_break
+               end
+               @session.update!(total_hours: total_duration_seconds)
                flash[:success] = "Checked OUT successfully"
                SlackService.new(current_user, "Checked Out", @session.check_out_time).send_message
                redirect_to attendance_index_path
@@ -29,9 +33,18 @@ class AttendanceController < ApplicationController
      def break_session
           if @break = current_user.attendances.last
                if @break.present?  && @break.check_out_time.nil? && @break.break_out_time.nil? && @break.break_in_time.nil?
-                    @break.update!(break_in_time: DateTime.now.strftime("%Y-%m-%d %H:%M:%S"))
-               else @break.break_in_time.present? && @break.break_out_time.nil?
-                    @break.update!(break_out_time: DateTime.now.strftime("%Y-%m-%d %H:%M:%S"))
+                    @break.update!(break_in_time: Time.now.utc)
+                    flash[:success] = "Break In successfully"
+                    SlackService.new(current_user, "Break In", @break.break_in_time).send_message
+                    redirect_to attendance_index_path
+               elsif @break.break_in_time.present? && @break.break_out_time.nil?
+                    @break.update!(break_out_time: Time.now.utc)
+                    flash[:success] = "Break OUT successfully"
+                    SlackService.new(current_user, "Break Out", @break.break_in_time).send_message
+                    redirect_to attendance_index_path
+               else
+               flash[:error] = "Break Already Marked"
+               redirect_to attendance_index_path
                end
           else
                flash[:alert] = "Attendance Not Marked"

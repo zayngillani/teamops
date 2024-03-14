@@ -68,6 +68,15 @@
 
     <% end %>
   </div>
+  <div style="float: right; margin-top: 20px;">
+  <% if !@session.empty? %>
+  <% if session.present? && session.check_out_time.nil? && !session.break_in_time.present? %>
+    <%= button_to "Break-In", break_session_path, class: "sign-out-button", id: "checkInButton", onclick: "setTimeout(() => this.disabled = true, 0)" %>
+  <% elsif session.check_out_time.nil? && !session.break_out_time.present? %>
+    <%= button_to "Break-Out", break_session_path, class: "sign-out-button", id: "checkInButton", onclick: "setTimeout(() => this.disabled = true, 0)" %>
+  <% end %>
+  <% end %>
+</div>
   <% if session.present? && session.check_out_time.nil? && current_user.attendances.last.check_in_time >= 16.hours.ago %>
     <div class="button-container">
       <button id="modal-btn" class="sign-out-button">Check Out</button>
