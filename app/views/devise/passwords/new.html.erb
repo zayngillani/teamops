@@ -9,7 +9,7 @@
   <body class="special-background">
     <div class="container">
       <div class="wrapper">
-        <div class="title"><span>Forgot your password?</span></div>
+        <div class="title"><span>Forgot Password?</span></div>
         <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
           <% if resource.errors.full_messages.present? %>
             <div class="alert alert-danger fading-out" id="banner"><%= resource.errors.full_messages[0] %></div>

@@ -38,3 +38,65 @@ document.addEventListener('turbo:load', function() {
       flashMessage.parentNode.removeChild(flashMessage);
     }, 3000);
   });
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Function to open a modal
+    function openModal(modalId) {
+        var modal = document.getElementById(modalId);
+        modal.style.display = "block";
+    }
+
+    // Function to close a modal
+    function closeModal(modalId) {
+        var modal = document.getElementById(modalId);
+        modal.style.display = "none";
+    }
+
+    // Get all modal buttons
+    var modalButtons = document.querySelectorAll(".modal-btn");
+
+    // Loop through each modal button
+    modalButtons.forEach(function(button) {
+        // Add click event listener to open the corresponding modal
+        button.addEventListener("click", function() {
+            var targetId = button.getAttribute("data-target");
+            openModal(targetId);
+        });
+    });
+
+    // Close modal when close button is clicked
+    var closeModalBtns = document.querySelectorAll(".closeModalBtn");
+    closeModalBtns.forEach(function(button) {
+        button.addEventListener("click", function() {
+            var modal = button.closest(".modal");
+            closeModal(modal.id);
+        });
+    });
+
+    // Close modal when clicking outside the modal
+    window.onclick = function(event) {
+        var modals = document.querySelectorAll(".modal");
+        modals.forEach(function(modal) {
+            if (event.target.classList.contains('modal')) {
+                closeModal(modal.id);
+            }
+        });
+    };
+
+    // Close modal after action is performed and reload the page
+    var actionButtons = document.querySelectorAll(".sign-out-button.delete-btn");
+    actionButtons.forEach(function(button) {
+        button.addEventListener("click", function() {
+            var modal = button.closest(".modal");
+            closeModal(modal.id);
+            performActionAndReload();
+        });
+    });
+});
+
+
+function performActionAndReload() {
+    setTimeout(function() {
+        location.reload();
+    }, 1000);
+}

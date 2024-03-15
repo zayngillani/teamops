@@ -8,20 +8,20 @@
   <body class="special-background">
     <div class="container">
       <div class="wrapper">
-        <div class="title"><span>Change your password</span></div>
+        <div class="title"><span>Create new password</span></div>
         <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
           <% if resource.errors.full_messages.present? %>
             <div class="alert alert-danger fading-out" id="banner"><%= resource.errors.full_messages[0] %></div>
           <% end %>
           <div class="form-group">
             <%= f.hidden_field :reset_password_token %>
-            <%= f.password_field :password, class: "password-field", placeholder: "Enter Password", required: true %>
+            <%= f.password_field :password, class: "password-field", placeholder: "Password", required: true %>
           </div>
 
           <div class="form-group">
-            <%= f.password_field :password_confirmation, class: "password-field", placeholder: "Enter Password", required: true %>
+            <%= f.password_field :password_confirmation, class: "password-field", placeholder: "Confirm Password", required: true %>
           </div>
-              <%= f.submit "Change Password", class: "sign-in-button" %>
+              <%= f.submit "Reset Password", class: "sign-in-button" %>
           <% end %>
       </div>
     </div>
