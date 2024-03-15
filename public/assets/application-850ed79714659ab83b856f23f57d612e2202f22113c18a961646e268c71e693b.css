@@ -739,15 +739,19 @@ form .button input:hover{
   text-align: center;
 }
 
-.pagination a,
-.pagination span {
-  padding: 10px;
-  margin: 0 5px;
-  background-color: #ff6700;
+.pagination .pagination-item {
+  display: inline-block;
+  padding: 8px 12px;
+  margin: 0 4px;
+  background-color: #007bff;
   color: #fff;
-  border-radius: 5px;
+  border-radius: 4px;
   text-decoration: none;
   cursor: pointer;
+}
+
+.pagination .current {
+  background-color: #0056b3;
 }
 
 .pagination .disabled {
@@ -755,23 +759,20 @@ form .button input:hover{
   cursor: not-allowed;
 }
 
-.pagination a:hover {
-  background-color: #ff6700;
+.pagination .previous,
+.pagination .next {
+  font-weight: bold;
 }
 
-.sidebar-btn {
-  display: block;
-  width: 100%;
-  padding: 10px;
-  background-color: #ff6700; /* Blue background color */
-  color: #fff; /* White text color */
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+.pagination .previous:before,
+.pagination .next:after {
+  content: "\00AB";
 }
 
-.sidebar-btn:hover {
-  background-color: #ff6700; /* Darker blue on hover */
+.pagination .next:after {
+  content: "\00BB";
+}
+
+.pagination .pagination-item:hover {
+  background-color: #0056b3;
 }

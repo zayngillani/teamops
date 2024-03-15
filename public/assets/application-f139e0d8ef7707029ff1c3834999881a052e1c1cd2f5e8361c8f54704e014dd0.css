@@ -1,4 +1,6 @@
-   
+*= require dataTables/jquery.dataTables
+
+
    .signup_link{
      margin: 30px 0;
      text-align: center;
@@ -96,7 +98,8 @@
    }
    
    .content {
-     background-color: #f9f9f9; /* Off-white background color for the content */
+     background-color: #f9f9f9; /* Off-white background color for the content *= require dataTables/jquery.dataTables
+ */
      padding: 20px;
      height: 700px;
    }
@@ -119,20 +122,26 @@
      font-weight: bold;
      text-align: center;
      text-decoration: none;
-     border: 2px solid #ff6700; /* Border color */
+     border: 2px solid #ff6700; /* Border color *= require dataTables/jquery.dataTables
+ */
      border-radius: 5px;
-     color: #ff6700; /* Text color */
-     background-color: transparent; /* Transparent background color */
+     color: #ff6700; /* Text color *= require dataTables/jquery.dataTables
+ */
+     background-color: transparent; /* Transparent background color *= require dataTables/jquery.dataTables
+ */
      cursor: pointer;
    }
    
    .button:hover {
-     background-color: #ff6700; /* Background color on hover */
-     color: #fff; /* Text color on hover */
+     background-color: #ff6700; /* Background color on hover *= require dataTables/jquery.dataTables
+ */
+     color: #fff; /* Text color on hover *= require dataTables/jquery.dataTables
+ */
    }
    
    #timerDisplay {
-    display: block; /* Make the timer display as a block-level element */
+    display: block; /* Make the timer display as a block-level element *= require dataTables/jquery.dataTables
+ */
     }
 
     table {
@@ -172,7 +181,8 @@
      margin-bottom: 15px;
      border: 1px solid #ccc;
      border-radius: 4px;
-     box-sizing: border-box; /* Ensure padding is included in width */
+     box-sizing: border-box; /* Ensure padding is included in width *= require dataTables/jquery.dataTables
+ */
      font-size: 16px;
    }
  
@@ -194,17 +204,21 @@
      font-family: Arial, sans-serif;
    }
    
-   /* Form container */
+   /* Form container *= require dataTables/jquery.dataTables
+ */
    .form-container {
-     width: 500px; /* Adjust width as needed */
-     margin: 0 auto; /* Center the form horizontally */
+     width: 500px; /* Adjust width as needed *= require dataTables/jquery.dataTables
+ */
+     margin: 0 auto; /* Center the form horizontally *= require dataTables/jquery.dataTables
+ */
      padding: 30px;
      border: 1px solid #ccc;
      border-radius: 5px;
      margin-top: 53px;
    }
    
-   /* Error message */
+   /* Error message *= require dataTables/jquery.dataTables
+ */
    .error-message {
      color: red;
      border: 1px solid red;
@@ -213,14 +227,16 @@
      margin-bottom: 15px;
    }
    
-   /* Labels */
+   /* Labels *= require dataTables/jquery.dataTables
+ */
    .label {
      display: block;
      margin-bottom: 5px;
      font-weight: bold;
    }
    
-   /* Input fields */
+   /* Input fields *= require dataTables/jquery.dataTables
+ */
    .text-field,
    .email-field,
    .password-field {
@@ -228,11 +244,13 @@
      padding: 10px;
      border: 1px solid #ccc;
      border-radius: 3px;
-     box-sizing: border-box; /* Include padding in width calculation */
+     box-sizing: border-box; /* Include padding in width calculation *= require dataTables/jquery.dataTables
+ */
      margin-bottom: 15px;
    }
    
-   /* Submit button */
+   /* Submit button *= require dataTables/jquery.dataTables
+ */
    .submit-button {
      background-color: #ff6700;
      color: white;
@@ -242,7 +260,8 @@
      cursor: pointer;
    }
    
-   /* Hover effect for submit button */
+   /* Hover effect for submit button *= require dataTables/jquery.dataTables
+ */
    .submit-button:hover {
      background-color: #ff6700	;
    }
@@ -250,7 +269,8 @@
    .styled-button {
      display: inline-block;
      padding: 10px 20px;
-     background-color: #ff6700; /* Green */
+     background-color: #ff6700; /* Green *= require dataTables/jquery.dataTables
+ */
      border: none;
      border-radius: 5px;
      color: white;
@@ -262,7 +282,8 @@
    }
    
    .styled-button:hover {
-     background-color: #ff6700; /* Darker Green */
+     background-color: #ff6700; /* Darker Green *= require dataTables/jquery.dataTables
+ */
    }
    
 
@@ -270,23 +291,32 @@
    /* Modal*/
 
    .modal {
-    display: none; /* Hidden by default */
-    position: fixed; /* Stay in place */
-    z-index: 1; /* Sit on top */
+    display: none; /* Hidden by default *= require dataTables/jquery.dataTables
+ */
+    position: fixed; /* Stay in place *= require dataTables/jquery.dataTables
+ */
+    z-index: 1; /* Sit on top *= require dataTables/jquery.dataTables
+ */
     left: 0;
     top: 0;
-    width: 100%; /* Full width */
-    height: 100%; /* Full height */
-    overflow: auto; /* Enable scroll if needed */
-    background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+    width: 100%; /* Full width *= require dataTables/jquery.dataTables
+ */
+    height: 100%; /* Full height *= require dataTables/jquery.dataTables
+ */
+    overflow: auto; /* Enable scroll if needed *= require dataTables/jquery.dataTables
+ */
+    background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity *= require dataTables/jquery.dataTables
+ */
   }
   
   .modal-content {
     background-color: #fefefe;
-    margin: 15% auto; /* 15% from the top and centered */
+    margin: 15% auto; /* 15% from the top and centered *= require dataTables/jquery.dataTables
+ */
     padding: 20px;
     border: 1px solid #888;
-    width: 80%; /* Could be more or less, depending on screen size */
+    width: 80%; /* Could be more or less, depending on screen size *= require dataTables/jquery.dataTables
+ */
   }
   
   .close {
@@ -302,13 +332,15 @@
     cursor: pointer;
   }
   
-/* Banner */
+/* Banner *= require dataTables/jquery.dataTables
+ */
 .banner {
   color: #fff;
   padding: 10px 20px;
 }
 
-/* Flash Message Alerts */
+/* Flash Message Alerts *= require dataTables/jquery.dataTables
+ */
 .alert {
   margin-bottom: 10px;
   border-radius: 5px;
@@ -363,9 +395,12 @@
 }
 
 .profile-image {
-  width: 50px; /* Adjust size as needed */
-  height: 50px; /* Adjust size as needed */
-  border-radius: 50%; /* To make it circular */
+  width: 50px; /* Adjust size as needed *= require dataTables/jquery.dataTables
+ */
+  height: 50px; /* Adjust size as needed *= require dataTables/jquery.dataTables
+ */
+  border-radius: 50%; /* To make it circular *= require dataTables/jquery.dataTables
+ */
   cursor: pointer;
   margin-right: 20px;
 }
@@ -387,17 +422,23 @@
 
 .dropdown-content button {
   display: block;
-  width: 100%; /* Make button width same as parent container */
+  width: 100%; /* Make button width same as parent container *= require dataTables/jquery.dataTables
+ */
   padding: 8px 16px;
-  background-color: #fff; /* Button background color */
-  border: 1px solid #ccc; /* Button border */
-  color: #333; /* Button text color */
+  background-color: #fff; /* Button background color *= require dataTables/jquery.dataTables
+ */
+  border: 1px solid #ccc; /* Button border *= require dataTables/jquery.dataTables
+ */
+  color: #333; /* Button text color *= require dataTables/jquery.dataTables
+ */
   cursor: pointer;
-  text-align: left; /* Align button text to left */
+  text-align: left; /* Align button text to left *= require dataTables/jquery.dataTables
+ */
 }
 
 .dropdown-content button:hover {
-  background-color: #f0f0f0; /* Button background color on hover */
+  background-color: #f0f0f0; /* Button background color on hover *= require dataTables/jquery.dataTables
+ */
 }
 
 .initial2 {
@@ -426,8 +467,10 @@
 }
 
 .form-container2 {
-  width: 500px; /* Adjust width as needed */
-  margin: 0 auto; /* Center the form horizontally */
+  width: 500px; /* Adjust width as needed *= require dataTables/jquery.dataTables
+ */
+  margin: 0 auto; /* Center the form horizontally *= require dataTables/jquery.dataTables
+ */
   padding: 30px;
   border: 1px solid #ccc;
   border-radius: 5px;
@@ -553,8 +596,10 @@ form .button input:hover{
   width: 350px;
 
   @media screen and (max-width: 768px) {
-    width: 100%; /* Full width for smaller screens */
-    margin-right: 0; /* No right margin for smaller screens */
+    width: 100%; /* Full width for smaller screens *= require dataTables/jquery.dataTables
+ */
+    margin-right: 0; /* No right margin for smaller screens *= require dataTables/jquery.dataTables
+ */
   }
 }
 
@@ -565,25 +610,36 @@ form .button input:hover{
 }
 
 .modal {
-  display: none; /* Hidden by default */
-  position: fixed; /* Stay in place */
-  z-index: 1; /* Sit on top */
+  display: none; /* Hidden by default *= require dataTables/jquery.dataTables
+ */
+  position: fixed; /* Stay in place *= require dataTables/jquery.dataTables
+ */
+  z-index: 1; /* Sit on top *= require dataTables/jquery.dataTables
+ */
   left: 0;
   top: 0;
-  width: 100%; /* Full width */
-  height: 100%; /* Full height */
-  overflow: auto; /* Enable scroll if needed */
-  background-color: rgb(0,0,0); /* Fallback color */
-  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+  width: 100%; /* Full width *= require dataTables/jquery.dataTables
+ */
+  height: 100%; /* Full height *= require dataTables/jquery.dataTables
+ */
+  overflow: auto; /* Enable scroll if needed *= require dataTables/jquery.dataTables
+ */
+  background-color: rgb(0,0,0); /* Fallback color *= require dataTables/jquery.dataTables
+ */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity *= require dataTables/jquery.dataTables
+ */
 }
 
-/* Modal Content/Box */
+/* Modal Content/Box *= require dataTables/jquery.dataTables
+ */
 .modal-content {
   background-color: #fefefe;
-  margin: 15% auto; /* 15% from the top and centered */
+  margin: 15% auto; /* 15% from the top and centered *= require dataTables/jquery.dataTables
+ */
   padding: 20px;
   border: 1px solid #888;
-  width: 22%; /* Could be more or less, depending on screen size */
+  width: 22%; /* Could be more or less, depending on screen size *= require dataTables/jquery.dataTables
+ */
 }
 
   .modal-footer {
@@ -596,10 +652,12 @@ form .button input:hover{
   .modal-footer button {
     height: 45px !important;
     border: none !important;
-    margin-right: 3px; /* Adjust margin as needed */
+    margin-right: 3px; /* Adjust margin as needed *= require dataTables/jquery.dataTables
+ */
   }
 
-  /* Optional: Center the buttons horizontally within the container */
+  /* Optional: Center the buttons horizontally within the container *= require dataTables/jquery.dataTables
+ */
   .modal-footer {
     align-items: center;
     margin-top: 25px;
@@ -634,7 +692,8 @@ form .button input:hover{
   display: inline-block;
 }
 
-/* Dropdown button */
+/* Dropdown button *= require dataTables/jquery.dataTables
+ */
 .dropdown-action .btn {
   background-color: #4CAF50;
   color: white;
@@ -644,7 +703,8 @@ form .button input:hover{
   cursor: pointer;
 }
 
-/* Dropdown content (hidden by default) */
+/* Dropdown content (hidden by default) *= require dataTables/jquery.dataTables
+ */
 .dropdown-content-action {
   display: none;
   position: absolute;
@@ -655,7 +715,8 @@ form .button input:hover{
   margin-left: -100px
 }
 
-/* Links inside the dropdown */
+/* Links inside the dropdown *= require dataTables/jquery.dataTables
+ */
 .dropdown-content-action button {
   color: black;
   padding: 12px 16px;
@@ -663,7 +724,8 @@ form .button input:hover{
   display: block;
 }
 
-/* Change color of dropdown links on hover */
+/* Change color of dropdown links on hover *= require dataTables/jquery.dataTables
+ */
 .dropdown-content-action button:hover {
   background-color: #f1f1f1;
 }
@@ -703,7 +765,8 @@ form .button input:hover{
 .styled-button2 {
   display: inline-block;
   padding: 10px 15px;
-  background-color: #ff6700; /* Green */
+  background-color: #ff6700; /* Green *= require dataTables/jquery.dataTables
+ */
   border: none;
   border-radius: 5px;
   color: white;
@@ -717,11 +780,14 @@ form .button input:hover{
   top: 128px;
   left: 0;
   height: 100%;
-  width: 200px; /* Adjust width as needed */
-  background-color: #f4f4f4; /* Example background color */
+  width: 200px; /* Adjust width as needed *= require dataTables/jquery.dataTables
+ */
+  background-color: #f4f4f4; /* Example background color *= require dataTables/jquery.dataTables
+ */
   padding: 20px;
   box-sizing: border-box;
-  z-index: 1000; /* Ensure the sidebar is above other content */
+  z-index: 1000; /* Ensure the sidebar is above other content *= require dataTables/jquery.dataTables
+ */
 
 }
 
@@ -732,46 +798,4 @@ form .button input:hover{
 
 #sidebar ul li {
   margin-bottom: 10px;
-}
-
-.pagination {
-  margin: 20px 0;
-  text-align: center;
-}
-
-.pagination a,
-.pagination span {
-  padding: 10px;
-  margin: 0 5px;
-  background-color: #ff6700;
-  color: #fff;
-  border-radius: 5px;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.pagination .disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.pagination a:hover {
-  background-color: #ff6700;
-}
-
-.sidebar-btn {
-  display: block;
-  width: 100%;
-  padding: 10px;
-  background-color: #ff6700; /* Blue background color */
-  color: #fff; /* White text color */
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.sidebar-btn:hover {
-  background-color: #ff6700; /* Darker blue on hover */
 }

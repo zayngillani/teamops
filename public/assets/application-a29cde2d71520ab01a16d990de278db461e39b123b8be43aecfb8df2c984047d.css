@@ -1,4 +1,6 @@
-   
+*= require dataTables/datatables
+
+
    .signup_link{
      margin: 30px 0;
      text-align: center;
@@ -732,46 +734,4 @@ form .button input:hover{
 
 #sidebar ul li {
   margin-bottom: 10px;
-}
-
-.pagination {
-  margin: 20px 0;
-  text-align: center;
-}
-
-.pagination a,
-.pagination span {
-  padding: 10px;
-  margin: 0 5px;
-  background-color: #ff6700;
-  color: #fff;
-  border-radius: 5px;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.pagination .disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.pagination a:hover {
-  background-color: #ff6700;
-}
-
-.sidebar-btn {
-  display: block;
-  width: 100%;
-  padding: 10px;
-  background-color: #ff6700; /* Blue background color */
-  color: #fff; /* White text color */
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.sidebar-btn:hover {
-  background-color: #ff6700; /* Darker blue on hover */
 }

@@ -402,7 +402,7 @@
 
 .initial2 {
   font-weight: bold;
-  font-size: 80px;
+  font-size: 100px;
 }
 
 .initial {
@@ -693,85 +693,11 @@ form .button input:hover{
   margin-top: 5px;
 }
 
+.pdf-set{
+  margin-right: 72px;
+  margin-top: 25px;
+}
 
 .pdf-set{
-  margin-top: 25px;
-  margin-left: 65px;
-}
-
-
-.styled-button2 {
-  display: inline-block;
-  padding: 10px 15px;
-  background-color: #ff6700; /* Green */
-  border: none;
-  border-radius: 5px;
-  color: white;
-  margin-top: 15px;
-  margin-bottom: 15px;
-  margin-left: 80px;
-}
-
-#sidebar {
-  position: absolute;
-  top: 128px;
-  left: 0;
-  height: 100%;
-  width: 200px; /* Adjust width as needed */
-  background-color: #f4f4f4; /* Example background color */
-  padding: 20px;
-  box-sizing: border-box;
-  z-index: 1000; /* Ensure the sidebar is above other content */
-
-}
-
-#sidebar ul {
-  list-style: none;
-  padding: 0;
-}
-
-#sidebar ul li {
-  margin-bottom: 10px;
-}
-
-.pagination {
-  margin: 20px 0;
-  text-align: center;
-}
-
-.pagination a,
-.pagination span {
-  padding: 10px;
-  margin: 0 5px;
-  background-color: #ff6700;
-  color: #fff;
-  border-radius: 5px;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-.pagination .disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.pagination a:hover {
-  background-color: #ff6700;
-}
-
-.sidebar-btn {
-  display: block;
-  width: 100%;
-  padding: 10px;
-  background-color: #ff6700; /* Blue background color */
-  color: #fff; /* White text color */
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.sidebar-btn:hover {
-  background-color: #ff6700; /* Darker blue on hover */
+  margin-left: 75px;
 }

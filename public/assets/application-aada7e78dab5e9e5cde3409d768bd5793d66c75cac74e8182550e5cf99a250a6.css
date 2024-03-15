@@ -734,44 +734,26 @@ form .button input:hover{
   margin-bottom: 10px;
 }
 
-.pagination {
-  margin: 20px 0;
+
+.pagination-buttons {
   text-align: center;
+  margin-top: 20px;
 }
 
-.pagination a,
-.pagination span {
-  padding: 10px;
-  margin: 0 5px;
-  background-color: #ff6700;
-  color: #fff;
-  border-radius: 5px;
+.prev-button,
+.next-button {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: #f44336; /* Red color, you can change it */
+  color: white;
   text-decoration: none;
-  cursor: pointer;
-}
-
-.pagination .disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-}
-
-.pagination a:hover {
-  background-color: #ff6700;
-}
-
-.sidebar-btn {
-  display: block;
-  width: 100%;
-  padding: 10px;
-  background-color: #ff6700; /* Blue background color */
-  color: #fff; /* White text color */
   border: none;
-  border-radius: 5px;
-  font-size: 16px;
+  border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s;
 }
 
-.sidebar-btn:hover {
-  background-color: #ff6700; /* Darker blue on hover */
+.prev-button:hover,
+.next-button:hover {
+  background-color: #d32f2f; /* Darker shade of red on hover */
 }

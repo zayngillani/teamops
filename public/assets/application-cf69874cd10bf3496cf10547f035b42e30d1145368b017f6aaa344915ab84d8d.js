@@ -96,3 +96,30 @@ document.addEventListener('turbo:load', function() {
 
 
 
+document.addEventListener('DOMContentLoaded', function() {
+    // Get the modal
+    var modal = document.getElementById("myModal");
+
+    // Get the button that opens the modal
+    var btn = document.getElementById("modal-btn");
+
+    // Get the <span> element that closes the modal
+    var closeModalBtn = document.getElementById("closeModalBtn");
+
+    // Event listener to close the modal when the button is clicked
+    closeModalBtn.addEventListener("click", function() {
+        modal.style.display = "none";
+    });
+
+    // Event listener to open the modal when the button is clicked
+    btn.addEventListener("click", function() {
+        modal.style.display = "block";
+    });
+
+    // Event listener to close the modal when clicking outside of it
+    window.addEventListener("click", function(event) {
+        if (event.target === modal) {
+            modal.style.display = "none";
+        }
+    });
+});

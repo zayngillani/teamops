@@ -45,6 +45,7 @@ gem 'dotenv-rails'
 
 gem 'devise-security'
 
+gem 'will_paginate'
 
 # Use Kredis to get higher-level data types in Redis [https://github.com/rails/kredis]
 # gem "kredis"

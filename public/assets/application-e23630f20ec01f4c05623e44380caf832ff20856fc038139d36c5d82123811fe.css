@@ -734,20 +734,28 @@ form .button input:hover{
   margin-bottom: 10px;
 }
 
+
 .pagination {
   margin: 20px 0;
   text-align: center;
 }
 
-.pagination a,
-.pagination span {
-  padding: 10px;
-  margin: 0 5px;
-  background-color: #ff6700;
-  color: #fff;
-  border-radius: 5px;
+.pagination .pagination-item {
+  display: inline-block;
+  padding: 8px 12px;
+  margin: 0 4px;
+  background-color: #f2f2f2;
+  color: #333;
+  border-radius: 4px;
   text-decoration: none;
   cursor: pointer;
+  border: 1px solid #ccc;
+}
+
+.pagination .current {
+  background-color: #007bff;
+  color: #fff;
+  border: 1px solid #007bff;
 }
 
 .pagination .disabled {
@@ -755,23 +763,20 @@ form .button input:hover{
   cursor: not-allowed;
 }
 
-.pagination a:hover {
-  background-color: #ff6700;
+.pagination .previous,
+.pagination .next {
+  font-weight: bold;
 }
 
-.sidebar-btn {
-  display: block;
-  width: 100%;
-  padding: 10px;
-  background-color: #ff6700; /* Blue background color */
-  color: #fff; /* White text color */
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+.pagination .previous:before,
+.pagination .next:after {
+  content: "<< ";
 }
 
-.sidebar-btn:hover {
-  background-color: #ff6700; /* Darker blue on hover */
+.pagination .next:after {
+  content: " >>";
+}
+
+.pagination .pagination-item:hover {
+  background-color: #ddd;
 }

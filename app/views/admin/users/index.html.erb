@@ -1,3 +1,4 @@
+  <div class="main-content" style="margin-left: 220px;"> <!-- Adjust margin-left to accommodate sidebar width -->
 <%= link_to "Create Employee", new_admin_user_path, class: "sign-out-button", id: "checkInButton", style: "float: right; margin-right: 20px; margin-bottom: 10px; margin-top: 15px;" %>
 <table>
   <thead>
@@ -11,6 +12,7 @@
     </tr>
   </thead>
   <tbody>
+  
     <% @session.each do |item| %>
     <tr>
       <td><%= item.id %></td>
@@ -19,7 +21,18 @@
       <td><%= item.ip_address.present? ? item.ip_address : "N/A"%>
       <td>
         <span>
-          <%= link_to 'PDF', admin_generate_pdf_path(id: item.id, format: :pdf), class: 'styled-button' %>
+            <button class="modal-btn styled-button" data-target="myModalPdf<%= item.id %>">Report</button>
+            <div id="myModalPdf<%= item.id %>" class="modal">
+              <div class="modal-content">
+                <%= form_tag admin_generate_pdf_path(format: :pdf), method: :get do %>
+                  <%= hidden_field_tag :id, item.id %>
+                  <%= select_tag 'month', options_for_select(Date::MONTHNAMES.compact.each_with_index.map { |month, index| [month, index + 1] }, params[:month]), class: 'form-control pdf-set' %>
+                  <%= select_tag 'year', options_for_select((Date.current.year..Date.current.year + 5).to_a, params[:year]), class: 'form-control' %>
+                  <br>
+                  <%= submit_tag 'Generate PDF', class: 'btn btn-primary styled-button2' %>
+                <% end %>
+              </div>
+            </div>
         </span>
       </td>
       <td>
@@ -64,4 +77,5 @@
 
   </tbody>
 </table>
-
+<%= will_paginate @session, renderer: WillPaginate::ActionView::LinkRenderer, class: 'pagination' %>
+</div>

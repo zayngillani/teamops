@@ -759,19 +759,3 @@ form .button input:hover{
   background-color: #ff6700;
 }
 
-.sidebar-btn {
-  display: block;
-  width: 100%;
-  padding: 10px;
-  background-color: #ff6700; /* Blue background color */
-  color: #fff; /* White text color */
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.sidebar-btn:hover {
-  background-color: #ff6700; /* Darker blue on hover */
-}

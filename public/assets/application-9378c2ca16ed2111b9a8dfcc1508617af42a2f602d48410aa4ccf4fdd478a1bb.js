@@ -46,53 +46,41 @@ document.addEventListener('turbo:load', function() {
         modal.style.display = "block";
     }
 
-    // Function to close a modal
-    function closeModal(modalId) {
-        var modal = document.getElementById(modalId);
-        modal.style.display = "none";
-    }
+    // Get all modal buttons
+    var modalButtons = document.querySelectorAll(".modal-btn");
 
-    // Event delegation for modal buttons
-    document.addEventListener('click', function(event) {
-        if (event.target.classList.contains('modal-btn')) {
-            var targetId = event.target.getAttribute("data-target");
+    // Loop through each modal button
+    modalButtons.forEach(function(button) {
+        // Add click event listener to open the corresponding modal
+        button.addEventListener("click", function() {
+            var targetId = button.getAttribute("data-target");
             openModal(targetId);
-        }
+        });
     });
 
-    // Event delegation for closing modal
-    document.addEventListener('click', function(event) {
-        if (event.target.classList.contains('closeModalBtn')) {
-            var modal = event.target.closest(".modal");
+    // Close modal when close button is clicked
+    var closeModalBtns = document.querySelectorAll(".closeModalBtn");
+    closeModalBtns.forEach(function(button) {
+        button.addEventListener("click", function() {
+            var modal = button.closest(".modal");
             closeModal(modal.id);
-        }
+        });
     });
 
-    // Event delegation for closing modal when clicking outside the modal
-    window.addEventListener('click', function(event) {
-        if (event.target.classList.contains('modal')) {
-            closeModal(event.target.id);
-        }
-    });
-
-    // Event delegation for action buttons
-    document.addEventListener('click', function(event) {
-        if (event.target.classList.contains('sign-out-button') && event.target.classList.contains('delete-btn')) {
-            var modal = event.target.closest(".modal");
-            closeModal(modal.id);
-            performActionAndReload();
-        }
-    });
-
-    // Function to perform action and reload the page
-    function performActionAndReload() {
-        setTimeout(function() {
-            location.reload();
-        }, 1000);
-    }
-    
+    // Close modal when clicking outside the modal
+    window.onclick = function(event) {
+        var modals = document.querySelectorAll(".modal");
+        modals.forEach(function(modal) {
+            if (event.target.classList.contains('modal')) {
+                closeModal(modal.id);
+            }
+        });
+    };
 });
 
 
-
-
+function performActionAndReload() {
+    setTimeout(function() {
+        location.reload();
+    }, 1000);
+};
