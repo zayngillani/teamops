@@ -11,6 +11,7 @@
     </tr>
   </thead>
   <tbody>
+  
     <% @session.each do |item| %>
     <tr>
       <td><%= item.id %></td>
@@ -19,14 +20,60 @@
       <td><%= item.ip_address.present? ? item.ip_address : "N/A"%>
       <td>
         <span>
-          <%= link_to 'PDF', admin_generate_pdf_path(id: item.id, format: :pdf), class: 'styled-button' %>
+            <button class="modal-btn styled-button" data-target="myModalPdf<%= item.id %>">Report</button>
+            <div id="myModalPdf<%= item.id %>" class="modal">
+              <div class="modal-content">
+                <%= form_tag admin_generate_pdf_path(format: :pdf), method: :get do %>
+                  <%= hidden_field_tag :id, item.id %>
+                  <%= select_tag 'month', options_for_select(Date::MONTHNAMES.compact.each_with_index.map { |month, index| [month, index + 1] }, params[:month]), class: 'form-control pdf-set' %>
+                  <%= select_tag 'year', options_for_select((Date.current.year..Date.current.year + 5).to_a, params[:year]), class: 'form-control' %>
+                  <br>
+                  <%= submit_tag 'Generate PDF', class: 'btn btn-primary styled-button2' %>
+                <% end %>
+              </div>
+            </div>
         </span>
       </td>
       <td>
-        <%= link_to(image_tag("edituser.png", width: "20", height: "20", alt: "Edit User"), edit_admin_user_path(item.id))%>
-      </td>
+      <div class="dropdown-action">
+      <%= image_tag("more.png", width: "20", height: "20", alt: "Edit User")%>
+  <div class="dropdown-content-action">
+<div class="actions-container">
+  <button class="modal-btn" onclick="window.location.href='<%= edit_admin_user_path(item.id) %>'">Edit</button>
+
+  <button class="modal-btn" data-target="myModalDelete<%= item.id %>"> Delete</button>
+<div id="myModalDelete<%= item.id %>" class="modal">
+    <div class="modal-content">
+        <p style="text-align: center; margin-top: 10px;">Are you sure you want to Delete this User?</p>
+        <div id="timerDisplayModal"></div>
+        <div class="modal-footer">
+            <%= button_to "Yes, Delete", admin_user_path(item.id), method: :delete, class: "sign-out-button delete-btn" %>
+            <button class="closeModalBtn close sign-out-button">No</button>
+        </div>
+    </div>
+</div>
+
+<button class="modal-btn" data-target="myModalDisable<%= item.id %>"><%= item.status == "active" ? "Disable" : "Un-disable"%>
+</button>
+
+<div id="myModalDisable<%= item.id %>" class="modal">
+    <div class="modal-content">
+        <p style="text-align: center; margin-top: 10px;">Are you sure you want to <%= item.status == "active" ? "Disable" : "Un-disable" %> this User?</p>
+        <div id="timerDisplayModal"></div>
+        <div class="modal-footer">
+            <%= button_to(item.status == "active" ? "Yes, Disable" : "Yes, Un-disable", admin_disable_user_path(id: item.id), method: :put, class: "sign-out-button delete-btn") %>
+            <button class="closeModalBtn close sign-out-button">No</button>
+        </div>
+    </div>
+</div>
+  </div>
+</div>
+</div>
+
+</td>
     </tr>
     <% end %>
+
   </tbody>
 </table>
-
+<%= will_paginate @session, renderer: WillPaginate::ActionView::LinkRenderer, class: 'pagination' %>

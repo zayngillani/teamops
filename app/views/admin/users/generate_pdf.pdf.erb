@@ -51,7 +51,10 @@
   margin-left: 10px; /* Adjust margin to create space between left and right info */
 }
 
-
+.absent-day {
+  color: red;
+  font-weight: bold;
+}
 
 </style>
 <h1 class="attendance-heading">Attendance Details</h1>
@@ -67,6 +70,8 @@
 </div>
 <div class="user-info">
   <div class="left-info">
+      <p>Supervisor:</p>
+    <span class="username"><strong><%= @user.supervisor%></strong></span>
   </div>
   <div class="right-info">
     <p>Regular Hours</p>
@@ -80,8 +85,7 @@
       <th>Date</th>
       <th>Check In</th>
       <th>Check Out</th>
-      <th>Break In</th>
-      <th>Break Out</th>
+      <th>Leaves</th>
       <th>Total Hours</th>
     </tr>
   </thead>
@@ -91,8 +95,7 @@
         <td><%= item.created_at.strftime("%b %d, %Y")%></td>
         <td><%= item.check_in_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") %></td>
         <td><%= item.check_out_time.present? ? item.check_out_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A"%></td>
-        <td><%= item.break_in_time.present? ? item.break_in_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A"%></td>
-        <td><%= item.break_out_time.present? ? item.break_out_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A"%></td>
+        <td></td>
         <td>
           <% if item.total_hours.present? %>
             <%= "#{item.total_hours / 3600} hours #{item.total_hours % 3600 / 60} minutes" %>
@@ -102,11 +105,10 @@
         </td>
       </tr>
       <% end%>
-<td><strong>Total HRS</strong></td>
+<td><strong>Total</strong></td>
       <td></td>
       <td></td>
-      <td></td>
-      <td></td>
+      <td><%= @leaves %></td>
 <td><strong><%= "#{@total_hours / 3600 || 0} hours #{@total_hours % 3600 / 60 || 0} minutes" %></strong></td>
 </td>
     </tbody>
