@@ -1,4 +1,3 @@
-  <div class="main-content" style="margin-left: 220px;"> <!-- Adjust margin-left to accommodate sidebar width -->
 <%= link_to "Create Employee", new_admin_user_path, class: "sign-out-button", id: "checkInButton", style: "float: right; margin-right: 20px; margin-bottom: 10px; margin-top: 15px;" %>
 <table>
   <thead>
@@ -78,4 +77,3 @@
   </tbody>
 </table>
 <%= will_paginate @session, renderer: WillPaginate::ActionView::LinkRenderer, class: 'pagination' %>
-</div>
