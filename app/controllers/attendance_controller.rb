@@ -40,7 +40,7 @@ class AttendanceController < ApplicationController
                elsif @break.break_in_time.present? && @break.break_out_time.nil?
                     @break.update!(break_out_time: Time.now.utc)
                     flash[:success] = "Break OUT successfully"
-                    SlackService.new(current_user, "Break Out", @break.break_in_time).send_message
+                    SlackService.new(current_user, "Break Out", @break.break_out_time).send_message
                     redirect_to attendance_index_path
                else
                flash[:error] = "Break Already Marked"
