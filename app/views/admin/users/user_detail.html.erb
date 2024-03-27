@@ -1,0 +1,39 @@
+<div class="main-content" style="margin-left: 220px; margin-top: 10px;">
+<h1><%= @user.name %>'s Attendance</h1>
+<br>
+<table class="attendance-table">
+  <thead>
+    <tr>
+      <th>Date</th>
+      <th>Check In</th>
+      <th>Check Out</th>
+      <th>Leaves</th>
+      <th>Total Hours</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @user_sessions.each do |item| %>
+      <tr>
+        <td><%= item.created_at.strftime("%b %d, %Y")%></td>
+        <td><%= item.check_in_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") %></td>
+        <td><%= item.check_out_time.present? ? item.check_out_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A"%></td>
+        <td></td>
+        <td>
+          <% if item.total_hours.present? %>
+            <%= "#{item.total_hours / 3600} hours #{item.total_hours % 3600 / 60} minutes" %>
+          <% else %>
+            N/A
+          <% end %>
+        </td>
+      </tr>
+      <% end%>
+<td><strong>Total</strong></td>
+      <td></td>
+      <td></td>
+      <td><%= @leaves %></td>
+<td><strong><%= "#{@total_hours / 3600 || 0} hours #{@total_hours % 3600 / 60 || 0} minutes" %></strong></td>
+</td>
+
+    </tbody>
+  </table>
+</div>

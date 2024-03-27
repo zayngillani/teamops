@@ -1,40 +1,41 @@
-  <div class="main-content" style="margin-left: 220px;"> <!-- Adjust margin-left to accommodate sidebar width -->
-<table>
-  <thead>
-    <tr>
-      <th>ID</th>
-      <th>Name</th>
-      <th>Email</th>
-      <th>Attendance</th>
-    </tr>
-  </thead>
-  <tbody>
+<div class="main-content" style="margin-left: 220px;">
+  <%= link_to "Leaves", admin_user_leave_path(month: Date.current.month, year: Date.current.year), class: "sign-out-button", id: "checkInButton", style: "float: left; margin-right: 20px; margin-bottom: 10px; margin-top: 15px;" %>
+  <%= link_to "Monthly User Report", admin_monthly_report_path(month: Date.current.month, year: Date.current.year), class: "sign-out-button", id: "checkInButton", style: "float: right; margin-right: 20px; margin-bottom: 10px; margin-top: 15px;" %>
   
-    <% @session.each do |item| %>
-    <tr>
-      <td><%= item.id %></td>
-      <td><%= item.name %></td>
-      <td><%= item.email %></td>
-      <td>
-        <span>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Attendance</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @session.each do |item| %>
+      <tr>
+        <td><%= item.id %></td>
+        <td><%= item.name %></td>
+        <td><%= item.email %></td>
+        <td>
+          <span>
             <button class="modal-btn styled-button" data-target="myModalPdf<%= item.id %>">Report</button>
             <div id="myModalPdf<%= item.id %>" class="modal">
               <div class="modal-content">
                 <%= form_tag admin_generate_pdf_path(format: :pdf), method: :get do %>
                   <%= hidden_field_tag :id, item.id %>
-                  <%= select_tag 'month', options_for_select(Date::MONTHNAMES.compact.each_with_index.map { |month, index| [month, index + 1] }, params[:month]), class: 'form-control pdf-set' %>
-<%= select_tag 'year', options_for_select((Date.current.year..Date.current.year + 5).to_a, params[:year]), class: 'form-control' %>
+                  <%= select_tag 'month', options_for_select(Date::MONTHNAMES.compact.each_with_index.map { |month, index| [month, index + 1] }, params[:month].presence || Date.current.month), class: 'form-control pdf-set', onchange: 'this.form.submit();' %>
+                  <%= select_tag 'year', options_for_select((Date.current.year..Date.current.year + 5).to_a, params[:year].presence || Date.current.year), class: 'form-control', onchange: 'this.form.submit();' %>
                   <br>
                   <%= submit_tag 'Generate PDF', class: 'btn btn-primary styled-button2' %>
                 <% end %>
               </div>
             </div>
-        </span>
-      </td>
-    </tr>
-    <% end %>
-
-  </tbody>
-</table>
-<%= will_paginate @session, renderer: WillPaginate::ActionView::LinkRenderer, class: 'pagination' %>
+          </span>
+        </td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <%= will_paginate @session, renderer: WillPaginate::ActionView::LinkRenderer, class: 'pagination' %>
 </div>

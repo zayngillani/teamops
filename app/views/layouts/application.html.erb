@@ -18,5 +18,8 @@
     <%= render :partial => 'shared/message' %>
   <% end %>
     <%= yield %>
+      <% if user_signed_in? && current_user.admin? %>
+      <%= render 'shared/sidebar' %>
+    <% end %>
   </body>
 </html>

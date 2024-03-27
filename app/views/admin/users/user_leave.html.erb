@@ -1,0 +1,35 @@
+<div class="main-content" style="margin-left: 220px;"> 
+            <button class="modal-btn styled-button btn-style" data-target="myModalPdf">Download PDF</button>
+               <div id="myModalPdf" class="modal">
+              <div class="modal-content">
+                <%= form_tag admin_leave_report_path(format: :pdf), method: :get do %>
+                   <%= select_tag 'month', options_for_select(Date::MONTHNAMES.compact.each_with_index.map { |month, index| [month, index + 1] }, params[:month].presence || Date.current.month), class: 'form-control pdf-set', onchange: 'this.form.submit();' %>
+                   <%= select_tag 'year', options_for_select((Date.current.year..Date.current.year + 5).to_a, params[:year].presence || Date.current.year), class: 'form-control', onchange: 'this.form.submit();' %>
+                  <br>
+                  <%= submit_tag 'Generate PDF', class: 'btn btn-primary styled-button2' %>
+                <% end %>
+              </div>
+            </div>
+   <%= form_tag admin_user_leave_path, method: :get do %>
+  <%= select_tag 'month', options_for_select(Date::MONTHNAMES.compact.each_with_index.map { |month, index| [month, index + 1] }, params[:month].presence || Date.current.month), class: 'form-control pdf-set', onchange: 'this.form.submit();' %>
+  <%= select_tag 'year', options_for_select((Date.current.year..Date.current.year + 5).to_a, params[:year].presence || Date.current.year), class: 'form-control', onchange: 'this.form.submit();' %>
+<% end %>
+  <table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Leaves</th>
+    </tr>
+  </thead>
+  <tbody>
+<% @user_leaves.each do |user_name, leaves| %>
+    <tr>
+      <td><%= user_name %></td>
+      <td><%= leaves %></td>
+
+          </tr>
+    <% end %>
+
+  </tbody>
+</table>
+</div>
