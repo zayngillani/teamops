@@ -1,0 +1,30 @@
+<div class="main-content" style="margin-left: 220px; margin-top: 10px;">
+              <button class="modal-btn btn-style" data-target="myModalPdf">Download PDF</button>
+               <div id="myModalPdf" class="modal">
+              <div class="modal-content">
+                <%= form_tag admin_leave_report_path(format: :pdf), method: :get do %>
+                   <%= select_tag 'month', options_for_select(Date::MONTHNAMES.compact.each_with_index.map { |month, index| [month, index + 1] }, params[:month].presence || Date.current.month), class: 'form-control pdf-set', onchange: 'this.form.submit();' %>
+                   <%= select_tag 'year', options_for_select((Date.current.year..Date.current.year + 5).to_a, params[:year].presence || Date.current.year), class: 'form-control', onchange: 'this.form.submit();' %>
+                  <br>
+                  <%= submit_tag 'Generate PDF', class: 'btn btn-primary styled-button2' %>
+                <% end %>
+              </div>
+            </div>
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Total Hours</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @users.each do |user| %>
+      <tr>
+        <td><%= user.name %></td>
+       
+        <td> <%= "#{@total_hours[user.id] / 3600 || 0} hours #{@total_hours[user.id] % 3600 / 60 || 0} minutes" %></td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

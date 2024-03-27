@@ -149,7 +149,6 @@ class Admin::UsersController < ApplicationController
       @users = User.where(role: "user", deleted: false).order(created_at: :desc)
       start_date = Date.new(@year, @month, 1)
       end_date = start_date.end_of_month
-      
       @user_leaves = {}
       @users.each do |user|
         date_range = (start_date..end_date).to_a
@@ -206,6 +205,38 @@ class Admin::UsersController < ApplicationController
         @total_hours[user.id] = total_hrs
       end
     end
+
+    def monthly_users_list
+      @users = User.where(role: "user", deleted: false).order(created_at: :desc)
+      @month = params[:month].to_i
+      @year = params[:year].to_i
+      start_date = Date.new(@year, @month, 1)
+      end_date = start_date.end_of_month
+    
+      @total_hours = {} # Hash to store total hours for each user
+    
+      @users.each do |user|
+        user_sessions = user.attendances.where(check_in_time: start_date.beginning_of_day..end_date.end_of_day).order(created_at: :asc)
+        total_hrs = 0
+    
+        user_sessions.each do |attendance|
+          total_hrs += attendance.total_hours.to_i unless attendance.total_hours.nil?
+        end
+    
+        # Store total hours for each user in the hash
+        @total_hours[user.id] = total_hrs
+      end
+      if @total_hours.present?
+        respond_to do |format|
+          format.html
+          format.pdf { render pdf: "leavesreport", layout: false } # Specify view and disable layout
+        end
+      else
+        flash[:error] = "Attendance Not Present"
+        redirect_to root_path
+      end
+    end
+    
     
 
     
