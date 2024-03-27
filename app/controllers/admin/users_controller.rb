@@ -204,6 +204,15 @@ class Admin::UsersController < ApplicationController
         # Store total hours for each user in the hash
         @total_hours[user.id] = total_hrs
       end
+      if @total_hours.present?
+        respond_to do |format|
+          format.html
+          format.pdf { render pdf: "monthlyreport", layout: false } # Specify view and disable layout
+        end
+      else
+        flash[:error] = "Attendance Not Present"
+        redirect_to root_path
+      end
     end
 
     def monthly_users_list
@@ -225,15 +234,6 @@ class Admin::UsersController < ApplicationController
     
         # Store total hours for each user in the hash
         @total_hours[user.id] = total_hrs
-      end
-      if @total_hours.present?
-        respond_to do |format|
-          format.html
-          format.pdf { render pdf: "leavesreport", layout: false } # Specify view and disable layout
-        end
-      else
-        flash[:error] = "Attendance Not Present"
-        redirect_to root_path
       end
     end
     
