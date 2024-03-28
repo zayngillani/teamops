@@ -1,29 +1,38 @@
 <div class="main-content" style="margin-left: 220px; margin-top: 10px;">
-              <button class="modal-btn btn-style" data-target="myModalPdf">Download PDF</button>
-               <div id="myModalPdf" class="modal">
-              <div class="modal-content">
-                <%= form_tag admin_monthly_report_path(format: :pdf), method: :get do %>
-                   <%= select_tag 'month', options_for_select(Date::MONTHNAMES.compact.each_with_index.map { |month, index| [month, index + 1] }, params[:month].presence || Date.current.month), class: 'form-control pdf-set', onchange: 'this.form.submit();' %>
-                   <%= select_tag 'year', options_for_select((Date.current.year..Date.current.year + 5).to_a, params[:year].presence || Date.current.year), class: 'form-control', onchange: 'this.form.submit();' %>
-                  <br>
-                  <%= submit_tag 'Generate PDF', class: 'btn btn-primary styled-button2' %>
-                <% end %>
-              </div>
-            </div>
+<div class="form-inline">
+  <%= form_tag admin_monthly_report_path(format: :pdf), method: :get, id: "pdfForm" do %>
+    <%= hidden_field_tag 'selected_users', nil %> <!-- Hidden field to store selected user IDs -->
+    <%= select_tag 'month', options_for_select(Date::MONTHNAMES.compact.each_with_index.map { |month, index| [month, index + 1] }, params[:month].presence || Date.current.month), class: 'form-control select-month' %>
+    <%= select_tag 'year', options_for_select((Date.current.year..Date.current.year + 5).to_a, params[:year].presence || Date.current.year), class: 'form-control select-year' %>
+    <%= submit_tag 'Generate PDF', class: 'btn btn-primary styled-button2', style: 'display: none;' %>
+  <% end %>
+  <button class="modal-btn btn-style float-right" data-target="myModalPdf" onclick="submitPdfForm()">Download PDF</button>
+  </div>
+  <script>
+    function submitPdfForm() {
+      var selectedUsers = [];
+      document.querySelectorAll('.userCheckbox:checked').forEach(function(checkbox) {
+        selectedUsers.push(checkbox.value);
+      });
+      document.getElementById('selected_users').value = selectedUsers.join(',');
+      document.getElementById('pdfForm').submit();
+    }
+  </script>
   <table>
     <thead>
       <tr>
         <th>Name</th>
         <th>Total Hours</th>
+        <th>Select</th>
       </tr>
     </thead>
     <tbody>
       <% @users.each do |user| %>
-      <tr>
-        <td><%= user.name %></td>
-       
-        <td> <%= "#{@total_hours[user.id] / 3600 || 0} hours #{@total_hours[user.id] % 3600 / 60 || 0} minutes" %></td>
-      </tr>
+        <tr>
+          <td><%= user.name %></td>
+          <td><%= "#{@total_hours[user.id] / 3600 || 0} hours #{@total_hours[user.id] % 3600 / 60 || 0} minutes" %></td>
+          <td><%= check_box_tag 'selected_users[]', user.id, false, class: 'userCheckbox' %></td>
+        </tr>
       <% end %>
     </tbody>
   </table>

@@ -24,8 +24,8 @@
               <div class="modal-content">
                 <%= form_tag admin_generate_pdf_path(format: :pdf), method: :get do %>
                   <%= hidden_field_tag :id, item.id %>
-                  <%= select_tag 'month', options_for_select(Date::MONTHNAMES.compact.each_with_index.map { |month, index| [month, index + 1] }, params[:month].presence || Date.current.month), class: 'form-control pdf-set', onchange: 'this.form.submit();' %>
-                  <%= select_tag 'year', options_for_select((Date.current.year..Date.current.year + 5).to_a, params[:year].presence || Date.current.year), class: 'form-control', onchange: 'this.form.submit();' %>
+                  <%= select_tag 'month', options_for_select(Date::MONTHNAMES.compact.each_with_index.map { |month, index| [month, index + 1] }, params[:month].presence || Date.current.month), class: 'form-control pdf-set' %>
+                  <%= select_tag 'year', options_for_select((Date.current.year..Date.current.year + 5).to_a, params[:year].presence || Date.current.year), class: 'form-control' %>
                   <br>
                   <%= submit_tag 'Generate PDF', class: 'btn btn-primary styled-button2' %>
                 <% end %>

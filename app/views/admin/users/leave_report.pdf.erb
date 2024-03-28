@@ -20,8 +20,34 @@
   color: white; /* Set text color to ensure readability */
   padding: 10px; /* Add padding for better appearance */
 }
+.user-info {
+  display: flex;
+  justify-content: space-between; /* Ensure space between left and right info */
+  align-items: center;
+}
+
+.left-info {
+  display: flex;
+  align-items: center;
+}
+
+.user-info p {
+  margin-right: 10px;
+}
+
+.username {
+  border-bottom: 3px dotted #000;
+  padding-bottom: 2px;
+
+}
 </style>
 <h1 class="attendance-heading">Leave Report</h1>
+<div class="user-info">
+  <div class="left-info">
+    <p>Month:</p>
+    <span class="username"><strong><%=  Date::MONTHNAMES[@month]%></strong></span>
+  </div>
+</div>
 <table class="attendance-table">
   <thead>
     <tr>

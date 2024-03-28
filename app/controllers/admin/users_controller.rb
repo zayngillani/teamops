@@ -156,8 +156,9 @@ class Admin::UsersController < ApplicationController
         present_dates = user.attendances.pluck(:check_in_time).map(&:to_date)
         leaves = date_range.count { |date| !present_dates.include?(date) && date < Date.today }
         @user_leaves[user.name] = leaves
+      end
     end
-    end
+    
     def leave_report
       @month = params[:month].to_i
       @year = params[:year].to_i
@@ -185,23 +186,23 @@ class Admin::UsersController < ApplicationController
     end
 
     def monthly_report
-      @users = User.where(role: "user", deleted: false).order(created_at: :desc)
+      if params[:selected_users].present?
+        user_ids = params[:selected_users].split(',').map(&:to_i)
+        @users = User.where(id: user_ids)
+      else
+        @users = User.where(role: "user", deleted: false).order(created_at: :desc)
+      end
       @month = params[:month].to_i
       @year = params[:year].to_i
       start_date = Date.new(@year, @month, 1)
       end_date = start_date.end_of_month
-    
-      @total_hours = {} # Hash to store total hours for each user
-    
+      @total_hours = {}
       @users.each do |user|
         user_sessions = user.attendances.where(check_in_time: start_date.beginning_of_day..end_date.end_of_day).order(created_at: :asc)
         total_hrs = 0
-    
         user_sessions.each do |attendance|
           total_hrs += attendance.total_hours.to_i unless attendance.total_hours.nil?
-        end
-    
-        # Store total hours for each user in the hash
+        end    
         @total_hours[user.id] = total_hrs
       end
       if @total_hours.present?
@@ -221,24 +222,16 @@ class Admin::UsersController < ApplicationController
       @year = params[:year].to_i
       start_date = Date.new(@year, @month, 1)
       end_date = start_date.end_of_month
-    
-      @total_hours = {} # Hash to store total hours for each user
-    
+      @total_hours = {}
       @users.each do |user|
         user_sessions = user.attendances.where(check_in_time: start_date.beginning_of_day..end_date.end_of_day).order(created_at: :asc)
         total_hrs = 0
-    
         user_sessions.each do |attendance|
           total_hrs += attendance.total_hours.to_i unless attendance.total_hours.nil?
         end
-    
-        # Store total hours for each user in the hash
         @total_hours[user.id] = total_hrs
       end
     end
-    
-    
-
     
      private
    

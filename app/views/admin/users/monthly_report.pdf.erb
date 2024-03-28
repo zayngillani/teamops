@@ -20,9 +20,43 @@
   color: white; /* Set text color to ensure readability */
   padding: 10px; /* Add padding for better appearance */
 }
+
+.user-info {
+  display: flex;
+  justify-content: space-between; /* Ensure space between left and right info */
+  align-items: center;
+}
+
+.left-info {
+  display: flex;
+  align-items: center;
+}
+
+.user-info p {
+  margin-right: 10px;
+}
+
+.username {
+  border-bottom: 3px dotted #000;
+  padding-bottom: 2px;
+}
+
+@media print {
+  .user-attendance, .user-data {
+    page-break-after: always;
+  }
+}
 </style>
+
 <h1 class="attendance-heading">Monthly Report</h1>
-<table class="attendance-table">
+<div class="user-info">
+  <div class="left-info">
+    <p>Month:</p>
+    <span class="username"><strong><%=  Date::MONTHNAMES[@month]%></strong></span>
+  </div>
+</div>
+
+<table class="attendance-table user-data">
   <thead>
     <tr>
       <th>Name</th>
@@ -30,11 +64,47 @@
     </tr>
   </thead>
   <tbody>
-<% @users.each do |user| %>
+    <% @users.each do |user| %>
     <tr>
       <td><%= user.name %></td>
       <td><%= "#{@total_hours[user.id] / 3600 || 0} hours" %></td>
+    </tr>
+    <% end %>
+  </tbody>
+</table>
+
+<% @users.each do |user| %>
+  <h2><%= user.name %>'s Attendance</h2>
+  <table class="attendance-table user-attendance">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Check In</th>
+        <th>Check Out</th>
+        <th>Total Hours</th>
       </tr>
-      <% end%>
+    </thead>
+    <tbody>
+      <% user.attendances.each do |session| %>
+      <tr>
+        <td><%= session.created_at.strftime("%b %d, %Y") %></td>
+        <td><%= session.check_in_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") %></td>
+        <td><%= session.check_out_time.present? ? session.check_out_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A" %></td>
+        <td>
+          <% if session.total_hours.present? %>
+          <%= "#{session.total_hours / 3600} hours #{session.total_hours % 3600 / 60} minutes" %>
+          <% else %>
+          N/A
+          <% end %>
+        </td>
+      </tr>
+      <% end %>
+      <tr>
+        <td><strong>Total</strong></td>
+        <td></td>
+        <td></td>
+        <td><strong><%= "#{@total_hours[user.id] / 3600 || 0} hours #{@total_hours[user.id] % 3600 / 60 || 0} minutes" %></strong></td>
+      </tr>
     </tbody>
   </table>
+<% end %>
