@@ -41,6 +41,21 @@
   padding-bottom: 2px;
 }
 
+.right-info {
+  display: flex;
+  align-items: center;
+  margin-right: 30px;
+}
+
+.right-info p {
+  margin-left: 10px; /* Adjust margin to create space between left and right info */
+}
+
+.absent-day {
+  color: red;
+  font-weight: bold;
+}
+
 @media print {
   .user-attendance, .user-data {
     page-break-after: always;
@@ -74,8 +89,27 @@
 </table>
 
 <% @users.each do |user| %>
-  <h2><%= user.name %>'s Attendance</h2>
-  <table class="attendance-table user-attendance">
+<h1 class="attendance-heading">Attendance Details</h1>
+<div class="user-info">
+  <div class="left-info">
+    <p>Employee:</p>
+    <span class="username"><strong><%= user.name%></strong></span>
+  </div>
+  <div class="right-info">
+    <p>Month</p>
+      <span class="username"><%= Date::MONTHNAMES[@month]%></span>
+  </div>
+</div>
+<div class="user-info">
+  <div class="left-info">
+      <p>Supervisor:</p>
+    <span class="username"><strong><%= user.supervisor%></strong></span>
+  </div>
+  <div class="right-info">
+    <p>Regular Hours</p>
+      <span class="username">8</span>
+  </div>
+  </div>  <table class="attendance-table user-attendance">
     <thead>
       <tr>
         <th>Date</th>
