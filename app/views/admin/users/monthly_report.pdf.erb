@@ -75,6 +75,8 @@
   <thead>
     <tr>
       <th>Name</th>
+      <th>Regular Hours</th>
+      <th>Over Time</th>
       <th>Total Hours</th>
     </tr>
   </thead>
@@ -82,7 +84,21 @@
     <% @users.each do |user| %>
     <tr>
       <td><%= user.name %></td>
-      <td><%= "#{@total_hours[user.id] / 3600 || 0} hours" %></td>
+      <% if @total_working_hours < @total_hours[user.id] / 3600 %>
+        <td><%= "#{@total_working_hours}" %></td>
+      <% else %>
+        <td><%= "#{@total_hours[user.id] / 3600}" %></td>
+      <% end %>
+      <% if @total_working_hours < @total_hours[user.id] / 3600 %>
+        <td><%= "#{@total_hours[user.id] / 3600}" - "#{@total_working_hours}" %></td>
+      <% else %>
+        <td><%= 0 %></td>
+      <% end %>
+      <% if @total_working_hours < @total_hours[user.id] / 3600 %>
+        <td><%= "#{@total_hours[user.id] / 3600}" %></td>
+      <% else %>
+        <td><%= "#{@total_hours[user.id] / 3600}" %></td>
+      <% end %>
     </tr>
     <% end %>
   </tbody>

@@ -204,6 +204,10 @@ class Admin::UsersController < ApplicationController
           total_hrs += attendance.total_hours.to_i unless attendance.total_hours.nil?
         end    
         @total_hours[user.id] = total_hrs
+        regular_hours_per_day = 8
+        date_range = (start_date..end_date).to_a
+        working_days = date_range.reject { |date| date.saturday? || date.sunday? }
+        @total_working_hours = working_days.count * regular_hours_per_day
       end
       if @total_hours.present?
         respond_to do |format|
