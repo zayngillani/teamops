@@ -177,7 +177,7 @@ class Admin::UsersController < ApplicationController
       if @user_leaves.present?
         respond_to do |format|
           format.html
-          format.pdf { render pdf: "leavesreport", layout: false } # Specify view and disable layout
+          format.pdf { render pdf: "LeaveReport_#{Date::MONTHNAMES[@month]}#{@year}", layout: false } # Specify view and disable layout
         end
       else
         flash[:error] = "Attendance Not Present"
@@ -212,7 +212,7 @@ class Admin::UsersController < ApplicationController
       if @user_sessions.present?
         respond_to do |format|
           format.html
-          format.pdf { render pdf: "monthlyreport", layout: false } # Specify view and disable layout
+          format.pdf { render pdf: "MonthlyReport_#{Date::MONTHNAMES[@month]}#{@year}", layout: false } # Specify view and disable layout
         end
       else
         flash[:error] = "Attendance Not Present"
