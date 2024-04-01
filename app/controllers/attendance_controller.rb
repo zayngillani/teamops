@@ -1,8 +1,8 @@
 class AttendanceController < ApplicationController
 
      def index
-          @session = current_user.attendances.order(created_at: :desc)
-          @user = User.find(current_user.id)
+          @sessions = current_user.attendances.where(created_at: Date.current.beginning_of_month.beginning_of_day..Date.current.end_of_month               .end_of_day).order(created_at: :desc)
+          @user = current_user
      end
 
      def create_session
