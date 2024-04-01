@@ -18,10 +18,10 @@
     </tr>
   </thead>
   <tbody>
-<% @user_leaves.each do |user_name, leaves| %>
+<% @user_leaves.each do |name, value| %>
     <tr>
-      <td><%= user_name %></td>
-      <td><%= leaves %></td>
+      <td><%= name %></td>
+      <td><%= value %></td>
 
           </tr>
     <% end %>
