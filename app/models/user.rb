@@ -11,5 +11,13 @@ class User < ApplicationRecord
   def password_expired?
     password_changed_at.nil? || password_changed_at.present? && password_changed_at < Devise.expire_password_after.ago
   end
+
+  def active_for_authentication?
+    super && status != 'pending'
+  end
+
+  def inactive_message
+    status == 'pending' ? :pending : super
+  end
   
 end

@@ -198,9 +198,9 @@ class Admin::UsersController < ApplicationController
       end_date = start_date.end_of_month
       @total_hours = {}
       @users.each do |user|
-        user_sessions = user.attendances.where(check_in_time: start_date.beginning_of_day..end_date.end_of_day).order(created_at: :asc)
+        @user_sessions = user.attendances.where(check_in_time: start_date.beginning_of_day..end_date.end_of_day).order(created_at: :asc)
         total_hrs = 0
-        user_sessions.each do |attendance|
+        @user_sessions.each do |attendance|
           total_hrs += attendance.total_hours.to_i unless attendance.total_hours.nil?
         end    
         @total_hours[user.id] = total_hrs
@@ -209,14 +209,14 @@ class Admin::UsersController < ApplicationController
         working_days = date_range.reject { |date| date.saturday? || date.sunday? }
         @total_working_hours = working_days.count * regular_hours_per_day
       end
-      if @total_hours.present?
+      if @user_sessions.present?
         respond_to do |format|
           format.html
           format.pdf { render pdf: "monthlyreport", layout: false } # Specify view and disable layout
         end
       else
         flash[:error] = "Attendance Not Present"
-        redirect_to root_path
+        redirect_to admin_report_path
       end
     end
 

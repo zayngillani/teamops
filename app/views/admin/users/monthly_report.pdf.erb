@@ -69,6 +69,10 @@
     <p>Month:</p>
     <span class="username"><strong><%=  Date::MONTHNAMES[@month]%></strong></span>
   </div>
+  <div class="right-info">
+    <p>Regular Hours</p>
+      <span class="username"><%= "#{@total_working_hours}" %></span>
+  </div>
 </div>
 
 <table class="attendance-table user-data">
