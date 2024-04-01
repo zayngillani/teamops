@@ -94,7 +94,7 @@
         <td><%= "#{@total_hours[user.id] / 3600}" %></td>
       <% end %>
       <% if @total_working_hours < @total_hours[user.id] / 3600 %>
-<td><%= (@total_hours[user.id] / 3600) - @total_working_hours %></td>
+        <td><%= (@total_hours[user.id] / 3600) - @total_working_hours %></td>
       <% else %>
         <td><%= 0 %></td>
       <% end %>
@@ -139,7 +139,7 @@
       </tr>
     </thead>
     <tbody>
-      <% user.attendances.each do |session| %>
+      <% user.attendances.where(check_in_time: Date.current.beginning_of_month.beginning_of_day..Date.current.end_of_month.end_of_day).each do |session| %>
       <tr>
         <td><%= session.created_at.strftime("%b %d, %Y") %></td>
         <td><%= session.check_in_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") %></td>

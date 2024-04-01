@@ -3,7 +3,7 @@ class AttendanceController < ApplicationController
      def index
           first_day_of_month = Date.current.beginning_of_month
           last_day_of_month = Date.current.end_of_month
-          @sessions = current_user.attendances.where(created_at: first_day_of_month.beginning_of_day..last_day_of_month.end_of_day).order(created_at: :desc)
+          @session = current_user.attendances.where(created_at: first_day_of_month.beginning_of_day..last_day_of_month.end_of_day).order(created_at: :desc)
           @user = current_user
      end
 
