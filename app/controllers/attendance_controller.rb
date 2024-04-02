@@ -1,19 +1,27 @@
 class AttendanceController < ApplicationController
 
      def index
-          @session = current_user.attendances.order(created_at: :desc)
-          @user = User.find(current_user.id)
+          first_day_of_month = Date.current.beginning_of_month
+          last_day_of_month = Date.current.end_of_month
+          @session = current_user.attendances.where(created_at: first_day_of_month.beginning_of_day..last_day_of_month.end_of_day).order(created_at: :desc)
+          @user = current_user
      end
 
      def create_session
-            @session = Attendance.new
-            @session.user_id = current_user.id
-            @session.check_in_time = Time.now.utc
-            @session.save!
-            flash[:success] = "Checked IN successfully"
-            SlackService.new(current_user, "Checked In", @session.check_in_time).send_message
+          existing_session = current_user.attendances.where(check_in_time: Date.today.beginning_of_day..Date.today.end_of_day).first
+          if existing_session
+            flash[:error] = "You have already checked in today"
             redirect_to attendance_index_path
-     end
+            return
+          end
+          @session = Attendance.new
+          @session.user_id = current_user.id
+          @session.check_in_time = Time.now.utc
+          @session.save!
+          flash[:success] = "Checked IN successfully"
+          SlackService.new(current_user, "Checked In", @session.check_in_time).send_message
+          redirect_to attendance_index_path
+        end
 
      def end_session
           @user = current_user

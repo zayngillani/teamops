@@ -12,6 +12,12 @@ Rails.application.routes.draw do
     get '/user_profile', :to => "users#user_profile", as: 'user_profile'
     put '/disable_user', :to => "users#disable_user", as: 'disable_user'
     get '/report', :to => "users#report", as: 'report'
+    get '/user_detail', :to => "users#user_detail", as: 'user_detail'
+    get '/user_leave', :to => "users#user_leave", as: 'user_leave'
+    get '/leave_report', :to => "users#leave_report", as: 'leave_report'
+    get '/monthly_report', :to => "users#monthly_report", as: 'monthly_report'
+    get '/monthly_users_list', :to => "users#monthly_users_list", as: 'monthly_users_list'
+
   end
   
   resources :attendance, only: [:index]

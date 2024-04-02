@@ -808,18 +808,3 @@ form .button input:hover{
 .float-right {
   margin-left: auto; /* This will push the button to the right */
 }
-
-.modal-btn2 {
-  background-color: #ff6700; /* Green */
-  border: none;
-  color: white;
-  padding: 12px 28px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 16px;
-  margin: 4px 2px;
-  cursor: pointer;
-  border-radius: 8px;
-  float: right; /* This will push the button to the right */
-}

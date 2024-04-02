@@ -62,12 +62,12 @@ class Admin::UsersController < ApplicationController
       @month = params[:month].to_i
       @year = params[:year].to_i
       start_date = Date.new(@year, @month, 1)
-      end_date = start_date.end_of_month     
+      end_date = start_date.end_of_month
       @user_sessions = @user.attendances.where(check_in_time: start_date.beginning_of_day..end_date.end_of_day).order(created_at: :asc)
       date_range = (start_date.to_date..end_date.to_date).to_a
       date_range.reject! { |date| date.saturday? || date.sunday? }
       present_dates = @user_sessions.pluck(:check_in_time).map(&:to_date)
-      @leaves = date_range.count { |date| !present_dates.include?(date) && date < Date.today }      
+      @leaves = date_range.count { |date| !present_dates.include?(date) && date < Date.today }
       if @user_sessions.present?
         total_hrs = 0
         @user_sessions.each do |attendance|
@@ -122,8 +122,121 @@ class Admin::UsersController < ApplicationController
       @session = session.paginate(page: params[:page], per_page: 10)
     end
 
-     
-   
+    def user_detail
+      @user = User.find_by(id: params[:id])
+      start_date = Date.current.beginning_of_month
+      end_date = Date.current.end_of_month
+      @user_sessions = @user.attendances.where(check_in_time: start_date.beginning_of_day..end_date.end_of_day).order(created_at: :asc)
+      date_range = (start_date.to_date..end_date.to_date).to_a
+      date_range.reject! { |date| date.saturday? || date.sunday? }
+      present_dates = @user_sessions.pluck(:check_in_time).map(&:to_date)
+      @leaves = date_range.count { |date| !present_dates.include?(date) && date < Date.today }
+      if @user_sessions.present?
+        total_hrs = 0
+        @user_sessions.each do |attendance|
+          total_hrs += attendance.total_hours.to_i unless attendance.total_hours.nil?
+        end
+        @total_hours = total_hrs
+      else
+        flash[:error] = "Attendance Not Present"
+        redirect_to root_path
+      end
+    end
+
+    def user_leave
+      @month = params[:month].to_i
+      @year = params[:year].to_i
+      @users = User.where(role: "user", deleted: false).order(created_at: :desc)
+      start_date = Date.new(@year, @month, 1)
+      end_date = start_date.end_of_month
+      @user_leaves = {}
+      @users.each do |user|
+        date_range = (start_date..end_date).to_a
+        date_range.reject! { |date| date.saturday? || date.sunday? }
+        present_dates = user.attendances.pluck(:check_in_time).map(&:to_date)
+        leaves = date_range.count { |date| !present_dates.include?(date) && date < Date.today }
+        @user_leaves[user.name] = leaves
+      end
+    end
+    
+    def leave_report
+      @month = params[:month].to_i
+      @year = params[:year].to_i
+      @users = User.where(role: "user", deleted: false)
+      start_date = Date.new(@year, @month, 1)
+      end_date = start_date.end_of_month
+      
+      @user_leaves = {}
+      @users.each do |user|
+        date_range = (start_date..end_date).to_a
+        date_range.reject! { |date| date.saturday? || date.sunday? }
+        present_dates = user.attendances.pluck(:check_in_time).map(&:to_date)
+        leaves = date_range.count { |date| !present_dates.include?(date) && date < Date.today }
+        @user_leaves[user.name] = leaves
+      end
+      if @user_leaves.present?
+        respond_to do |format|
+          format.html
+          format.pdf { render pdf: "LeaveReport_#{Date::MONTHNAMES[@month]}#{@year}", layout: false } # Specify view and disable layout
+        end
+      else
+        flash[:error] = "Attendance Not Present"
+        redirect_to root_path
+      end
+    end
+
+    def monthly_report
+      if params[:selected_users].present?
+        user_ids = params[:selected_users].split(',').map(&:to_i)
+        @users = User.where(id: user_ids)
+      else
+        @users = User.where(role: "user", deleted: false).order(created_at: :desc)
+      end
+      @month = params[:month].to_i
+      @year = params[:year].to_i
+      @start_date = Date.new(@year, @month, 1)
+      @end_date = @start_date.end_of_month
+      @total_hours = {}
+      @users.each do |user|
+        @user_sessions = user.attendances.where(check_in_time: @start_date.beginning_of_day..@end_date.end_of_day).order(created_at: :asc)
+        total_hrs = 0
+        @user_sessions.each do |attendance|
+          total_hrs += attendance.total_hours.to_i unless attendance.total_hours.nil?
+        end    
+        @total_hours[user.id] = total_hrs
+        regular_hours_per_day = 8
+        date_range = (@start_date..@end_date).to_a
+        working_days = date_range.reject { |date| date.saturday? || date.sunday? }
+        @total_working_hours = working_days.count * regular_hours_per_day
+      end
+      if @user_sessions.present?
+        respond_to do |format|
+          format.html
+          format.pdf { render pdf: "MonthlyReport_#{Date::MONTHNAMES[@month]}#{@year}", layout: false } # Specify view and disable layout
+        end
+      else
+        flash[:error] = "Attendance Not Present"
+        redirect_to admin_report_path
+      end
+    end
+
+    def monthly_users_list
+      @users = User.where(role: "user", deleted: false).order(created_at: :desc)
+      @month = params[:month].to_i
+      @year = params[:year].to_i
+      start_date = Date.new(@year, @month, 1)
+      end_date = start_date.end_of_month
+      @total_hours = {}
+      @users.each do |user|
+        user_sessions = user.attendances.where(check_in_time: start_date.beginning_of_day..end_date.end_of_day).order(created_at: :asc)
+        total_hrs = 0
+        user_sessions.each do |attendance|
+          total_hrs += attendance.total_hours.to_i unless attendance.total_hours.nil?
+        end
+        @total_hours[user.id] = total_hrs
+      end
+    end
+    
      private
    
      def user_params

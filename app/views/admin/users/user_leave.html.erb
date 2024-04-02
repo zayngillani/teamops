@@ -1,0 +1,31 @@
+<div class="main-content" style="margin-left: 220px; margin-top: 10px;"> 
+<button class="modal-btn sign-out-button btn-style" data-target="myModalPdf">Download PDF</button>
+            <div id="myModalPdf" class="modal">
+              <div class="modal-content">
+                <%= form_tag admin_leave_report_path(format: :pdf), method: :get do %>
+                   <%= select_tag 'month', options_for_select(Date::MONTHNAMES.compact.each_with_index.map { |month, index| [month, index + 1] }, params[:month].presence || Date.current.month), class: 'form-control pdf-set' %>
+                   <%= select_tag 'year', options_for_select((Date.current.year..Date.current.year + 5).to_a, params[:year].presence || Date.current.year), class: 'form-control' %>
+                  <br>
+                  <%= submit_tag 'Generate PDF', class: 'btn btn-primary styled-button2' %>
+                <% end %>
+              </div>
+            </div>
+  <table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Leaves</th>
+    </tr>
+  </thead>
+  <tbody>
+<% @user_leaves.each do |name, value| %>
+    <tr>
+      <td><%= name %></td>
+      <td><%= value %></td>
+
+          </tr>
+    <% end %>
+
+  </tbody>
+</table>
+</div>

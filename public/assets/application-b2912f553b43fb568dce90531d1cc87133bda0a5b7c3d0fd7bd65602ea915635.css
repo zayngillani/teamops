@@ -821,5 +821,5 @@ form .button input:hover{
   margin: 4px 2px;
   cursor: pointer;
   border-radius: 8px;
-  float: right; /* This will push the button to the right */
+  margin-left: auto; /* This will push the button to the right */
 }
