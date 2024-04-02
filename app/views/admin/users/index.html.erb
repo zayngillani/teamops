@@ -46,10 +46,10 @@
 
 <div id="myModalDisable<%= item.id %>" class="modal">
     <div class="modal-content">
-        <p style="text-align: center; margin-top: 10px;">Are you sure you want to <%= item.status == "active" ? "Disable" : "Un-disable" %> this User?</p>
+        <p style="text-align: center; margin-top: 10px;">Are you sure you want to <%= item.status == "active" ? "Disable" : "Enable" %> this User?</p>
         <div id="timerDisplayModal"></div>
         <div class="modal-footer">
-            <%= button_to(item.status == "active" ? "Yes, Disable" : "Yes, Un-disable", admin_disable_user_path(id: item.id), method: :put, class: "sign-out-button delete-btn") %>
+            <%= button_to(item.status == "active" ? "Yes, Disable" : "Yes, Enable", admin_disable_user_path(id: item.id), method: :put, class: "sign-out-button delete-btn") %>
             <button class="closeModalBtn close sign-out-button">No</button>
         </div>
     </div>
