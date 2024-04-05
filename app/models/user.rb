@@ -4,7 +4,9 @@ class User < ApplicationRecord
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable, :timeoutable
 
-  has_many :attendances 
+  has_many :attendances
+  has_many :leaves
+
   enum role: [:user, :admin]
   enum status: [:active , :pending]
 

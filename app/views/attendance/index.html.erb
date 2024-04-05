@@ -7,7 +7,6 @@
   <% elsif session.present? && session.check_out_time.nil? %>
         <% create_at = session.created_at %>
         <div id="timerDisplay" data-created-at="<%= create_at || nil %>" data-system-time="<%= Time.zone.now %>"></div>
-
     <% end %>
   </div>
   <div style="float: right; margin-top: 20px;">
@@ -34,6 +33,9 @@
       </div>
     </div>
   <% end %>
+      <br>
+    <%= button_to "Request Leaves", new_leave_path, method: :get, class: "sign-out-button", id: "checkInButton", onclick: "setTimeout(() => this.disabled = true, 0)" %>
+    <br>
 
   <br>
   <%= render 'attendance/user_attendance' %>

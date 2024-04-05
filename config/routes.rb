@@ -25,6 +25,8 @@ Rails.application.routes.draw do
   post '/end_session', :to => "attendance#end_session", as: 'end_session'
   post '/break_session', :to => "attendance#break_session", as: 'break_session'
   post '/create_user', :to => "attendance#create_user", as: 'create_user'
+
+  resources :leaves, only: [:new, :create, :index, :edit, :update, :destroy]
   
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

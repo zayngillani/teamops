@@ -828,7 +828,7 @@ form .button input:hover{
   max-width: 400px;
   margin: 50px auto;
   background-color: #fff;
-  padding: 60px;
+  padding: 20px;
   border-radius: 5px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
 }
@@ -860,72 +860,4 @@ label {
   box-sizing: border-box;
   vertical-align: top; /* Align to the top of the container */
   display: inline-block; /* Make sure it aligns horizontally */
-}
-
-.orange-button {
-  background-color: #ff6700;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 4px;
-  font-size: 16px;
-  cursor: pointer;
-  float: right;
-}
-
-.container-leave {
-  display: flex;
-  justify-content: flex-end; /* Aligns containers to the right */
-}
-
-.container-leaf {
-  width: 410px;
-  margin: 52px 11px;
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 5px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  height: 300px;
-}
-
-
-.dropdown-btn {
-  background-color: #555;
-  color: white;
-  padding: 10px;
-  text-align: left;
-  cursor: pointer;
-  border: none;
-  outline: none;
-  width: 100%;
-  font-size: 16px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.dropdown-btn:hover {
-  background-color: #777;
-}
-
-.dropdown-container {
-  display: none;
-  padding-left: 20px;
-}
-
-.dropdown-btn:focus + .dropdown-container {
-  display: block;
-}
-
-/* Dropdown links */
-.dropdown-container a {
-  padding: 10px;
-  display: block;
-  color: white;
-  text-decoration: none;
-  transition: background-color 0.3s;
-}
-
-.dropdown-container a:hover {
-  background-color: #777;
 }

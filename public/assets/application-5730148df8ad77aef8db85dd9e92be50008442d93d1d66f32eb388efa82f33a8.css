@@ -890,7 +890,7 @@ label {
 
 
 .dropdown-btn {
-  background-color: #555;
+  background-color: #333;
   color: white;
   padding: 10px;
   text-align: left;
@@ -899,33 +899,34 @@ label {
   outline: none;
   width: 100%;
   font-size: 16px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
 }
 
-.dropdown-btn:hover {
-  background-color: #777;
-}
-
+/* Style the dropdown container (hidden by default) */
 .dropdown-container {
   display: none;
   padding-left: 20px;
 }
 
-.dropdown-btn:focus + .dropdown-container {
-  display: block;
-}
-
-/* Dropdown links */
+/* Style the links inside the dropdown */
 .dropdown-container a {
   padding: 10px;
   display: block;
-  color: white;
+  color: black;
   text-decoration: none;
   transition: background-color 0.3s;
 }
 
+/* Change color of dropdown links on hover */
 .dropdown-container a:hover {
-  background-color: #777;
+  background-color: #f1f1f1;
+}
+
+/* Show the dropdown menu on hover */
+.dropdown-btn:hover + .dropdown-container {
+  display: block;
+}
+
+/* Change background color of dropdown menu on hover */
+.dropdown-btn:hover {
+  background-color: #555;
 }
