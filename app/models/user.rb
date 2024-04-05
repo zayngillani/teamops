@@ -15,11 +15,16 @@ class User < ApplicationRecord
   end
 
   def active_for_authentication?
-    super && status != 'pending'
+    super && status != 'pending' && deleted != true
   end
 
   def inactive_message
-    status == 'pending' ? :pending : super
+    status == 'pending' ? :pending : deleted == true ? :deleted:  super
   end
   
+  def send_devise_notification(notification, *args)
+    unless deleted? || status == "pending"
+      super(notification, *args)
+    end
+  end
 end

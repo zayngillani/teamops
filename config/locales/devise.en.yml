@@ -10,6 +10,7 @@ en:
       already_authenticated: "You are already signed in."
       inactive: "Your account is not activated yet."
       pending: "Your account is disabled"
+      deleted: "Your account is deleted"
       invalid: "Invalid %{authentication_keys} or password."
       locked: "Your account is locked."
       last_attempt: "You have one more attempt before your account is locked."
