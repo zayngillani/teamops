@@ -26,7 +26,10 @@ Rails.application.routes.draw do
   post '/break_session', :to => "attendance#break_session", as: 'break_session'
   post '/create_user', :to => "attendance#create_user", as: 'create_user'
 
-  resources :leaves, only: [:new, :create, :index, :edit, :update, :destroy]
+  resources :leaves, only: [:new, :create, :index, :edit, :update, :destroy, :show]
+  get '/approve', :to => "leaves#approve", as: 'approve'
+  get '/reject', :to => "leaves#reject", as: 'reject'
+
   
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

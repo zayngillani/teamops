@@ -1,6 +1,58 @@
 <div class="container-leave">
   <div class="container-leaf">
     <strong style="margin-bottom: 10px;">Pending Requests</strong>
+    <% if @pending_leaves.empty? %>
+      <p>N/A</p>
+    <% else %>
+    <table class="display">
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Leaves</th>
+        </tr>
+      </thead>
+      <tbody>
+      <% @pending_leaves.each do |item| %>
+        <tr>
+          <td><%= item.name %></td>
+          <td><%= link_to "View", leave_path(id: item.id), class: "sign-out-button"%>
+</td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+    <% end %>
+  </div>
+  
+  <div class="container-leaf">
+    <strong style="margin-bottom: 10px;">Accepted Requests</strong>
+    <% if @accepted_leaves.empty? %>
+      <p>N/A</p>
+    <% else %>
+    <table class="display">
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Leaves</th>
+        </tr>
+      </thead>
+      <tbody>
+      <% @accepted_leaves.each do |item| %>
+        <tr>
+          <td><%= item.name %></td>
+          <td><%= link_to "View", leave_path(id: item.id, accept: true), class: "sign-out-button"%>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+      <% end %>
+  </div>
+  
+  <div class="container-leaf">
+    <strong style="margin-bottom: 10px;">Rejected Requests</strong>
+    <% if @rejected_leaves.empty? %>
+      <p>N/A</p>
+    <% else %>
     <table class="display">
       <thead>
         <tr>
@@ -9,50 +61,15 @@
         </tr>
       </thead>
       <tbody>
-      <% @pending.each do |item| %>
+      <% @rejected_leaves.each do |item| %>
         <tr>
-          <td><%= item.user_id %></td>
-          <td><%= item.status %></td>
+          <td><%= item.name %></td>
+          <td><%= link_to "View", leave_path(id: item.id, reject: true), class: "sign-out-button"%>
         </tr>
       <% end %>
       </tbody>
     </table>
-  </div>
-  
-  <div class="container-leaf">
-    <strong style="margin-bottom: 10px;">Accepted Requests</strong>
-    <table class="display">
-      <thead>
-        <tr>
-          <th>Column 1</th>
-          <th>Column 2</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Data 1</td>
-          <td>Data 2</td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
-  
-  <div class="container-leaf">
-    <strong style="margin-bottom: 10px;">Rejected Requests</strong>
-    <table class="display">
-      <thead>
-        <tr>
-          <th>Column 1</th>
-          <th>Column 2</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>Data 1</td>
-          <td>Data 2</td>
-        </tr>
-      </tbody>
-    </table>
+      <% end %>
   </div>
 </div>
 
