@@ -874,25 +874,18 @@ label {
 }
 
 .container-leave {
-  /* justify-content: flex-end; */
   display: flex;
-  flex-wrap: nowrap;
-  overflow-x: auto;
-
+  justify-content: flex-end; /* Aligns containers to the right */
 }
 
 .container-leaf {
-  width: 297px;
-  margin-top: 52px;
+  width: 410px;
+  margin: 52px 11px;
   background-color: #fff;
   padding: 20px;
-  margin-left: 208px; /* Adjust as needed for spacing between containers */
   border-radius: 5px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   height: 300px;
-  display: inline-block;
-  vertical-align: top;
-  flex: 0 0 auto;
 }
 
 

@@ -882,11 +882,11 @@ label {
 }
 
 .container-leaf {
-  width: 297px;
-  margin-top: 52px;
+  width: 400px;
+  /* margin: 52px 11px; */
   background-color: #fff;
   padding: 20px;
-  margin-left: 208px; /* Adjust as needed for spacing between containers */
+  margin-right: 20px; /* Adjust as needed for spacing between containers */
   border-radius: 5px;
   box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   height: 300px;

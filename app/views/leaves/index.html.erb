@@ -1,0 +1,76 @@
+<div class="container-leave">
+  <div class="container-leaf">
+    <strong style="margin-bottom: 10px;">Pending Requests</strong>
+    <% if @pending_leaves.empty? %>
+      <p>N/A</p>
+    <% else %>
+    <table class="display">
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Leaves</th>
+        </tr>
+      </thead>
+      <tbody>
+      <% @pending_leaves.each do |item| %>
+        <tr>
+          <td><%= item.name %></td>
+          <td><%= link_to "View", leave_path(id: item.id), class: "sign-out-button"%>
+</td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+    <% end %>
+  </div>
+  
+  <div class="container-leaf">
+    <strong style="margin-bottom: 10px;">Accepted Requests</strong>
+    <% if @accepted_leaves.empty? %>
+      <p>N/A</p>
+    <% else %>
+    <table class="display">
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Leaves</th>
+        </tr>
+      </thead>
+      <tbody>
+      <% @accepted_leaves.each do |item| %>
+        <tr>
+          <td><%= item.name %></td>
+          <td><%= link_to "View", leave_path(id: item.id, accept: true), class: "sign-out-button"%>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+      <% end %>
+  </div>
+  
+  <div class="container-leaf">
+    <strong style="margin-bottom: 10px;">Rejected Requests</strong>
+    <% if @rejected_leaves.empty? %>
+      <p>N/A</p>
+    <% else %>
+    <table class="display">
+      <thead>
+        <tr>
+          <th>User</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+      <% @rejected_leaves.each do |item| %>
+        <tr>
+          <td><%= item.name %></td>
+          <td><%= link_to "View", leave_path(id: item.id, reject: true), class: "sign-out-button"%>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
+      <% end %>
+  </div>
+</div>
+
+
