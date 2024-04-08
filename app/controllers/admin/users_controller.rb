@@ -154,7 +154,10 @@ class Admin::UsersController < ApplicationController
         date_range = (start_date..end_date).to_a
         date_range.reject! { |date| date.saturday? || date.sunday? }
         present_dates = user.attendances.pluck(:check_in_time).map(&:to_date)
-        leaves = date_range.count { |date| !present_dates.include?(date) && date < Date.today }
+        created_date = user.created_at.to_date
+        leaves = date_range.count { |date|
+          !present_dates.include?(date) && date >= created_date && date <= Date.today
+        }
         @user_leaves[user.name] = leaves
       end
     end
@@ -171,7 +174,10 @@ class Admin::UsersController < ApplicationController
         date_range = (start_date..end_date).to_a
         date_range.reject! { |date| date.saturday? || date.sunday? }
         present_dates = user.attendances.pluck(:check_in_time).map(&:to_date)
-        leaves = date_range.count { |date| !present_dates.include?(date) && date < Date.today }
+        created_date = user.created_at.to_date
+        leaves = date_range.count { |date|
+          !present_dates.include?(date) && date >= created_date && date <= Date.today
+        }
         @user_leaves[user.name] = leaves
       end
       if @user_leaves.present?
