@@ -23,6 +23,7 @@ class User < ApplicationRecord
   end
   
   def send_devise_notification(notification, *args)
+    binding.pry
     unless deleted? || status == "pending"
       super(notification, *args)
     end

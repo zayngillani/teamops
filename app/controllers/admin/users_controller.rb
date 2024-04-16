@@ -68,6 +68,7 @@ class Admin::UsersController < ApplicationController
       date_range.reject! { |date| date.saturday? || date.sunday? }
       present_dates = @user_sessions.pluck(:check_in_time).map(&:to_date)
       @leaves = date_range.count { |date| !present_dates.include?(date) && date < Date.today }
+      @holidays = Holiday.all
       if @user_sessions.present?
         total_hrs = 0
         @user_sessions.each do |attendance|

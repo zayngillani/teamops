@@ -24,6 +24,7 @@ class LeavesController < ApplicationController
         
      
      def new
+          @leaves = current_user.leaves
      end
      
      def create
