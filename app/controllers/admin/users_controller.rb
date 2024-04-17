@@ -57,33 +57,33 @@ class Admin::UsersController < ApplicationController
 
 
 
-     def generate_pdf
+    def generate_pdf
       @user = User.find(params[:id])
       @month = params[:month].to_i
       @year = params[:year].to_i
       start_date = Date.new(@year, @month, 1)
       end_date = start_date.end_of_month
+      @public_holidays = Holiday.where("start_date <= ? AND end_date >= ?", start_date.end_of_month, end_date.beginning_of_month)
+      date_range = (start_date..end_date).reject { |date| date.saturday? || date.sunday? }
+      @public_holidays.each do |holiday|
+        date_range.reject! { |date| date.between?(holiday.start_date, holiday.end_date) }
+      end
       @user_sessions = @user.attendances.where(check_in_time: start_date.beginning_of_day..end_date.end_of_day).order(created_at: :asc)
-      date_range = (start_date.to_date..end_date.to_date).to_a
-      date_range.reject! { |date| date.saturday? || date.sunday? }
       present_dates = @user_sessions.pluck(:check_in_time).map(&:to_date)
       @leaves = date_range.count { |date| !present_dates.include?(date) && date < Date.today }
-      @holidays = Holiday.all
       if @user_sessions.present?
-        total_hrs = 0
-        @user_sessions.each do |attendance|
-          total_hrs += attendance.total_hours.to_i unless attendance.total_hours.nil?
-        end
+        total_hrs = @user_sessions.sum(:total_hours)
         @total_hours = total_hrs
         respond_to do |format|
-            format.html
-            format.pdf { render pdf: "#{@user.name}", layout: false } # Specify view and disable layout
+          format.html
+          format.pdf { render pdf: @user.name, layout: false }
         end
       else
         flash[:error] = "Attendance Not Present"
         redirect_to root_path
       end
     end
+    
 
     def destroy
       @user = User.find_by(id: params[:id])
