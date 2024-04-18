@@ -5,5 +5,5 @@
 #
 #   movies = Movie.create([{ name: "Star Wars" }, { name: "Lord of the Rings" }])
 #   Character.create(name: "Luke", movie: movies.first)
-user= User.where(role: "user").pluck(:supervisor)
-user.update(supervisor: "Fahad")
+holiday = Holiday.all
+holiday.destroy_all
