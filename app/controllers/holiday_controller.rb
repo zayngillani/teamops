@@ -1,17 +1,22 @@
 class HolidayController < ApplicationController
   def create
-    existing_holiday = Holiday.find_by(start_date: params[:holiday][:start_date])
+    start_date = params[:holiday][:start_date]
+    end_date = params[:holiday][:end_date]
+    if start_date > end_date
+      redirect_to holiday_index_path, flash: { error: "End date must be greater than or equal to start date" }
+      return
+    end
+    existing_holiday = Holiday.find_by(start_date: start_date)
     if existing_holiday
-      flash[:notice] = "A holiday already exists on this date."
+      redirect_to holiday_index_path, flash: { error: "A holiday already exists on this date." }
+      return
+    end
+    @holiday = Holiday.new(holiday_params)
+    if @holiday.save
+      flash[:success] = "Holiday created successfully"
       redirect_to holiday_index_path
     else
-      @holiday = Holiday.new(holiday_params)
-      if @holiday.save
-        flash[:success] = "Holiday created successfully"
-        redirect_to holiday_index_path
-      else
-        render 'new'
-      end
+      render 'new'
     end
   end
 
