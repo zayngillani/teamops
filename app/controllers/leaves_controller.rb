@@ -30,6 +30,12 @@ class LeavesController < ApplicationController
      def create
           start_date = params[:user][:start_date]
           end_date = params[:user][:end_date]
+          leave_start = Date.parse(params[:user][:start_date])
+          leave_end = Date.parse(params[:user][:end_date])
+          if leave_start.saturday? || leave_start.sunday? || leave_end.saturday? || leave_end.sunday?
+            redirect_to root_path, flash: { error: "You can't request leave for weekends (Saturday or Sunday)." }
+            return
+          end
           if start_date > end_date
             redirect_to root_path, flash: { error: "End date must be greater than or equal to start date" }
             return

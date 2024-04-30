@@ -10,24 +10,29 @@ class Admin::UsersController < ApplicationController
      end
    
      def create
-       @existing_user = User.where(email: params[:user][:email])
-      if @existing_user.present?
-        flash[:error] = "Email Already Exist"
-        redirect_to root_path
-      else
-        @user = User.new(user_params)
-        @user.ip_address = "#{request.headers['X-Forwarded-For']&.split(',')&.last&.strip} || " + "#{request.ip} || " + "#{request.remote_ip}"
-        @user.role = "user"
-        @user.password =  params[:user][:password]
-        @user.password_confirmation = params[:user][:password_confirmation]
-        if @user.save
-          flash[:success] = "User created successfully"
+      if params[:user][:email] =~ /\A[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]+\z/
+        @existing_user = User.find_by(email: params[:user][:email])
+        if @existing_user.present?
+          flash[:error] = "Email Already Exists"
           redirect_to root_path
         else
-          render 'new'
+          @user = User.new(user_params)
+          @user.ip_address = "#{request.headers['X-Forwarded-For']&.split(',')&.last&.strip || request.ip || request.remote_ip}"
+          @user.role = "user"
+          @user.password = params[:user][:password]
+          @user.password_confirmation = params[:user][:password_confirmation]
+          if @user.save
+            flash[:success] = "User created successfully"
+            redirect_to root_path
+          else
+            render 'new'
+          end
         end
+      else
+        flash[:error] = "Invalid Email Format"
+        redirect_to root_path
       end
-     end
+    end
 
      def edit
       @user = User.find_by(id: params[:id]) if params[:id].present?

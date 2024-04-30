@@ -19,19 +19,21 @@
     <% end %>
   </div>
   <% if session.present? && session.check_out_time.nil? && current_user.attendances.last.check_in_time >= 16.hours.ago %>
-    <div class="button-container">
-      <button id="modal-btn" class="sign-out-button">Check Out</button>
-      <div id="myModal" class="modal">
-        <div class="modal-content">
-          <p style="text-align: center; margin-top: 10px;">Are you sure you want to checkout?</p>
-          <div id="timerDisplayModal"></div>
-          <div class="modal-footer">
-            <button id="closeModalBtn" class="close sign-out-button">No</button>
-            <%= button_to "Check-Out", end_session_path, class: "sign-out-button", id: "checkOutButtonModal", onclick: "setTimeout(() => this.disabled = true, 0)" %>
+    <% unless session.break_in_time.present? && !session.break_out_time.present? %>
+      <div class="button-container">
+        <button id="modal-btn" class="sign-out-button">Check Out</button>
+        <div id="myModal" class="modal">
+          <div class="modal-content">
+            <p style="text-align: center; margin-top: 10px;">Are you sure you want to checkout?</p>
+            <div id="timerDisplayModal"></div>
+            <div class="modal-footer">
+              <button id="closeModalBtn" class="close sign-out-button">No</button>
+              <%= button_to "Check-Out", end_session_path, class: "sign-out-button", id: "checkOutButtonModal", onclick: "setTimeout(() => this.disabled = true, 0)" %>
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    <% end %>
   <% end %>
       <br>
     <%= button_to "Request Leaves", new_leave_path, method: :get, class: "sign-out-button", id: "checkInButton", onclick: "setTimeout(() => this.disabled = true, 0)" %>

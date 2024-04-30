@@ -11,7 +11,7 @@
         <div class="title"><span>Create new password</span></div>
         <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
           <% if resource.errors.full_messages.present? %>
-            <div class="alert alert-danger fading-out" id="banner"><%= resource.errors.full_messages[0] %></div>
+            <div class="alert alert-danger fading-out" id="banner"><%= I18n.t('password') %></div>
           <% end %>
           <div class="form-group">
             <%= f.hidden_field :reset_password_token %>

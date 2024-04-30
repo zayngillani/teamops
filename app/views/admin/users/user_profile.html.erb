@@ -15,7 +15,7 @@
 
     <div class="form-group">
     <p><strong>Slack ID:</strong></p>
-    <%= @user.slack_member_id %>
+    <%= @user.slack_member_id.present? ? @user.slack_member_id : "TU7Q45YH78"%>
     </div>
   </div>
 </div>
