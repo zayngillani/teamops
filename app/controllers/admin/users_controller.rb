@@ -10,6 +10,10 @@ class Admin::UsersController < ApplicationController
      end
    
      def create
+      unless params[:user][:password] == params[:user][:password_confirmation]
+        flash[:error] = "Passwords don't match. Please check and re-type your confirm password."
+        redirect_to new_admin_user_path and return
+      end
       if params[:user][:email] =~ /\A[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]+\z/
         @existing_user = User.find_by(email: params[:user][:email])
         if @existing_user.present?

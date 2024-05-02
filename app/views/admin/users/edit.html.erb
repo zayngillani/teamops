@@ -33,12 +33,12 @@
 
     <div class="form-group">
       <%= form.label :password, class: "label" %>
-      <%= form.password_field :password, class: "password-field" %>
+      <%= form.password_field :password, class: "password-field", minlength: 6 %>
     </div>
 
     <div class="form-group">
       <%= form.label :password_confirmation, class: "label" %>
-      <%= form.password_field :password_confirmation, class: "password-field" %>
+      <%= form.password_field :password_confirmation, class: "password-field", minlength: 6 %>
     </div>
 
     <div class="form-actions">
