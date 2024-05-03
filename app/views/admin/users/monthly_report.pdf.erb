@@ -139,7 +139,7 @@
       </tr>
     </thead>
     <tbody>
-      <% user.attendances.where(check_in_time: @start_date..@end_date).each do |session| %>
+      <% @user_sessions.each do |session| %>
       <tr>
         <td><%= session.created_at.strftime("%b %d, %Y") %></td>
         <td><%= session.check_in_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") %></td>
