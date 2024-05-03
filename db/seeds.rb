@@ -7,7 +7,7 @@
 #   Character.create(name: "Luke", movie: movies.first)
 start_of_april = Date.new(2024, 4, 1).beginning_of_day
 end_of_april = Date.new(2024, 4, -1).end_of_day
-attendances_in_april = Attendance.where(user_id: 13, created_at: start_of_april..end_of_april)
+attendances_in_april = Attendance.where(user_id: 62, created_at: start_of_april..end_of_april)
 attendances_in_april.destroy_all
 dates_in_april = (Date.new(2024, 4, 1)..Date.new(2024, 4, -1)).to_a
 working_days_in_april = dates_in_april.reject { |date| date.saturday? || date.sunday? }
@@ -26,6 +26,6 @@ working_days_in_april.each do |date|
     created_at: check_in_time
   )
 
-  attendance.update(user_id: 13)
+  attendance.update(user_id: 62)
 
 end
