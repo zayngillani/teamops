@@ -93,7 +93,7 @@ document.addEventListener('turbo:load', function() {
     
 });
 
-document.addEventListener("turbo:load", function() {
+document.addEventListener("turbolinks:load", function() {
     const togglePasswordButtons = document.querySelectorAll(".toggle-password");
   
     togglePasswordButtons.forEach(button => {
