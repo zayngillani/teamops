@@ -27,8 +27,13 @@ class LeavesController < ApplicationController
      end
      
      def create
+          start_date = Date.parse(params[:user][:start_date])
           if Leave.exists?(user_id: current_user.id, status: [0, 1, 2], start_date: params[:user][:start_date]..params[:user][:end_date])
             redirect_to root_path, flash: { error: "Leave Already Submitted" }
+            return
+          end
+          if start_date == Date.today && Time.now.hour >= 12
+            redirect_to root_path, flash: { error: "Leave request can only be submitted before 12 pm." }
             return
           end
           if params[:user][:start_date] > params[:user][:end_date]
