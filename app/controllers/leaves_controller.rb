@@ -36,7 +36,6 @@ class LeavesController < ApplicationController
             redirect_to root_path, flash: { error: "You can't request leave for weekends (Saturday or Sunday)." }
             return
           end
-          if start_date > end_date
           if Leave.exists?(user_id: current_user.id, status: [0, 1, 2], start_date: params[:user][:start_date]..params[:user][:end_date])
             redirect_to root_path, flash: { error: "Leave Already Submitted" }
             return
