@@ -93,7 +93,7 @@
   <tbody>
     <% @user_sessions.each do |item| %>
       <tr>
-        <td><%= item.created_at.strftime("%b %d, %Y") %></td>
+        <td><%= item.created_at.strftime("%A %b #{item.created_at.day.ordinalize}") %></td>
         <td><%= item.check_in_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") %></td>
         <td><%= item.check_out_time.present? ? item.check_out_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A" %></td>
         <td></td>

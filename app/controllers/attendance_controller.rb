@@ -15,6 +15,12 @@ class AttendanceController < ApplicationController
                return
           end
           existing_session = current_user.attendances.where(check_in_time: Date.today.beginning_of_day..Date.today.end_of_day).first
+          leave = current_user.leaves.where(start_date: Date.today.beginning_of_day..Date.today.end_of_day)
+          if leave.present?
+               flash[:error] = "You are on leave today, so you won't be able to check-in."
+               redirect_to attendance_index_path
+               return
+          end
           if existing_session
             flash[:error] = "You have already checked in today"
             redirect_to attendance_index_path
