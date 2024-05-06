@@ -10,24 +10,33 @@ class Admin::UsersController < ApplicationController
      end
    
      def create
-       @existing_user = User.where(email: params[:user][:email])
-      if @existing_user.present?
-        flash[:error] = "Email Already Exist"
-        redirect_to root_path
-      else
-        @user = User.new(user_params)
-        @user.ip_address = "#{request.headers['X-Forwarded-For']&.split(',')&.last&.strip} || " + "#{request.ip} || " + "#{request.remote_ip}"
-        @user.role = "user"
-        @user.password =  params[:user][:password]
-        @user.password_confirmation = params[:user][:password_confirmation]
-        if @user.save
-          flash[:success] = "User created successfully"
+      unless params[:user][:password] == params[:user][:password_confirmation]
+        flash[:error] = "Passwords don't match. Please check and re-type your confirm password."
+        redirect_to new_admin_user_path and return
+      end
+      if params[:user][:email] =~ /\A[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]+\z/
+        @existing_user = User.find_by(email: params[:user][:email])
+        if @existing_user.present?
+          flash[:error] = "Email Already Exists"
           redirect_to root_path
         else
-          render 'new'
+          @user = User.new(user_params)
+          @user.ip_address = "#{request.headers['X-Forwarded-For']&.split(',')&.last&.strip || request.ip || request.remote_ip}"
+          @user.role = "user"
+          @user.password = params[:user][:password]
+          @user.password_confirmation = params[:user][:password_confirmation]
+          if @user.save
+            flash[:success] = "User created successfully"
+            redirect_to root_path
+          else
+            render 'new'
+          end
         end
+      else
+        flash[:error] = "Invalid Email Format"
+        redirect_to root_path
       end
-     end
+    end
 
      def edit
       @user = User.find_by(id: params[:id]) if params[:id].present?
@@ -57,32 +66,33 @@ class Admin::UsersController < ApplicationController
 
 
 
-     def generate_pdf
+    def generate_pdf
       @user = User.find(params[:id])
       @month = params[:month].to_i
       @year = params[:year].to_i
       start_date = Date.new(@year, @month, 1)
       end_date = start_date.end_of_month
+      @public_holidays = Holiday.where("start_date <= ? AND end_date >= ?", start_date.end_of_month, end_date.beginning_of_month)
+      date_range = (start_date..end_date).reject { |date| date.saturday? || date.sunday? }
+      @public_holidays.each do |holiday|
+        date_range.reject! { |date| date.between?(holiday.start_date, holiday.end_date) }
+      end
       @user_sessions = @user.attendances.where(check_in_time: start_date.beginning_of_day..end_date.end_of_day).order(created_at: :asc)
-      date_range = (start_date.to_date..end_date.to_date).to_a
-      date_range.reject! { |date| date.saturday? || date.sunday? }
       present_dates = @user_sessions.pluck(:check_in_time).map(&:to_date)
       @leaves = date_range.count { |date| !present_dates.include?(date) && date < Date.today }
       if @user_sessions.present?
-        total_hrs = 0
-        @user_sessions.each do |attendance|
-          total_hrs += attendance.total_hours.to_i unless attendance.total_hours.nil?
-        end
+        total_hrs = @user_sessions.sum(:total_hours)
         @total_hours = total_hrs
         respond_to do |format|
-            format.html
-            format.pdf { render pdf: "#{@user.name}", layout: false } # Specify view and disable layout
+          format.html
+          format.pdf { render pdf: @user.name, layout: false }
         end
       else
         flash[:error] = "Attendance Not Present"
         redirect_to root_path
       end
     end
+    
 
     def destroy
       @user = User.find_by(id: params[:id])
@@ -161,18 +171,21 @@ class Admin::UsersController < ApplicationController
         @user_leaves[user.name] = leaves
       end
     end
-    
+
     def leave_report
       @month = params[:month].to_i
       @year = params[:year].to_i
       @users = User.where(role: "user", deleted: false)
       start_date = Date.new(@year, @month, 1)
       end_date = start_date.end_of_month
+      @public_holidays = Holiday.where("start_date <= ? AND end_date >= ?", start_date.end_of_month, end_date.beginning_of_month)
       
       @user_leaves = {}
       @users.each do |user|
-        date_range = (start_date..end_date).to_a
-        date_range.reject! { |date| date.saturday? || date.sunday? }
+        date_range = (start_date..end_date).reject { |date| date.saturday? || date.sunday? }
+        @public_holidays.each do |holiday|
+          date_range.reject! { |date| date.between?(holiday.start_date, holiday.end_date) }
+        end
         present_dates = user.attendances.pluck(:check_in_time).map(&:to_date)
         created_date = user.created_at.to_date
         leaves = date_range.count { |date|

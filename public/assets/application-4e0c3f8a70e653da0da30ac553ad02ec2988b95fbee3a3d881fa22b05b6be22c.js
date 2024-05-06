@@ -93,7 +93,7 @@ document.addEventListener('turbo:load', function() {
     
 });
 
-document.addEventListener("turbo:load", function() {
+document.addEventListener("DOMContentLoaded", function() {
     const togglePasswordButtons = document.querySelectorAll(".toggle-password");
   
     togglePasswordButtons.forEach(button => {
@@ -101,10 +101,10 @@ document.addEventListener("turbo:load", function() {
         const passwordInput = this.parentNode.querySelector(".password-input");
         if (passwordInput.type === "password") {
           passwordInput.type = "text";
-          this.innerHTML = '<i class="fas fa-eye-slash"></i>'; // Change button content to "Hide" icon
+          this.textContent = "Hide";
         } else {
           passwordInput.type = "password";
-          this.innerHTML = '<i class="fas fa-eye"></i>'; // Change button content to "Show" icon
+          this.textContent = "Show";
         }
       });
     });

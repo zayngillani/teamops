@@ -24,15 +24,23 @@ class LeavesController < ApplicationController
         
      
      def new
+          @leaves = current_user.leaves
      end
      
      def create
-          start_date = Date.parse(params[:user][:start_date])
+          start_date = params[:user][:start_date]
+          end_date = params[:user][:end_date]
+          leave_start = Date.parse(params[:user][:start_date])
+          leave_end = Date.parse(params[:user][:end_date])
+          if leave_start.saturday? || leave_start.sunday? || leave_end.saturday? || leave_end.sunday?
+            redirect_to root_path, flash: { error: "You can't request leave for weekends (Saturday or Sunday)." }
+            return
+          end
           if Leave.exists?(user_id: current_user.id, status: [0, 1, 2], start_date: params[:user][:start_date]..params[:user][:end_date])
             redirect_to root_path, flash: { error: "Leave Already Submitted" }
             return
           end
-          if start_date == Date.today && Time.now.hour >= 12
+          if leave_start == Date.today && Time.now.hour >= 12
             redirect_to root_path, flash: { error: "Leave request can only be submitted before 12 pm." }
             return
           end
@@ -40,15 +48,32 @@ class LeavesController < ApplicationController
             redirect_to root_path, flash: { error: "End date must be greater than or equal to start date" }
             return
           end
+          leaves_this_month = Leave.where(user_id: current_user.id)
+                                    .where("start_date >= ?", Date.today.beginning_of_month)
+                                    .where("start_date <= ?", Date.today.end_of_month)
+                                    .count
+          holiday = Holiday.find_by(start_date: start_date..end_date)
+          if leaves_this_month >= 2
+            redirect_to root_path, flash: { error: "You can only request two leaves in one month" }
+            return
+          end
+          if holiday.present?
+            redirect_to root_path, flash: { error: "You can't request for Leave on Public Holiday" }
+            return
+          end
+          if Leave.exists?(user_id: current_user.id, status: [0, 1, 2], start_date: start_date..end_date)
+            redirect_to root_path, flash: { error: "Leave Already Submitted" }
+            return
+          end
           @leave = Leave.new
           @leave.start_date = params[:user][:start_date]
           @leave.end_date = params[:user][:end_date]
           @leave.user_id = current_user.id
           @leave.reason = params[:user][:reason]
-          if @leave.save!
-               redirect_to root_path, notice: 'Leave request submitted.'
+          if @leave.save
+            redirect_to root_path, notice: 'Leave request submitted.'
           else
-               render :new
+            render :new
           end
      end
      
