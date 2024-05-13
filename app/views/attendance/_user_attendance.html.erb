@@ -1,42 +1,48 @@
-<table>
-  <thead>
-    <tr>
-      <th>Date</th>
-      <th>Check In</th>
-      <th>Check Out</th>
-      <th>Break In</th>
-      <th>Break Out</th>
-      <th>Total Hours</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% if @session.present? %>
-      <% @session.each do |item| %>
-        <tr>
-          <td><%= item.created_at.strftime("%Y-%m-%d ") %></td>
-          <td><%= item.check_in_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") %></td>
-          <td><%= item.check_out_time.present? ? item.check_out_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A" %></td>
-          <td><%= item.break_in_time.present? ? item.break_in_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A" %></td>
-          <td><%= item.break_out_time.present? ? item.break_out_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A" %></td>
-          <td>
-            <% if item.total_hours.present? %>
-              <%= "#{item.total_hours / 3600} hours #{item.total_hours % 3600 / 60} minutes" %>
-            <% else %>
-              N/A
-            <% end %>
-          </td>
-        </tr>
-      <% end %>
-    <% else %>
-      <tr>
-        <td>N/A</td>
-        <td>N/A</td>
-        <td>N/A</td>
-        <td>N/A</td>
-        <td>N/A</td>
-        <td>N/A</td>
-
+<div style="overflow-x: hidden;">
+  <table style="width: 100%;">
+    <thead>
+      <tr style="text-align: left;">
+        <th>Date</th>
+        <th>Check In</th>
+        <th>Check Out</th>
+        <th>Break In</th>
+        <th>Break Out</th>
+        <th>Total Hours</th>
+        <tr><td colspan="6" style="border-bottom: 1px solid black;"></td></tr>
       </tr>
+    </thead>
+    <tbody>
+  <% if @session.present? %>
+    <% @session.each do |item| %>
+      <tr>
+        <td><%= item.created_at.strftime("%Y-%m-%d ") %></td>
+        <td><%= item.check_in_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") %></td>
+        <td><%= item.check_out_time.present? ? item.check_out_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A" %></td>
+        <td><%= item.break_in_time.present? ? item.break_in_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A" %></td>
+        <td><%= item.break_out_time.present? ? item.break_out_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A" %></td>
+        <td>
+          <% if item.total_hours.present? %>
+            <%= "#{item.total_hours / 3600} hours #{item.total_hours % 3600 / 60} minutes" %>
+          <% else %>
+            N/A
+          <% end %>
+        </td>
+      </tr>
+      <tr><td colspan="6" style="border-bottom: 1px solid black;"></td></tr>
     <% end %>
-  </tbody>
-</table>
+  <% else %>
+    <tr>
+      <td colspan="6">N/A</td>
+    </tr>
+  <% end %>
+  <td><strong>Total</strong></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+<td><strong><%= "#{@total_hours / 3600 || 0} hours #{@total_hours % 3600 / 60 || 0} minutes" %></strong></td>
+</td>
+
+    </tbody>
+  </table>
+</div>

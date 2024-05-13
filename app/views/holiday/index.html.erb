@@ -6,6 +6,7 @@
       <th>Start Date</th>
       <th>End Date</th>
       <th>Title</th>
+      <th></th>
     </tr>
   </thead>
   <tbody>
@@ -15,9 +16,28 @@
       <td><%= item.start_date %></td>
       <td><%= item.end_date %></td>
       <td><%= item.title %></td>
+      <td>
+      <div class="dropdown-action">
+        <%= image_tag("more.png", width: "20", height: "20", alt: "Edit User")%>
+          <div class="dropdown-content-action">
+            <div class="actions-container">
+            <button class="modal-btn" data-target="myModalDelete<%= item.id %>"> Delete</button>
+              <div id="myModalDelete<%= item.id %>" class="modal">
+                <div class="modal-content">
+                  <p style="text-align: center; margin-top: 10px;">Are you sure you want to Delete this Holiday?</p>
+                    <div id="timerDisplayModal"></div>
+                      <div class="modal-footer">
+                        <%= button_to "Yes, Delete", holiday_path(item.id), method: :delete, class: "sign-out-button delete-btn" %>
+                        <button class="closeModalBtn close sign-out-button">No</button>
+                      </div>
+                    </div>
+                </div>
+              </div>
+          </div>
+        </div>
+      </td>
     </tr>
     <% end %>
-
   </tbody>
 </table>
 </div>
