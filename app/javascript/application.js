@@ -13,6 +13,9 @@ document.addEventListener("turbo:load", function() {
         startTimer(startTime); // Start the timer
     }
 
+    function pad(number) {
+        return (number < 10 ? '0' : '') + number;
+    }
     function startTimer(startTime) {
         var timerDisplay = document.getElementById("timerDisplay");
         var systemTime = document.getElementById("timerDisplay").dataset.systemTime;
@@ -27,7 +30,7 @@ document.addEventListener("turbo:load", function() {
         var seconds = Math.floor((elapsedTime % (1000 * 60)) / 1000);
 
         // Display the elapsed time in the timerDisplay element
-        timerDisplay.textContent = hours + " hours " + minutes + " minutes " + seconds + " seconds";
+        timerDisplay.textContent = pad(hours) + " : " + pad(minutes) + " : " + pad(seconds);
     }
 });
 

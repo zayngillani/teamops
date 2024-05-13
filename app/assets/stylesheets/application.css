@@ -18,12 +18,6 @@
      width: 100vw;
      height: 25vh;
    }
-
-   .header {
-     overflow: hidden;
-     background-color: #f1f1f1;
-     padding: 20px 10px;
-   }
    
    .header a {
      float: left;
@@ -69,16 +63,20 @@
    .logo img {
      width: 110px;
      height: auto;
- }
+     margin-left: 40px;
+    }
 
- .header {
-     display: flex;
-     justify-content: space-between;
-     align-items: center;
-   }
-   
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      overflow: hidden;
+      background-color: #f1f1f1;
+      padding: 20px 10px;
+    }
+
    .sign-out-button {
-     background-color: #ff6700;
+     background-color: #F89320;
      border: none;
      color: white;
      padding: 10px 20px;
@@ -89,22 +87,108 @@
      margin-right: 10px;
      border-radius: 5px;
      cursor: pointer;
+     border-radius: 1px;
    }
    
    .sign-out-button:hover {
-     background-color: #ff6700;
+     background-color: #F89320;
    }
    
+   .leave-button {
+    background-color: #F89320;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    font-size: 16px;
+    margin-left: 3%;
+    border-radius: 5px;
+    cursor: pointer;
+    border-radius: 1px;
+  }
+
+  .leave-button:hover {
+    background-color: #ff6700;
+  }
+
    .content {
-     background-color: #f9f9f9; /* Off-white background color for the content */
-     padding: 20px;
-     height: 700px;
+     background-color: #F1F1F1; /* Off-white background color for the content */
+     padding: 12px;
+     height: auto;
    }
 
    .button-container {
      display: flex;
      margin-top: 20px;
 
+   }
+
+   .userTable {
+    width: 95%;
+    margin: 20px auto; /* Adjust margin for spacing from top and bottom */
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 20px; /* Add padding for spacing from left and right */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add shadow for depth */
+  }
+
+  .userTable h2 {
+    color: rgb(48, 48, 48);
+    margin-left: 2%;
+    margin-bottom: 3px;
+    margin-top: 3%;
+  }
+
+
+  .userTable p {
+    color: darkgray;
+    margin-left: 2%;
+    margin-bottom: 4%;
+    font-weight: bolder;
+  }
+
+  .userTable table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-left: 2%;
+  }
+
+  .userTable td {
+    padding: 10px; /* Adjust padding for spacing inside cells */
+    color: #423f3f;
+  }
+
+   .card {
+      width: 95%;
+      height: 170px;
+      background-color: #ffffff;
+      margin: auto;
+      position: relative;
+      border-radius: 10px;
+    }
+    .card h3 {
+      position: absolute;
+      top: 25px;
+      left: 45px;
+      color: rgb(48, 48, 48);
+    }
+
+    .card h1 {
+      position: absolute;
+      top: 50px;
+      left: 45px;
+      color: #F89320;
+    }
+
+    .card h4 {
+      position: absolute;
+      top: 100px;
+      left: 45px;
+      color: darkgray;
+    }
+
+   .spacer {
+    border-radius: 1px;
+    flex-grow: 1;
    }
 
    .timer {
@@ -141,7 +225,6 @@
    }
    
     th, td {
-      border: 1px solid #ddd;
       padding: 8px;
       text-align: left;
     }
@@ -360,6 +443,7 @@
   align-items: center;
   font-size: 25px;
   color: #fff;
+  margin-right: 40px;
 }
 
 .profile-image {
@@ -602,7 +686,7 @@ form .button input:hover{
 
   #timerDisplay {
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    font-size: 36px;
+    font-size: 65px;
     font-weight: bold;
     color: #333;
     background-color: #f0f0f0;
@@ -610,6 +694,8 @@ form .button input:hover{
     border-radius: 10px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     display: inline-block;
+    margin-left: 65%;
+    margin-top: 2%;
   }
 
 

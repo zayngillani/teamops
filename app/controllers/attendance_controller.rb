@@ -5,6 +5,16 @@ class AttendanceController < ApplicationController
           last_day_of_month = Date.current.end_of_month
           @session = current_user.attendances.where(created_at: first_day_of_month.beginning_of_day..last_day_of_month.end_of_day).order(created_at: :desc)
           @user = current_user
+          if @session.present?
+            total_hrs = 0
+            @session.each do |attendance|
+            total_hrs += attendance.total_hours.to_i unless attendance.total_hours.nil?
+            end
+             @total_hours = total_hrs
+          else
+            flash[:error] = "Attendance Not Present"
+            redirect_to attendance_index_path
+          end
      end
 
      def create_session
