@@ -65,7 +65,7 @@
 <body>
 
 <h1 class="attendance-heading">Attendance Details</h1>
-<p style="float: left; margin: 5px;">Employee:</p>
+<p style="float: left; margin: 7px;">Employee:</p>
 <p style="float: right; margin: 5px;">Month:  <strong><%= @user_sessions.first.created_at.strftime("%b") %></strong></p>
 <div style="display: flex; justify-content: space-between; align-items: center; margin: 5px;">
   <span style="margin: 5px;"><strong><%= @user.name %></strong></span>
@@ -74,8 +74,10 @@
   <br>
   <p style="float: left; margin: 5px;">Supervisor:</p>
   <span style="float: left; margin: 5px;"><strong><%= @user.supervisor.present? ? @user.supervisor : "Fahad" %></strong></span>
-  <span style="float: right; margin: 5px; margin-right: 10px;"><strong>8</strong></span>
-  <p style="float: right; margin: 5px;">Regular Hours:</p>
+  <span style="float: right; margin: 5px;"></span>
+<div style="display: flex; justify-content: space-between; align-items: center; margin: 5px;">
+  <p style="float: right; margin: 5px;">Regular Hours: <strong>8</strong></p>
+</div>
   <br>
   <br>
 <table class="attendance-table">
