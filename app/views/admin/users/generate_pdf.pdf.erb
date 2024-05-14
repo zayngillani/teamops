@@ -66,16 +66,15 @@
 
 <h1 class="attendance-heading">Attendance Details</h1>
 <p style="float: left; margin: 5px;">Employee:</p>
-<p style="float: right; margin: 5px; margin-left:62%;">Month:</p>
+<span style="margin: 5px; float: right">Month:  <strong><%= @user_sessions.first.created_at.strftime("%b %d, %Y") %></strong></span>
 <div style="display: flex; justify-content: space-between; align-items: center; margin: 5px;">
-  <span style="margin: 5px; border-bottom: 3px dotted #000;"><strong><%= @user.name %></strong></span>
+  <span style="margin: 5px;"><strong><%= @user.name %></strong></span>
 </div>
-<span style="margin: 5px; border-bottom: 3px dotted #000; float: right"><strong><%= @user_sessions.first.created_at.strftime("%b %d, %Y") %></strong></span>
   <br>
   <br>
   <p style="float: left; margin: 5px;">Supervisor:</p>
-  <span style="float: left; margin: 5px; border-bottom: 3px dotted #000;"><strong><%= @user.supervisor.present? ? @user.supervisor : "Fahad" %></strong></span>
-  <span style="float: right; margin: 5px; border-bottom: 3px dotted #000;"><strong>8</strong></span>
+  <span style="float: left; margin: 5px;"><strong><%= @user.supervisor.present? ? @user.supervisor : "Fahad" %></strong></span>
+  <span style="float: right; margin: 5px;"><strong>8</strong></span>
   <p style="float: right; margin: 5px;">Regular Hours:</p>
   <br>
   <br>
