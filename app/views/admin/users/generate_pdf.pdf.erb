@@ -66,7 +66,7 @@
 
 <h1 class="attendance-heading">Attendance Details</h1>
 <p style="float: left; margin: 5px;">Employee:</p>
-<span style="margin: 5px; float: right">Month:  <strong><%= @user_sessions.first.created_at.strftime("%b %d, %Y") %></strong></span>
+<p style="float: right; margin: 5px;">Month:  <strong><%= @user_sessions.first.created_at.strftime("%b %d, %Y") %></strong></p>
 <div style="display: flex; justify-content: space-between; align-items: center; margin: 5px;">
   <span style="margin: 5px;"><strong><%= @user.name %></strong></span>
 </div>
