@@ -65,13 +65,12 @@
 <body>
 
 <h1 class="attendance-heading">Attendance Details</h1>
-<div style="display: flex; align-items: center; margin: 5px;">
-  <p style="margin: 5px;">Employee:</p>
+<p style="float: left; margin: 5px;">Employee:</p>
+<div style="display: flex; justify-content: space-between; align-items: center; margin: 5px;">
   <span style="margin: 5px; border-bottom: 3px dotted #000;"><strong><%= @user.name %></strong></span>
-  <p style="margin: 5px; margin-left: 20px;">Month:</p>
-  <span style="margin: 5px; border-bottom: 3px dotted #000;"><strong><%= @user_sessions.first.created_at.strftime("%b %d, %Y") %></strong></span>
+    <span style="margin: 5px; border-bottom: 3px dotted #000; margin-left:50%;"><strong><%= @user_sessions.first.created_at.strftime("%b %d, %Y") %></strong></span>
+  <p style="float: right; margin: 5px; margin-left:62%;">Month:</p>
 </div>
-
   <br>
   <br>
   <p style="float: left; margin: 5px;">Supervisor:</p>
