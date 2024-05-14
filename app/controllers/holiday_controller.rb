@@ -3,10 +3,6 @@ class HolidayController < ApplicationController
     start_date = params[:holiday][:start_date]
     end_date = params[:holiday][:end_date]
     date_start = Date.parse(params[:holiday][:start_date])
-    if  params[:title].blank?
-      redirect_to holiday_index_path, flash: { error: "Title can't be blank or contain only spaces" }
-      return
-    end
     if date_start == Date.today && Time.now.hour >= 12
       redirect_to holiday_index_path, flash: { error: "Holiday can only be added before 12 pm." }
       return
