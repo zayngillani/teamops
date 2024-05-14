@@ -40,7 +40,7 @@
       <td></td>
       <td></td>
       <td></td>
-<td><strong><%= "#{@total_hours / 3600 || 0} hours #{@total_hours % 3600 / 60 || 0} minutes" %></strong></td>
+<td><strong><%= @total_hours.present? ? "#{@total_hours / 3600 || 0} hours #{@total_hours % 3600 / 60 || 0} minutes" : "N/A"%></strong></td>
 </td>
 
     </tbody>

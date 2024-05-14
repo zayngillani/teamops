@@ -8,12 +8,9 @@ class AttendanceController < ApplicationController
           if @session.present?
             total_hrs = 0
             @session.each do |attendance|
-            total_hrs += attendance.total_hours.to_i unless attendance.total_hours.nil?
+              total_hrs += attendance.total_hours.to_i unless attendance.total_hours.nil?
             end
-             @total_hours = total_hrs
-          else
-            flash[:error] = "Attendance Not Present"
-            redirect_to attendance_index_path
+            @total_hours = total_hrs
           end
      end
 
