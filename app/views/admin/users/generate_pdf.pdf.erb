@@ -22,35 +22,27 @@
     padding: 10px;
   }
 
-  .user-info {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
+.user-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px; /* Adjust as needed */
+}
 
-  .left-info {
-    display: flex;
-    align-items: center;
-  }
+.info-item {
+  display: flex;
+  align-items: center;
+}
 
-  .user-info p {
-    margin-right: 10px;
-  }
+.info-key {
+  margin-right: 10px;
+  font-weight: bold;
+}
 
-  .username {
-    border-bottom: 3px dotted #000;
-    padding-bottom: 2px;
-  }
-
-  .right-info {
-    display: flex;
-    align-items: center;
-    margin-right: 30px;
-  }
-
-  .right-info p {
-    margin-left: 10px;
-  }
+.info-value {
+  border-bottom: 1px dotted #000;
+  padding-bottom: 2px;
+}
 
   .absent-day {
     color: red;
@@ -60,23 +52,23 @@
 
 <h1 class="attendance-heading">Attendance Details</h1>
 <div class="user-info">
-  <div class="left-info">
-    <p>Employee:</p>
-    <span class="username"><strong><%= @user.name %></strong></span>
+  <div class="info-item">
+    <p class="info-key">Employee:</p>
+    <p class="info-value"><%= @user.name %></p>
   </div>
-  <div class="right-info">
-    <p>Month</p>
-    <span class="username"><%= @user_sessions.first.created_at.strftime("%b %d, %Y") %></span>
+  <div class="info-item">
+    <p class="info-key">Month:</p>
+    <p class="info-value"><%= @user_sessions.first.created_at.strftime("%b %d, %Y") %></p>
   </div>
 </div>
 <div class="user-info">
-  <div class="left-info">
-    <p>Supervisor:</p>
-    <span class="username"><strong><%= @user.supervisor %></strong></span>
+  <div class="info-item">
+    <p class="info-key">Supervisor:</p>
+    <p class="info-value"><%= @user.supervisor %></p>
   </div>
-  <div class="right-info">
-    <p>Regular Hours</p>
-    <span class="username">8</span>
+  <div class="info-item">
+    <p class="info-key">Regular Hours:</p>
+    <p class="info-value">8</p>
   </div>
 </div>
 <br>
