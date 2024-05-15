@@ -110,9 +110,10 @@ class Admin::UsersController < ApplicationController
       @user = User.find_by(id: params[:id])
       if @user.present?
         if @user.status == "active"
-        @user.update(status: 1)
-        flash[:success] = "User disabled successfully"
-        redirect_to admin_users_path
+          @user.update(status: 1)
+          disable_attendance(@user)
+          flash[:success] = "User disabled successfully"
+          redirect_to admin_users_path
         elsif @user.status == "pending"
           @user.update(status: 0)
           flash[:success] = "User undisabled successfully"
@@ -261,5 +262,21 @@ class Admin::UsersController < ApplicationController
      def user_params
        params.require(:user).permit(:email, :name, :slack_member_id, :supervisor)
      end
+
+     def disable_attendance(user)
+      attendance = user.attendances.last
+      if attendance.present?
+        if attendance.check_out_time.nil?
+          attendance.update(check_out_time: Time.now.utc)
+          total_duration_seconds = attendance.check_out_time - attendance.check_in_time
+          if attendance.break_in_time.present? && attendance.break_out_time.present?
+            total_break = attendance.break_out_time - attendance.break_in_time
+            total_duration_seconds -= total_break
+          end
+          attendance.update!(total_hours: total_duration_seconds)
+          SlackService.new(user, "Checked Out", attendance.check_out_time).send_message
+        end
+      end
+    end
    end
    

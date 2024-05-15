@@ -1,27 +1,42 @@
 <div class="content">
-  <h1> Hi <%= current_user.name %> </h1>
+<div class="card">
+  <h3> Welcome </h3>
+  <h1> <%= current_user.name %> </h1>
+  <h4> Have a Nice day at work</h4>
   <div class="button-container">
+    <% content_for :link_button do %>
+<%= button_to "Request Leaves", new_leave_path, method: :get, class: "sign-out-button", id: "checkInButton", onclick: "setTimeout(() => this.disabled = true, 0)" %>    <% end %>
   <% session = current_user.attendances.order(created_at: :asc).last%>
     <% if current_user.attendances.empty? || current_user.attendances.last.check_in_time <= 16.hours.ago || session.total_hours.present? %>
-    <%= button_to "Check-In", create_session_path, class: "sign-out-button", id: "checkInButton", onclick: "setTimeout(() => this.disabled = true, 0)" %>    
+    <% content_for :link_button do %>
+    <%= button_to "Check-In", create_session_path, class: "sign-out-button", id: "checkInButton", onclick: "setTimeout(() => this.disabled = true, 0)" %>
+    <% end %>
   <% elsif session.present? && session.check_out_time.nil? %>
         <% create_at = session.created_at %>
         <div id="timerDisplay" data-created-at="<%= create_at || nil %>" data-system-time="<%= Time.zone.now %>"></div>
     <% end %>
   </div>
+</div>
   <div style="float: right; margin-top: 20px;">
     <% if session.present? %>
       <% if session.check_out_time.nil? && !session.break_in_time.present? %>
+      <% content_for :link_button do %>
         <%= button_to "Break-In", break_session_path, class: "sign-out-button", id: "checkInButton", onclick: "setTimeout(() => this.disabled = true, 0)" %>
+      <% end %>
       <% elsif session.check_out_time.nil? && !session.break_out_time.present? %>
+      <% content_for :link_button do %>
         <%= button_to "Break-Out", break_session_path, class: "sign-out-button", id: "checkInButton", onclick: "setTimeout(() => this.disabled = true, 0)" %>
+      <% end %>
+    
       <% end %>
     <% end %>
   </div>
   <% if session.present? && session.check_out_time.nil? && current_user.attendances.last.check_in_time >= 16.hours.ago %>
     <% unless session.break_in_time.present? && !session.break_out_time.present? %>
       <div class="button-container">
+      <% content_for :link_button do %>
         <button id="modal-btn" class="sign-out-button">Check Out</button>
+      <% end %>
         <div id="myModal" class="modal">
           <div class="modal-content">
             <p style="text-align: center; margin-top: 10px;">Are you sure you want to checkout?</p>
@@ -35,12 +50,15 @@
       </div>
     <% end %>
   <% end %>
-      <br>
-    <%= button_to "Request Leaves", new_leave_path, method: :get, class: "sign-out-button", id: "checkInButton", onclick: "setTimeout(() => this.disabled = true, 0)" %>
-    <br>
 
-  <br>
+
+<div class="userTable">
+   <h2> Attedance Record </h2>
+  <p> Monthly Attedance</p>
   <%= render 'attendance/user_attendance' %>
+
+</div>
+<br>
 </div>
 
 

@@ -27,15 +27,25 @@ class HomeController < ApplicationController
      end
 
      def update_password
-          if params[:user][:password] == params[:user][:password_confirmation]
-               current_user.update(user_params)
-               current_user.update(password_changed_at: DateTime.now)
-               bypass_sign_in(current_user)
-               redirect_to root_path
-               flash[:success] = "Password Successfully Changed"
+          new_password = params[:user][:password]
+          if new_password == params[:user][:password_confirmation]
+            if current_user.valid_password?(new_password)
+              flash[:error] = "New password cannot be the same as the current password"
+              redirect_to change_password_path
+            else
+              if current_user.update(user_params)
+                current_user.update(password_changed_at: DateTime.now)
+                bypass_sign_in(current_user)
+                flash[:success] = "Password Successfully Changed"
+                redirect_to root_path
+              else
+                flash[:error] = "Failed to update password"
+                redirect_to change_password_path
+              end
+            end
           else
-               redirect_to change_password_path
-               flash[:error] = "Passwords Don't Match"
+            flash[:error] = "Passwords don't match"
+            redirect_to change_password_path
           end
      end
 

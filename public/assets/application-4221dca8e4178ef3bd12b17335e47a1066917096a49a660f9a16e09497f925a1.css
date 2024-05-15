@@ -1045,34 +1045,3 @@ label {
   border-radius: 5px;
   box-sizing: border-box;
 }
-
-
-.user-info {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.left-info {
-  display: flex;
-  align-items: center;
-}
-
-.user-info p {
-  margin-right: 10px;
-}
-
-.username {
-  border-bottom: 3px dotted #000;
-  padding-bottom: 2px;
-}
-
-.right-info {
-  display: flex;
-  align-items: center;
-  margin-right: 30px;
-}
-
-.right-info p {
-  margin-left: 10px;
-}

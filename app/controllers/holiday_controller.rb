@@ -2,6 +2,11 @@ class HolidayController < ApplicationController
   def create
     start_date = params[:holiday][:start_date]
     end_date = params[:holiday][:end_date]
+    date_start = Date.parse(params[:holiday][:start_date])
+    if date_start == Date.today && Time.now.hour >= 12
+      redirect_to holiday_index_path, flash: { error: "Holiday can only be added before 12 pm." }
+      return
+    end
     if start_date > end_date
       redirect_to holiday_index_path, flash: { error: "End date must be greater than or equal to start date" }
       return
@@ -26,6 +31,18 @@ class HolidayController < ApplicationController
 
   def index
     @holidays = Holiday.all
+  end
+
+  def destroy
+    @holiday = Holiday.find_by(id: params[:id])
+    if @holiday.present?
+      @holiday.destroy
+      flash[:success] = "Holiday deleted successfully"
+      redirect_to holiday_index_path
+    else
+      flash[:error] = "Holiday not found"
+      redirect_to holiday_index_path
+    end
   end
 
   private

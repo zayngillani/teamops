@@ -21,36 +21,6 @@
   padding: 10px; /* Add padding for better appearance */
 }
 
-.user-info {
-  display: flex;
-  justify-content: space-between; /* Ensure space between left and right info */
-  align-items: center;
-}
-
-.left-info {
-  display: flex;
-  align-items: center;
-}
-
-.user-info p {
-  margin-right: 10px;
-}
-
-.username {
-  border-bottom: 3px dotted #000;
-  padding-bottom: 2px;
-}
-
-.right-info {
-  display: flex;
-  align-items: center;
-  margin-right: 30px;
-}
-
-.right-info p {
-  margin-left: 10px; /* Adjust margin to create space between left and right info */
-}
-
 .absent-day {
   color: red;
   font-weight: bold;
@@ -64,17 +34,10 @@
 </style>
 
 <h1 class="attendance-heading">Monthly Report</h1>
-<div class="user-info">
-  <div class="left-info">
-    <p>Month:</p>
-    <span class="username"><strong><%=  Date::MONTHNAMES[@month]%></strong></span>
-  </div>
-  <div class="right-info">
-    <p>Regular Hours</p>
-      <span class="username"><%= "#{@total_working_hours}" %></span>
-  </div>
+<p style="float: right; margin: 5px;">Month:  <strong><%= Date::MONTHNAMES[@month] %></strong></p>
+<div style="display: flex; justify-content: space-between; align-items: center; margin: 5px;">
+  <p style="float: left; margin: 0; margin-right: 10px;">Regular Hours:<strong>8</strong></p>
 </div>
-
 <table class="attendance-table user-data">
   <thead>
     <tr>

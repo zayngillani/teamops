@@ -1,9 +1,11 @@
 <div class="header">
   <a href="/" class="logo">
-    <%= image_tag "logo.svg" %>
+    <%= image_tag "tecerlogo.svg" %>
   </a>
+  <div class="spacer"></div> <!-- Spacer to push buttons to the right -->
+  <%= yield(:link_button) %>
   <div class="profile">
-  <span class="initial"><%= current_user.name.split.first[0] + current_user.name.split.last[0] %></span>
+    <span class="initial"><%= current_user.name.split.first[0] + current_user.name.split.last[0] %></span>
     <div class="dropdown-content">
       <%= button_to "Profile", admin_user_profile_path(current_user.id), method: :get %>
       <%= button_to "Sign out", destroy_user_session_path, method: :delete %>
