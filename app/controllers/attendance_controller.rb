@@ -94,9 +94,15 @@ class AttendanceController < ApplicationController
      private
 
      def restrict_mobile_access
-          if browser.device.mobile?
-            redirect_to root_path, alert: "Check-in and check-out are not allowed from mobile devices."
-          end
+       if mobile_device?
+         redirect_to root_path, alert: "Check-in and check-out are not allowed from mobile devices."
+       end
+     end
+     def mobile_device?
+       browser.device.mobile? || android_device?
      end
      
+     def android_device?
+       request.user_agent =~ /Android/i
+     end
 end
