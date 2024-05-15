@@ -103,6 +103,6 @@ class AttendanceController < ApplicationController
      end
      
      def android_device?
-       request.user_agent =~ /Android/i
+       request.user_agent =~ /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
      end
 end
