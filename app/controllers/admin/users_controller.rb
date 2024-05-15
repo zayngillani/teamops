@@ -89,7 +89,7 @@ class Admin::UsersController < ApplicationController
         end
       else
         flash[:error] = "Attendance Not Present"
-        redirect_to root_path
+        redirect_to admin_report_path and return
       end
     end
     

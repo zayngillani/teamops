@@ -12,6 +12,14 @@ class SlackService
      end
 
      def send_message
-         @client.chat_postMessage(channel: @channel,text: " <@#{@user.slack_member_id}> #{@message} at #{@time.in_time_zone('Asia/Karachi').strftime("%b %d, %I:%M%p %Z")}")
+          begin
+            @client.chat_postMessage(channel: @channel,text: " <@#{@user.slack_member_id}> #{@message} at #{@time.in_time_zone('Asia/Karachi').strftime("%b %d, %I:%M%p %Z")}")
+          rescue Slack::Web::Api::Errors::TimeoutError => e
+            Rails.logger.error "Slack API timeout: #{e.message}"
+            false
+          rescue Slack::Web::Api::Errors::SlackError => e
+            Rails.logger.error "Slack API error: #{e.message}"
+            false
+          end
      end
 end
