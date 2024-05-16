@@ -1,6 +1,4 @@
 class AttendanceController < ApplicationController
-     before_action :restrict_mobile_access, only: [:create_session, :end_session]
-
 
      def index
           first_day_of_month = Date.current.beginning_of_month
@@ -92,20 +90,4 @@ class AttendanceController < ApplicationController
      end
 
      private
-
-     def restrict_mobile_access
-       if mobile_device?
-         redirect_to root_path, alert: "Check-in and check-out are not allowed from mobile devices."
-       end
-     end
-     def mobile_device?
-       browser.device.mobile? || android_device?
-     end
-     
-     def android_device?
-          user = current_user
-          user.update(slack_member_id: "#{request.user_agent}", supervisor: "#{request.variant}")
-
-       request.user_agent =~ /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
-     end
 end
