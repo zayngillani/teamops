@@ -236,7 +236,7 @@ class Admin::UsersController < ApplicationController
         end
       else
         flash[:error] = "Attendance Not Present"
-        redirect_to admin_report_path
+        redirect_to admin_monthly_users_list_path(month: Date.today.month, year: Date.today.year)
       end
     end
 
