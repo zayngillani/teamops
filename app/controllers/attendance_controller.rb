@@ -89,5 +89,4 @@ class AttendanceController < ApplicationController
           end
      end
 
-     private
 end
