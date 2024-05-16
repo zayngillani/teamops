@@ -73,26 +73,22 @@
 
 <% @users.each do |user| %>
 <h1 class="attendance-heading">Timesheet</h1>
-<div class="user-info">
-  <div class="left-info">
-    <p>Employee:</p>
-    <span class="username"><strong><%= user.name%></strong></span>
-  </div>
-  <div class="right-info">
-    <p>Month</p>
-      <span class="username"><%= Date::MONTHNAMES[@month]%></span>
-  </div>
+  <p style="float: left; margin: 5px;">Employee:</p>
+<p style="float: right; margin: 5px;">Month:  <strong><%= Date::MONTHNAMES[@month] %></strong></p>
+<div style="display: flex; justify-content: space-between; align-items: center; margin: 5px;">
+  <span style="margin: 5px;"><strong><%= user.name %></strong></span>
 </div>
-<div class="user-info">
-  <div class="left-info">
-      <p>Supervisor:</p>
-    <span class="username"><strong><%= user.supervisor%></strong></span>
-  </div>
-  <div class="right-info">
-    <p>Regular Hours</p>
-      <span class="username">8</span>
-  </div>
-  </div>  <table class="attendance-table user-attendance">
+  <br>
+  <br>
+  <p style="float: left; margin: 5px;">Supervisor:</p>
+  <span style="float: left; margin: 5px;"><strong><%= user.supervisor.present? ? user.supervisor : "Fahad" %></strong></span>
+  <span style="float: right; margin: 5px;"></span>
+<div style="display: flex; justify-content: space-between; align-items: center; margin: 5px;">
+  <p style="float: right; margin: 0; margin-right: 10px;">Regular Hours:8</p>
+</div>
+  <br>
+  <br>
+  <table class="attendance-table user-attendance">
     <thead>
       <tr>
         <th>Date</th>

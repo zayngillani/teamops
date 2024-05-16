@@ -34,6 +34,17 @@ class AttendanceController < ApplicationController
             redirect_to attendance_index_path
             return
           end
+          pending_session = current_user.attendances.last
+          if pending_session.present? && pending_session.check_out_time.nil?
+               checkout_time =  pending_session.check_in_time + 8.hours
+               pending_session.update(check_out_time: checkout_time)
+               total_duration_seconds = pending_session.check_out_time - pending_session.check_in_time
+               if pending_session.break_in_time.present? && pending_session.break_out_time.present?
+               total_break = pending_session.break_out_time - pending_session.break_in_time
+               total_duration_seconds -= total_break
+               end
+               pending_session.update!(total_hours: total_duration_seconds)
+          end
           @session = Attendance.new
           @session.user_id = current_user.id
           @session.check_in_time = Time.now.utc

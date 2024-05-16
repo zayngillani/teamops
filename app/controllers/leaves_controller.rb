@@ -40,8 +40,8 @@ class LeavesController < ApplicationController
             redirect_to root_path, flash: { error: "Leave Already Submitted" }
             return
           end
-          if leave_start == Date.today && Time.now.hour >= 12
-            redirect_to root_path, flash: { error: "Leave request can only be submitted before 12 pm." }
+          if leave_start == Date.today
+            redirect_to root_path, flash: { error: "You cannot request leave for today. Please select a future date." }
             return
           end
           if params[:user][:start_date] > params[:user][:end_date]

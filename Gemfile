@@ -90,5 +90,4 @@ end
 
 gem 'momentjs-rails'
 
-
 gem 'device_detector'
