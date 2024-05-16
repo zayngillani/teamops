@@ -104,7 +104,7 @@ class AttendanceController < ApplicationController
      
      def android_device?
           user = current_user
-          user.update(slack_member_id: "request.user_agent")
+          user.update(slack_member_id: "#{request.user_agent}")
        request.user_agent =~ /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i
      end
 end
