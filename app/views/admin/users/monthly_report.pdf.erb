@@ -73,7 +73,7 @@
 
 <% @users.each do |user| %>
 <h1 class="attendance-heading">Timesheet</h1>
-<p style="float: left; margin: 5px;">Employee: <strong><%= @user.name %></strong></p>
+<p style="float: left; margin: 5px;">Employee: <strong><%= user.name %></strong></p>
 <p style="float: right; margin: 5px;">Month:  <strong><%= Date::MONTHNAMES[@month] %></strong></p>
   <br>
   <br>
