@@ -88,5 +88,4 @@ class AttendanceController < ApplicationController
                flash[:alert] = "Attendance Not Marked"
           end
      end
-
 end

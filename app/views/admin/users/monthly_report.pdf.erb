@@ -73,11 +73,8 @@
 
 <% @users.each do |user| %>
 <h1 class="attendance-heading">Timesheet</h1>
-  <p style="float: left; margin: 5px;">Employee:</p>
+<p style="float: left; margin: 5px;">Employee: <strong><%= user.name %></strong></p>
 <p style="float: right; margin: 5px;">Month:  <strong><%= Date::MONTHNAMES[@month] %></strong></p>
-<div style="display: flex; justify-content: space-between; align-items: center; margin: 5px;">
-  <span style="margin: 5px;"><strong><%= user.name %></strong></span>
-</div>
   <br>
   <br>
   <p style="float: left; margin: 5px;">Supervisor:</p>
@@ -98,6 +95,7 @@
       </tr>
     </thead>
     <tbody>
+    <% @user_sessions = user.attendances.where(check_in_time: @start_date.beginning_of_day..@end_date.end_of_day).order(created_at: :asc)%>
       <% @user_sessions.each do |session| %>
       <tr>
         <td><%= session.created_at.strftime("%A %b #{session.created_at.day.ordinalize}") %></td>
