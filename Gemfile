@@ -89,5 +89,3 @@ group :test do
 end
 
 gem 'momentjs-rails'
-
-gem 'browser'

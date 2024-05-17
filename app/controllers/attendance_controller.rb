@@ -1,5 +1,4 @@
 class AttendanceController < ApplicationController
-     before_action :block_mobile_and_tablet, only: [:create_session, :end_session]
 
      def index
           first_day_of_month = Date.current.beginning_of_month
@@ -88,14 +87,5 @@ class AttendanceController < ApplicationController
           else
                flash[:alert] = "Attendance Not Marked"
           end
-     end
-
-     private
-     
-     def block_mobile_and_tablet
-     browser = Browser.new(request.user_agent)
-       if browser.device.mobile? || browser.device.tablet? || browser.platform.android? || browser.platform.ios?
-         redirect_to root_path, alert: "Check-in and check-out are not allowed from mobile devices."
-       end
      end
 end
