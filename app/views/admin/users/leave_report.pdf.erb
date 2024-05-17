@@ -42,12 +42,7 @@
 }
 </style>
 <h1 class="attendance-heading">Leave Report</h1>
-<div class="user-info">
-  <div class="left-info">
-    <p>Month:</p>
-    <span class="username"><strong><%=  Date::MONTHNAMES[@month]%></strong></span>
-  </div>
-</div>
+<p style="float: right; margin: 5px;">Month:  <strong><%= Date::MONTHNAMES[@month] %></strong></p>
 <table class="attendance-table">
   <thead>
     <tr>
