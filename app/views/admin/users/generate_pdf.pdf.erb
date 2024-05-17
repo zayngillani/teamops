@@ -34,9 +34,9 @@
 </head>
 <body>
 
-<h1 class="attendance-heading">Attendance Details</h1>
+<h1 class="attendance-heading">Monthly Timesheet</h1>
 <p style="float: left; margin: 5px;">Employee: <strong><%= @user.name %></strong></p>
-<p style="float: right; margin: 5px;">Month:  <strong><%= @user_sessions.first.created_at.strftime("%b") %></strong></p>
+<p style="float: right; margin: 5px; margin-right: 10px;">Month:  <strong><%= @user_sessions.first.created_at.strftime("%b") %></strong></p>
   <br>
   <br>
   <p style="float: left; margin: 5px;">Supervisor:</p>
