@@ -30,7 +30,7 @@ Rails.application.routes.draw do
   get '/approve', :to => "leaves#approve", as: 'approve'
   get '/reject', :to => "leaves#reject", as: 'reject'
 
-  resources :holiday, only: [:new, :create, :index, :destroy]
+  resources :public_holidays, only: [:new, :create, :index, :destroy]
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

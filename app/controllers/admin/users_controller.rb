@@ -72,11 +72,13 @@ class Admin::UsersController < ApplicationController
       @year = params[:year].to_i
       start_date = Date.new(@year, @month, 1)
       end_date = start_date.end_of_month
-      # @public_holidays = Holiday.where("start_date <= ? AND end_date >= ?", start_date.end_of_month, end_date.beginning_of_month)
+      @public_holidays = PublicHoliday.where("start_date <= ? AND end_date >= ?", start_date.end_of_month, end_date.beginning_of_month)
       date_range = (start_date..end_date).reject { |date| date.saturday? || date.sunday? }
-      # @public_holidays.each do |holiday|
-      #   date_range.reject! { |date| date.between?(holiday.start_date, holiday.end_date) }
-      # end
+      if @public_holidays.present?
+        @public_holidays.each do |holiday|
+          date_range.reject! { |date| date.between?(holiday.start_date, holiday.end_date) }
+        end
+      end
       @user_sessions = @user.attendances.where(check_in_time: start_date.beginning_of_day..end_date.end_of_day).order(created_at: :asc)
       present_dates = @user_sessions.pluck(:check_in_time).map(&:to_date)
       created_date = @user.created_at.to_date
@@ -185,14 +187,15 @@ class Admin::UsersController < ApplicationController
       @users = User.where(role: "user", deleted: false)
       start_date = Date.new(@year, @month, 1)
       end_date = start_date.end_of_month
-      # @public_holidays = Holiday.where("start_date <= ? AND end_date >= ?", start_date.end_of_month, end_date.beginning_of_month)
-      
+      @public_holidays = PublicHoliday.where("start_date <= ? AND end_date >= ?", start_date.end_of_month, end_date.beginning_of_month)
       @user_leaves = {}
       @users.each do |user|
         date_range = (start_date..end_date).reject { |date| date.saturday? || date.sunday? }
-        # @public_holidays.each do |holiday|
-        #   date_range.reject! { |date| date.between?(holiday.start_date, holiday.end_date) }
-        # end
+        if @public_holidays.present?
+          @public_holidays.each do |holiday|
+            date_range.reject! { |date| date.between?(holiday.start_date, holiday.end_date) }
+          end
+        end
         present_dates = user.attendances.pluck(:check_in_time).map(&:to_date)
         created_date = user.created_at.to_date
         leaves = date_range.count { |date|
