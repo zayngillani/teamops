@@ -15,12 +15,12 @@ class AttendanceController < ApplicationController
      end
 
      def create_session
-          holiday = Holiday.find_by(start_date: Date.today)
-          if holiday.present?
-               flash[:error] = "You can't check in on a #{holiday.title}."
-               redirect_to attendance_index_path
-               return
-          end
+          # holiday = Holiday.find_by(start_date: Date.today)
+          # if holiday.present?
+          #      flash[:error] = "You can't check in on a #{holiday.title}."
+          #      redirect_to attendance_index_path
+          #      return
+          # end
           existing_session = current_user.attendances.where(check_in_time: Date.today.beginning_of_day..Date.today.end_of_day).first
           leave = current_user.leaves.where(start_date: Date.today.beginning_of_day..Date.today.end_of_day, status: "approved")
           if leave.present?
