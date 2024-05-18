@@ -72,7 +72,7 @@ class Admin::UsersController < ApplicationController
       @year = params[:year].to_i
       start_date = Date.new(@year, @month, 1)
       end_date = start_date.end_of_month
-      @public_holidays = Holiday.where("start_date <= ? AND end_date >= ?", start_date.end_of_month, end_date.beginning_of_month)
+      @public_holidays = PublicHoliday.where("start_date <= ? AND end_date >= ?", start_date.end_of_month, end_date.beginning_of_month)
       date_range = (start_date..end_date).reject { |date| date.saturday? || date.sunday? }
       if @public_holidays.present?
         @public_holidays.each do |holiday|
