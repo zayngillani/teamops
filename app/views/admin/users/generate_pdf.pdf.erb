@@ -73,12 +73,6 @@
         </td>
       </tr>
     <% end %>
-    <% @public_holidays.each do |holiday| %>
-  <tr>
-    <td><strong><%= holiday.title %></strong></td>
-    <td colspan="4"><%= holiday.start_date.strftime("%b %d, %Y") %> to <%= holiday.end_date.strftime("%b %d, %Y") %></td>
-  </tr>
-<% end %>
     <tr>
       <td><strong>Total</strong></td>
       <td></td>

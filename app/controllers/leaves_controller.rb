@@ -52,15 +52,15 @@ class LeavesController < ApplicationController
                                     .where("start_date >= ?", Date.today.beginning_of_month)
                                     .where("start_date <= ?", Date.today.end_of_month)
                                     .count
-          holiday = Holiday.find_by(start_date: start_date..end_date)
+          # holiday = Holiday.find_by(start_date: start_date..end_date)
           if leaves_this_month >= 2
             redirect_to root_path, flash: { error: "You can only request two leaves in one month" }
             return
           end
-          if holiday.present?
-            redirect_to root_path, flash: { error: "You can't request for Leave on Public Holiday" }
-            return
-          end
+          # if holiday.present?
+          #   redirect_to root_path, flash: { error: "You can't request for Leave on Public Holiday" }
+          #   return
+          # end
           if Leave.exists?(user_id: current_user.id, status: [0, 1, 2], start_date: start_date..end_date)
             redirect_to root_path, flash: { error: "Leave Already Submitted" }
             return
