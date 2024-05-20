@@ -15,77 +15,89 @@ class AttendanceController < ApplicationController
      end
 
      def create_session
-          holiday = PublicHoliday.find_by(start_date: Date.today)
-          if holiday.present?
-               flash[:error] = "You can't check in on a #{holiday.title}."
-               redirect_to attendance_index_path
-               return
-          end
-          existing_session = current_user.attendances.where(check_in_time: Date.today.beginning_of_day..Date.today.end_of_day).first
-          leave = current_user.leaves.where(start_date: Date.today.beginning_of_day..Date.today.end_of_day, status: "approved")
-          if leave.present?
-               flash[:error] = "You are on leave today, so you won't be able to check-in."
-               redirect_to attendance_index_path
-               return
-          end
-          if existing_session
-            flash[:error] = "You have already checked in today"
-            redirect_to attendance_index_path
-            return
-          end
-          pending_session = current_user.attendances.last
-          if pending_session.present? && pending_session.check_out_time.nil?
-               checkout_time =  pending_session.check_in_time + 8.hours
-               pending_session.update(check_out_time: checkout_time)
-               total_duration_seconds = pending_session.check_out_time - pending_session.check_in_time
-               if pending_session.break_in_time.present? && pending_session.break_out_time.present?
-               total_break = pending_session.break_out_time - pending_session.break_in_time
-               total_duration_seconds -= total_break
-               end
-               pending_session.update!(total_hours: total_duration_seconds)
-          end
-          @session = Attendance.new
-          @session.user_id = current_user.id
-          @session.check_in_time = Time.now.utc
-          @session.save!
-          flash[:success] = "Checked IN successfully"
-          SlackService.new(current_user, "Checked In", @session.check_in_time).send_message
-          redirect_to attendance_index_path
-        end
-
-     def end_session
-          @user = current_user
-          @session = Attendance.where(user_id: @user.id).last
-               @session.update!(check_out_time: Time.now.utc)
-               total_duration_seconds = @session.check_out_time - @session.check_in_time
-               if @session.break_in_time.present? && @session.break_out_time.present?
-               total_break = @session.break_out_time - @session.break_in_time
-               total_duration_seconds -= total_break
-               end
-               @session.update!(total_hours: total_duration_seconds)
-               flash[:success] = "Checked OUT successfully"
-               SlackService.new(current_user, "Checked Out", @session.check_out_time).send_message
-               redirect_to attendance_index_path
+       holiday = PublicHoliday.find_by(start_date: Date.today)
+       if holiday.present?
+         flash[:error] = "You can't check in on a #{holiday.title}."
+         redirect_to attendance_index_path
+         return
+       end
+       existing_session = current_user.attendances.where(check_in_time: Date.today.beginning_of_day..Date.today.end_of_day).first
+       leave = current_user.leaves.where(start_date: Date.today.beginning_of_day..Date.today.end_of_day, status: "approved")
+       if leave.present?
+         flash[:error] = "You are on leave today, so you won't be able to check-in."
+         redirect_to attendance_index_path
+         return
+       end
+       if existing_session
+         flash[:error] = "You have already checked in today"
+         redirect_to attendance_index_path
+         return
+       end
+       pending_session = current_user.attendances.last
+       if pending_session.present? && pending_session.check_out_time.nil?
+         checkout_time = pending_session.check_in_time + 8.hours
+         pending_session.update(check_out_time: checkout_time)
+         total_duration_seconds = checkout_time - pending_session.check_in_time
+         total_break_time = pending_session.breaks.sum { |br| br.break_out_time - br.break_in_time if br.break_in_time.present? && br.break_out_time.present? }
+         total_duration_seconds -= total_break_time
+         pending_session.update!(total_hours: total_duration_seconds)
+       end
+   
+       @session = current_user.attendances.create!(check_in_time: Time.now.utc)
+       flash[:success] = "Checked IN successfully"
+       SlackService.new(current_user, "Checked In", @session.check_in_time).send_message
+       redirect_to attendance_index_path
      end
-
+   
+     def end_session
+       @session = current_user.attendances.last
+       if @session
+         @session.update!(check_out_time: Time.now.utc)
+         total_duration_seconds = @session.check_out_time - @session.check_in_time
+         total_break_time = @session.breaks.sum { |br| br.break_out_time - br.break_in_time if br.break_in_time.present? && br.break_out_time.present? }
+         total_duration_seconds -= total_break_time
+         @session.update!(total_hours: total_duration_seconds)
+         flash[:success] = "Checked OUT successfully"
+         SlackService.new(current_user, "Checked Out", @session.check_out_time).send_message
+       else
+         flash[:error] = "No active session found"
+       end
+       redirect_to attendance_index_path
+     end
+   
      def break_session
-          if @break = current_user.attendances.last
-               if @break.present?  && @break.check_out_time.nil? && @break.break_out_time.nil? && @break.break_in_time.nil?
-                    @break.update!(break_in_time: Time.now.utc)
-                    flash[:success] = "Break In successfully"
-                    SlackService.new(current_user, "Break In", @break.break_in_time).send_message
-                    redirect_to attendance_index_path
-               elsif @break.break_in_time.present? && @break.break_out_time.nil?
-                    @break.update!(break_out_time: Time.now.utc)
-                    flash[:success] = "Break OUT successfully"
-                    SlackService.new(current_user, "Break Out", @break.break_out_time).send_message
-                    redirect_to attendance_index_path
-               else
-               flash[:error] = "Break Already Marked"
-               redirect_to attendance_index_path
-               end
+          @session = current_user.attendances.last
+          if @session && @session.check_out_time.nil?
+            last_break = @session.breaks.last
+            if last_break.nil? || (last_break.break_in_time.present? && last_break.break_out_time.present?)
+              @session.breaks.create!(break_in_time: Time.now.utc)
+              flash[:success] = "Break IN successfully"
+              SlackService.new(current_user, "Break In", Time.now.utc).send_message
+            elsif last_break.break_in_time.present? && last_break.break_out_time.nil?
+              last_break.update!(break_out_time: Time.now.utc)
+              total_break_time = calculate_total_break_time(@session)
+              @session.update!(total_break: total_break_time)
+              flash[:success] = "Break IN successfully"
+              SlackService.new(current_user, "Break Out", Time.now.utc).send_message
+            else
+              flash[:error] = "Unable to mark break"
+            end
           else
-               flash[:alert] = "Attendance Not Marked"
+            flash[:error] = "No active session or session already checked out"
           end
+          redirect_to attendance_index_path
+     end
+        
+     private
+     
+     def calculate_total_break_time(session)
+          total_break_time_seconds = 0
+          session.breaks.each do |break_instance|
+               if break_instance.break_in_time.present? && break_instance.break_out_time.present?
+               break_duration_seconds = break_instance.break_out_time - break_instance.break_in_time
+               total_break_time_seconds += break_duration_seconds
+               end
+          end
+          total_break_time_seconds
      end
 end
