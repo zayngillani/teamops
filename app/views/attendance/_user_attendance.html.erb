@@ -5,8 +5,7 @@
         <th>Date</th>
         <th>Check In</th>
         <th>Check Out</th>
-        <th>Break In</th>
-        <th>Break Out</th>
+        <th>Break</th>
         <th>Total Hours</th>
         <tr><td colspan="6" style="border-bottom: 1px solid black;"></td></tr>
       </tr>
@@ -18,8 +17,18 @@
         <td><%= item.created_at.strftime("%Y-%m-%d ") %></td>
         <td><%= item.check_in_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") %></td>
         <td><%= item.check_out_time.present? ? item.check_out_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A" %></td>
-        <td><%= item.break_in_time.present? ? item.break_in_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A" %></td>
-        <td><%= item.break_out_time.present? ? item.break_out_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A" %></td>
+        <td>
+          <% if item.total_break.present? %>
+           <% total_break_seconds = item.total_break %>
+            <% if total_break_seconds >= 3600 %>
+              <%= "#{total_break_seconds / 3600} hours #{total_break_seconds % 3600 / 60} minutes" %>
+            <% else %>
+              <%= "#{total_break_seconds / 60} minutes" %>
+            <% end %>
+          <% else %>
+            N/A
+          <% end %>
+        </td>
         <td>
           <% if item.total_hours.present? %>
             <%= "#{item.total_hours / 3600} hours #{item.total_hours % 3600 / 60} minutes" %>
@@ -36,7 +45,6 @@
     </tr>
   <% end %>
   <td><strong>Total</strong></td>
-      <td></td>
       <td></td>
       <td></td>
       <td></td>
