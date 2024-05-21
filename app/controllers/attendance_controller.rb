@@ -54,7 +54,7 @@ class AttendanceController < ApplicationController
        if @session
          @session.update!(check_out_time: Time.now.utc)
          total_duration_seconds = @session.check_out_time - @session.check_in_time
-         total_break_time = @session.breaks.sum { |br| br.break_out_time - br.break_in_time if br.break_in_time.present? && br.break_out_time.present? }
+         total_break_time = calculate_total_break_time(@session)
          total_duration_seconds -= total_break_time
          @session.update!(total_hours: total_duration_seconds)
          flash[:success] = "Checked OUT successfully"
