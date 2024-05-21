@@ -43,7 +43,7 @@
             <div id="timerDisplayModal"></div>
             <div class="modal-footer">
               <button id="closeModalBtn" class="close sign-out-button">No</button>
-              <%= button_to "Check-Out", end_session_path, class: "sign-out-button", id: "checkOutButtonModal", onclick: "setTimeout(() => this.disabled = true, 0)" %>
+              <%= button_to "Check-Out", end_session_path, class: "sign-out-button", id: "checkOutButtonModal", onclick: "this.disabled=true; this.form.submit();" %>
             </div>
           </div>
         </div>
