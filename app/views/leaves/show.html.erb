@@ -24,8 +24,10 @@
           </td>
           <% else %>
           <td>
-          <%= link_to "Approve", approve_path(id: item.id), class: "sign-out-button"%> 
-          <%= link_to "Reject", reject_path(id: item.id), class: "sign-out-button"%>
+          <div class="leave-container">
+            <%= button_to "Approve", approve_path, method: :get, params: { id: item.id }, class: "leave-request" %>
+            <%= button_to "Reject", reject_path, method: :get, params: { id: item.id }, class: "leave-request" %>
+          </div>
           </td>
           <% end %>
         </tr>
