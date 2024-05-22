@@ -1,38 +1,94 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     <title>Login</title> 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"/>
-  </head>
+<html>
+<head>
+  <title>Login Page</title>
+  <style>
+    body, html {
+      height: 100%;
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
 
-<body class="special-background">
-  <div class="container">
-      <div class="wrapper">
-        <div class="title"><span>Login</span></div>
+    .login-container {
+      display: flex;
+      height: 100vh;
+      width: 100%;
+      margin: 0 auto;
+      max-width: 240px; /* Set a maximum width for the login form */
+      padding: 70px 5px;
+      margin-left: 55%;
+    }
+
+    .background-image {
+      flex: 1;
+      background: url('/assets/loginscreen.svg') no-repeat center center;
+      background-size: cover;
+    }
+
+    .login-form {
+      flex: 0 0 417px;
+      padding: 80px 40px;
+      background: white;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      margin: auto; /* Center the login form horizontally */
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px;
+      margin-top: 5px;
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 10px;
+      background-color: #007bff;
+      border: none;
+      color: white;
+      cursor: pointer;
+    }
+
+    .btn-primary:hover {
+      background-color: #0056b3;
+    }
+
+
+    .f-link {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 11%;
+    }
+  </style>
+</head>
+<body>
+  <div class="background-image">
+    <div class="login-container">
+      <div class="login-form">
         <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-          <% if notice %>
-            <div class="alert alert-success fading-out" id="banner"><%= notice %></div>
-          <% end %>
-          <% if alert %>
-            <div class="alert alert-danger fading-out" id="banner"><%= alert %></div>
-          <% end %>
-          <div class="row">
-            <i class="fas fa-user"></i>
-              <%= f.email_field :email, autofocus: true, autocomplete: "email", placeholder: "Email", required: true %>
+          <div class="form-group">
+            <%= f.label :email %>
+            <%= f.email_field :email, autofocus: true, class: 'form-control', autocomplete: "email", placeholder: "Email", required: true %>
           </div>
-          <div class="row">
-            <i class="fas fa-lock"></i>
-              <%= f.password_field :password, autocomplete: "current-password", placeholder: "Password", required: true %>
+          <div class="form-group">
+            <%= f.label :password %>
+            <%= f.password_field :password, autocomplete: "current-password", class: 'form-control', placeholder: "Password", required: true %>
           </div>
-              <%= f.submit "Log in", class: "sign-in-button" %>
-            <div class="doEnd">
-              <%= link_to "Forgot Password?", new_user_password_path(resource_name), :class => "btn btn-link" %>
-            </div>
-          <% end %>
+          <div class="f-link">
+            <%= link_to "Forgot Password?", new_user_password_path(resource_name), style: "color: black;" %>
+          </div>  
+          <div class="form-group">
+            <%= f.submit "Login", class: "sign-in-button" %>
+          </div>
+        <% end %>
       </div>
     </div>
-
-  </body>
+  </div>
+</body>
 </html>
