@@ -25,8 +25,8 @@
           <% else %>
           <td>
           <div class="leave-container">
-            <%= button_to "Approve", approve_path, method: :get, params: { id: item.id }, class: "leave-request", id: "checkOutButtonModal" %>
-            <%= button_to "Reject", reject_path, method: :get, params: { id: item.id }, class: "leave-request", id: "checkOutButtonModal" %>
+           <%= button_to "Approve", approve_path, method: :get, params: { id: item.id }, class: "leave-request approve-btn", id: "approve-btn-#{item.id}", data: { disable_with: "Processing..." } %>
+           <%= button_to "Reject", reject_path, method: :get, params: { id: item.id }, class: "leave-request reject-btn", id: "reject-btn-#{item.id}", data: { disable_with: "Processing..." } %>
           </div>
           </td>
           <% end %>
@@ -37,7 +37,22 @@
  </div>
 
  <script>
-   function disableButton() {
-    document.getElementById("checkOutButtonModal").disabled = true;
-  }
- </script>
+ document.addEventListener("DOMContentLoaded", function() {
+  // Select all approve and reject buttons
+  const approveButtons = document.querySelectorAll('.approve-btn');
+  const rejectButtons = document.querySelectorAll('.reject-btn');
+
+  // Disable the button when clicked
+  approveButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      button.disabled = true;
+    });
+  });
+
+  rejectButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      button.disabled = true;
+    });
+  });
+});
+</script>
