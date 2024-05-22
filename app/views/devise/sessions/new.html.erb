@@ -14,14 +14,13 @@
       height: 100vh;
       width: 100%;
       margin: 0 auto;
-      max-width: 240px; /* Set a maximum width for the login form */
+      max-width: 240px;
       padding: 70px 5px;
       margin-left: 55%;
     }
 
     .background-image {
       flex: 1;
-      background: url('/assets/loginscreen.svg') no-repeat center center;
       background-size: cover;
     }
 
@@ -33,7 +32,7 @@
       display: flex;
       flex-direction: column;
       justify-content: center;
-      margin: auto; /* Center the login form horizontally */
+      margin: auto;
     }
 
     .form-group {
@@ -68,7 +67,7 @@
   </style>
 </head>
 <body>
-  <div class="background-image">
+<div class="background-image" style="background-image: url('/assets/loginscreen.svg');">
     <div class="login-container">
       <div class="login-form">
         <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
