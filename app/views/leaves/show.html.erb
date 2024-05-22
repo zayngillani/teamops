@@ -25,8 +25,8 @@
           <% else %>
           <td>
           <div class="leave-container">
-            <%= button_to "Approve", approve_path, method: :get, params: { id: item.id }, class: "leave-request" %>
-            <%= button_to "Reject", reject_path, method: :get, params: { id: item.id }, class: "leave-request" %>
+            <%= button_to "Approve", approve_path, method: :get, params: { id: item.id }, class: "leave-request", id: "checkOutButtonModal" %>
+            <%= button_to "Reject", reject_path, method: :get, params: { id: item.id }, class: "leave-request", id: "checkOutButtonModal" %>
           </div>
           </td>
           <% end %>
@@ -35,3 +35,9 @@
       </tbody>
     </table>
  </div>
+
+ <script>
+   function disableButton() {
+    document.getElementById("checkOutButtonModal").disabled = true;
+  }
+ </script>

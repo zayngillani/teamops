@@ -44,7 +44,10 @@ class LeavesController < ApplicationController
           .count
           holiday = PublicHoliday.find_by(start_date: start_date..end_date)
           if start_date.present?
-            if leave_start.between?(current_month_start, current_month_end)
+            if leave_start > next_month_end
+              redirect_to root_path, flash: { error: "You cannot request leaves for future months" }
+              return
+            elsif leave_start.between?(current_month_start, current_month_end)
               if leaves_current_month >= 2
                 redirect_to root_path, flash: { error: "You can only request two leaves in the current month" }
                 return
