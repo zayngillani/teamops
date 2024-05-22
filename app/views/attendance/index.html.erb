@@ -1,42 +1,52 @@
 <div class="content">
-<div class="card">
-  <h3> Welcome </h3>
-  <h1> <%= current_user.name %> </h1>
-  <h4> Have a Nice day at work</h4>
-  <div class="button-container">
-    <% content_for :link_button do %>
-<%= button_to "Request Leaves", new_leave_path, method: :get, class: "sign-out-button", id: "checkInButton", onclick: "setTimeout(() => this.disabled = true, 0)" %>    <% end %>
-  <% session = current_user.attendances.order(created_at: :asc).last%>
-    <% if current_user.attendances.empty? || current_user.attendances.last.check_in_time <= 16.hours.ago || session.total_hours.present? %>
-    <% content_for :link_button do %>
-    <%= button_to "Check-In", create_session_path, class: "sign-out-button", id: "checkInButton", onclick: "setTimeout(() => this.disabled = true, 0)" %>
-    <% end %>
-  <% elsif session.present? && session.check_out_time.nil? %>
+  <div class="card">
+    <h3>Welcome</h3>
+    <h1><%= current_user.name %></h1>
+    <h4>Have a nice day at work</h4>
+    <div class="button-container">
+      <% content_for :link_button do %>
+        <%= button_to "Request Leaves", new_leave_path, method: :get, class: "sign-out-button", id: "checkInButton", onclick: "setTimeout(() => this.disabled = true, 0)" %>
+      <% end %>
+      <% session = current_user.attendances.order(created_at: :asc).last %>
+      <% if current_user.attendances.empty? || current_user.attendances.last.check_in_time <= 16.hours.ago || session.total_hours.present? %>
+        <% content_for :link_button do %>
+          <%= button_to "Check-In", create_session_path, class: "sign-out-button", id: "checkInButton", onclick: "setTimeout(() => this.disabled = true, 0)" %>
+        <% end %>
+      <% elsif session.present? && session.check_out_time.nil? %>
         <% create_at = session.created_at %>
         <div id="timerDisplay" data-created-at="<%= create_at || nil %>" data-system-time="<%= Time.zone.now %>"></div>
-    <% end %>
+      <% end %>
+    </div>
   </div>
-</div>
+
   <div style="float: right; margin-top: 20px;">
     <% if session.present? %>
-      <% if session.check_out_time.nil? && !session.break_in_time.present? %>
-      <% content_for :link_button do %>
-        <%= button_to "Break-In", break_session_path, class: "sign-out-button", id: "checkInButton", onclick: "setTimeout(() => this.disabled = true, 0)" %>
-      <% end %>
-      <% elsif session.check_out_time.nil? && !session.break_out_time.present? %>
-      <% content_for :link_button do %>
-        <%= button_to "Break-Out", break_session_path, class: "sign-out-button", id: "checkInButton", onclick: "setTimeout(() => this.disabled = true, 0)" %>
-      <% end %>
-    
+      <% if session.check_out_time.nil? %>
+      <% if session.breaks.present? %>
+        <% if session.breaks.last.break_out_time.nil? %>
+          <% content_for :link_button do %>
+            <%= button_to "Break-Out", break_session_path, class: "sign-out-button", id: "breakOutButton", onclick: "setTimeout(() => this.disabled = true, 0)" %>
+          <% end %>
+            <% else %>
+          <% content_for :link_button do %>
+            <%= button_to "Break-In", break_session_path, class: "sign-out-button", id: "breakInButton", onclick: "setTimeout(() => this.disabled = true, 0)" %>
+        <% end %>
+        <% end %>
+      <% else %>
+          <% content_for :link_button do %>
+            <%= button_to "Break-In", break_session_path, class: "sign-out-button", id: "breakInButton", onclick: "setTimeout(() => this.disabled = true, 0)" %>
+        <% end %>
+        <% end %>
       <% end %>
     <% end %>
   </div>
+
   <% if session.present? && session.check_out_time.nil? && current_user.attendances.last.check_in_time >= 16.hours.ago %>
-    <% unless session.break_in_time.present? && !session.break_out_time.present? %>
+    <% unless session.breaks.present? && session.breaks.last.break_out_time.nil? %>
       <div class="button-container">
-      <% content_for :link_button do %>
-        <button id="modal-btn" class="sign-out-button">Check Out</button>
-      <% end %>
+        <% content_for :link_button do %>
+          <button id="modal-btn" class="sign-out-button">Check Out</button>
+        <% end %>
         <div id="myModal" class="modal">
           <div class="modal-content">
             <p style="text-align: center; margin-top: 10px;">Are you sure you want to checkout?</p>
@@ -51,50 +61,31 @@
     <% end %>
   <% end %>
 
-
-<div class="userTable">
-   <h2> Attedance Record </h2>
-  <p> Monthly Attedance</p>
-  <%= render 'attendance/user_attendance' %>
-
+  <div class="userTable">
+    <h2>Attendance Record</h2>
+    <p>Monthly Attendance</p>
+    <%= render 'attendance/user_attendance' %>
+  </div>
+  <br>
 </div>
-<br>
-</div>
-
-
-
 
 <script>
-// Get the modal
-var modal = document.getElementById("myModal");
+  var modal = document.getElementById("myModal");
+  var btn = document.getElementById("modal-btn");
+  var closeModalBtn = document.getElementById("closeModalBtn");
 
-// Get the button that opens the modal
-var btn = document.getElementById("modal-btn");
-
-// Get the <span> element that closes the modal
-// Get the button element for closing the modal
-var closeModalBtn = document.getElementById("closeModalBtn");
-
-// Add event listener to close the modal when the button is clicked
-closeModalBtn.addEventListener("click", function() {
-  modal.style.display = "none";
-});
-
-// When the user clicks the button, open the modal
-btn.onclick = function() {
-  modal.style.display = "block";
-}
-
-// When the user clicks on <span> (x), close the modal
-span.onclick = function() {
-  modal.style.display = "none";
-}
-
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
-  if (event.target == modal) {
+  closeModalBtn.addEventListener("click", function() {
     modal.style.display = "none";
+  });
+
+  btn.onclick = function() {
+    modal.style.display = "block";
   }
-}
+
+  window.onclick = function(event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  }
 
 </script>
