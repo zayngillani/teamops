@@ -25,8 +25,8 @@
           <% else %>
           <td>
           <div class="leave-container">
-           <%= button_to "Approve", approve_path, method: :get, params: { id: item.id }, class: "leave-request approve-btn", id: "approve-btn-#{item.id}", data: { disable_with: "Processing..." } %>
-           <%= button_to "Reject", reject_path, method: :get, params: { id: item.id }, class: "leave-request reject-btn", id: "reject-btn-#{item.id}", data: { disable_with: "Processing..." } %>
+            <%= button_to "Approve", approve_path, method: :get, params: { id: item.id }, class: "leave-request approve-btn", data: { disable_with: "Processing..." } %>
+            <%= button_to "Reject", reject_path, method: :get, params: { id: item.id }, class: "leave-request reject-btn", data: { disable_with: "Processing..." } %>
           </div>
           </td>
           <% end %>
@@ -36,23 +36,20 @@
     </table>
  </div>
 
- <script>
- document.addEventListener("DOMContentLoaded", function() {
-  // Select all approve and reject buttons
-  const approveButtons = document.querySelectorAll('.approve-btn');
-  const rejectButtons = document.querySelectorAll('.reject-btn');
+<script>
+    document.addEventListener("turbo:load", function() {
+      const buttons = document.querySelectorAll('form button.leave-request');
 
-  // Disable the button when clicked
-  approveButtons.forEach(button => {
-    button.addEventListener('click', function() {
-      button.disabled = true;
+      buttons.forEach(button => {
+        button.addEventListener('click', function(event) {
+          event.preventDefault();
+          button.disabled = true;
+          button.textContent = button.getAttribute('data-disable-with');
+          const form = button.closest('form');
+          if (form) {
+            form.submit();
+          }
+        });
+      });
     });
-  });
-
-  rejectButtons.forEach(button => {
-    button.addEventListener('click', function() {
-      button.disabled = true;
-    });
-  });
-});
-</script>
+  </script>

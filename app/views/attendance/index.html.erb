@@ -10,7 +10,7 @@
       <% session = current_user.attendances.order(created_at: :asc).last %>
       <% if current_user.attendances.empty? || current_user.attendances.last.check_in_time <= 16.hours.ago || session.total_hours.present? %>
         <% content_for :link_button do %>
-          <%= button_to "Check-In", create_session_path, class: "sign-out-button", id: "checkOutButtonModal" %>
+          <%= button_to "Check-In", create_session_path, class: "sign-out-button check-btn", data: { disable_with: "Processing..." } %>
         <% end %>
       <% elsif session.present? && session.check_out_time.nil? %>
         <% create_at = session.created_at %>
@@ -25,16 +25,16 @@
       <% if session.breaks.present? %>
         <% if session.breaks.last.break_out_time.nil? %>
           <% content_for :link_button do %>
-            <%= button_to "Break-Out", break_session_path, class: "sign-out-button", id: "checkOutButtonModal" %>
+            <%= button_to "Break-Out", break_session_path, class: "sign-out-button check-btn", id: "checkOutButtonModal", data: { disable_with: "Processing..." } %>
           <% end %>
             <% else %>
           <% content_for :link_button do %>
-            <%= button_to "Break-In", break_session_path, class: "sign-out-button", id: "checkOutButtonModal" %>
+            <%= button_to "Break-In", break_session_path, class: "sign-out-button check-btn", id: "checkOutButtonModal", data: { disable_with: "Processing..." } %>
         <% end %>
         <% end %>
       <% else %>
           <% content_for :link_button do %>
-            <%= button_to "Break-In", break_session_path, class: "sign-out-button", id: "checkOutButtonModal" %>
+            <%= button_to "Break-In", break_session_path, class: "sign-out-button check-btn", id: "checkOutButtonModal", data: { disable_with: "Processing..." } %>
         <% end %>
         <% end %>
       <% end %>
@@ -53,7 +53,7 @@
             <div id="timerDisplayModal"></div>
             <div class="modal-footer">
               <button id="closeModalBtn" class="close sign-out-button">No</button>
-              <%= button_to "Check-Out", end_session_path, class: "sign-out-button", id: "checkOutButtonModal" %>
+              <%= button_to "Check-Out", end_session_path, class: "sign-out-button check-btn", id: "checkOutButtonModal", data: { disable_with: "Processing..." } %>
             </div>
           </div>
         </div>
@@ -70,6 +70,21 @@
 </div>
 
 <script>
+    document.addEventListener("turbo:load", function() {
+      const buttons = document.querySelectorAll('form button.sign-out-button');
+      buttons.forEach(button => {
+        button.addEventListener('click', function(event) {
+          event.preventDefault();
+          button.disabled = true;
+          button.textContent = button.getAttribute('data-disable-with');
+          const form = button.closest('form');
+          if (form) {
+            form.submit();
+          }
+        });
+      });
+    });
+
   var modal = document.getElementById("myModal");
   var btn = document.getElementById("modal-btn");
   var closeModalBtn = document.getElementById("closeModalBtn");
@@ -89,8 +104,5 @@
   }
 
 
-  function disableButton() {
-    document.getElementById("checkOutButtonModal").disabled = true;
-  }
 
 </script>

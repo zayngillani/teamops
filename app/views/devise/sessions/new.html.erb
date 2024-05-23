@@ -71,6 +71,12 @@
     <div class="login-container">
       <div class="login-form">
         <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
+         <% if notice %>
+            <div class="alert alert-success fading-out" id="banner"><%= notice %></div>
+          <% end %>
+          <% if alert %>
+            <div class="alert alert-danger fading-out" id="banner"><%= alert %></div>
+          <% end %>
           <div class="form-group">
             <%= f.label :email %>
             <%= f.email_field :email, autofocus: true, class: 'form-control', autocomplete: "email", placeholder: "Email", required: true %>
