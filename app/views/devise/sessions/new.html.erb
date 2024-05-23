@@ -25,9 +25,9 @@
     }
 
     .login-form {
-      margin-top: auto;
+      margin-top: 30%;
       width: 120%;
-      margin-left: -10%;
+      margin-left: -6%;
     }
 
     .form-group {
@@ -38,6 +38,7 @@
       width: 100%;
       padding: 10px;
       margin-top: 5px;
+      font-size: 14px;
     }
 
     .btn-primary {
@@ -57,6 +58,7 @@
       display: flex;
       justify-content: flex-end;
       margin-bottom: 11%;
+      font-size: 14px;
     }
 
     .log-in-button {
@@ -67,24 +69,24 @@
       text-align: center;
       text-decoration: none;
       display: inline-block;
-      font-size: 16px;
+      font-size: 14px;
       margin-right: 10px;
       border-radius: 5px;
       cursor: pointer;
       width: 280px;
     }
 
-      .logos img {
-     width: 100px;
-     height: auto;
-     margin-left: 25%;
-     margin-bottom: 8%;
+    .logos img {
+      width: 100px;
+      height: auto;
+      margin-left: 25%;
+      margin-bottom: 10%;
     }
 
   </style>
 </head>
 <body>
-<div class="background-image" style="background-image: url('<%= asset_path('tecerlogin.svg') %>');">
+<div class="background-image" style="background-image: url('<%= asset_path('tecerscreen.svg') %>');">
     <div class="login-container">
       <div class="login-form">
        <a href="/" class="logos">
@@ -98,12 +100,12 @@
             <div class="alert alert-danger fading-out" id="banner"><%= alert %></div>
           <% end %>
           <div class="form-group">
-            <%= f.label :email %>
-            <%= f.email_field :email, autofocus: true, class: 'form-control', autocomplete: "email", placeholder: "Email", required: true %>
+            <%= f.label :email, style: "font-size: 14px" %>
+            <%= f.email_field :email, autofocus: true, class: 'form-control', autocomplete: "email", placeholder: "Enter your email", required: true %>
           </div>
           <div class="form-group">
-            <%= f.label :password %>
-            <%= f.password_field :password, autocomplete: "current-password", class: 'form-control', placeholder: "Password", required: true %>
+            <%= f.label :password, style: "font-size: 14px" %>
+            <%= f.password_field :password, autocomplete: "current-password", class: 'form-control', placeholder: "Eneter your password", required: true %>
           </div>
           <div class="f-link">
             <%= link_to "Forgot Password?", new_user_password_path(resource_name), style: "color: black;" %>
