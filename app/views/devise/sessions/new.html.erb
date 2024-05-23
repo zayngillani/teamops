@@ -3,11 +3,12 @@
 <head>
   <title>Login Page</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
     body, html {
       height: 100%;
       margin: 0;
-      font-family: Arial, sans-serif;
+      font-family: 'Poppins', sans-serif; 
     }
 
     .login-container {
@@ -31,14 +32,14 @@
     }
 
     .form-group {
-      margin-bottom: 20px;
+      margin-bottom: 7px;
     }
 
     .form-control {
       width: 100%;
-      padding: 10px;
       margin-top: 5px;
-      font-size: 14px;
+      font-size: 12px;
+      height: 40px;
     }
 
     .btn-primary {
@@ -58,7 +59,7 @@
       display: flex;
       justify-content: flex-end;
       margin-bottom: 11%;
-      font-size: 14px;
+      font-size: 10px;
     }
 
     .log-in-button {
@@ -69,11 +70,12 @@
       text-align: center;
       text-decoration: none;
       display: inline-block;
-      font-size: 14px;
+      font-size: 12px;
       margin-right: 10px;
       border-radius: 5px;
       cursor: pointer;
       width: 280px;
+      margin-top: 5%;
     }
 
     .logos img {
@@ -100,11 +102,11 @@
             <div class="alert alert-danger fading-out" id="banner"><%= alert %></div>
           <% end %>
           <div class="form-group">
-            <%= f.label :email, style: "font-size: 14px" %>
+            <%= f.label :email, style: "font-size: 12px" %>
             <%= f.email_field :email, autofocus: true, class: 'form-control', autocomplete: "email", placeholder: "Enter your email", required: true %>
           </div>
           <div class="form-group">
-            <%= f.label :password, style: "font-size: 14px" %>
+            <%= f.label :password, style: "font-size: 12px" %>
             <%= f.password_field :password, autocomplete: "current-password", class: 'form-control', placeholder: "Eneter your password", required: true %>
           </div>
           <div class="f-link">
