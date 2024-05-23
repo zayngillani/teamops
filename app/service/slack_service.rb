@@ -17,6 +17,9 @@ class SlackService
      
      def send_leave
        @request_user = User.find_by(id: @time.user_id)
-       @client.chat_postMessage(channel: @channel,text: " <@#{@request_user.slack_member_id}> #{@message} #{@time.status == "pending" ? @time.start_date.strftime("%d/%B")..@time.end_date.strftime("%d/%B") : "<@#{@user.name}>"}")
+       @client.chat_postMessage(channel: @channel,
+               channel: @channel,
+               text: "<@#{@request_user.slack_member_id}> Leave #{@time.status.capitalize} by #{@user.name} for #{@time.start_date.strftime("%d/%B")}..#{@time.end_date.strftime("%d/%B")}"
+               )
      end
 end
