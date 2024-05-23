@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>Login Page</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
   <style>
     body, html {
       height: 100%;
@@ -16,7 +17,6 @@
       margin: 0 auto;
       max-width: 240px;
       padding: 70px 5px;
-      margin-left: 55%;
     }
 
     .background-image {
@@ -25,14 +25,9 @@
     }
 
     .login-form {
-      flex: 0 0 417px;
-      padding: 80px 40px;
-      background: white;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      margin: auto;
+      margin-top: auto;
+      width: 120%;
+      margin-left: -10%;
     }
 
     .form-group {
@@ -58,18 +53,43 @@
       background-color: #0056b3;
     }
 
-
     .f-link {
       display: flex;
       justify-content: flex-end;
       margin-bottom: 11%;
     }
+
+    .log-in-button {
+      background-color: #F89320;
+      border: none;
+      color: white;
+      padding: 10px 20px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+      margin-right: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 280px;
+    }
+
+      .logos img {
+     width: 100px;
+     height: auto;
+     margin-left: 25%;
+     margin-bottom: 8%;
+    }
+
   </style>
 </head>
 <body>
-<div class="background-image" style="background-image: url('<%= asset_path('loginscreen.svg') %>');">
+<div class="background-image" style="background-image: url('<%= asset_path('tecerlogin.svg') %>');">
     <div class="login-container">
       <div class="login-form">
+       <a href="/" class="logos">
+    <%= image_tag "tecerlogo.svg" %>
+  </a>
         <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
          <% if notice %>
             <div class="alert alert-success fading-out" id="banner"><%= notice %></div>
@@ -89,7 +109,7 @@
             <%= link_to "Forgot Password?", new_user_password_path(resource_name), style: "color: black;" %>
           </div>  
           <div class="form-group">
-            <%= f.submit "Login", class: "sign-in-button" %>
+            <%= f.submit "Login", class: "log-in-button" %>
           </div>
         <% end %>
       </div>
