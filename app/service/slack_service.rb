@@ -14,12 +14,19 @@ class SlackService
      def send_message
           @client.chat_postMessage(channel: @channel,text: " <@#{@user.slack_member_id}> #{@message} at #{@time.in_time_zone('Asia/Karachi').strftime("%b %d, %I:%M%p %Z")}")
      end
+
+     def request_leave
+          @client.chat_postMessage(channel: @channel,
+               channel: @channel,
+               text: "<@#{@user.slack_member_id}> #{@message} #{@time.start_date.strftime("%d/%B")} to #{@time.end_date.strftime("%d/%B")}"
+          )
+     end
      
      def send_leave
        @request_user = User.find_by(id: @time.user_id)
        @client.chat_postMessage(channel: @channel,
                channel: @channel,
-               text: "<@#{@request_user.slack_member_id}> Leave #{@time.status.capitalize} by #{@user.name} for #{@time.start_date.strftime("%d/%B")}..#{@time.end_date.strftime("%d/%B")}"
+               text: "<@#{@request_user.slack_member_id}> Leave #{@time.status.capitalize} by #{@user.name} from #{@time.start_date.strftime("%d/%B")} to #{@time.end_date.strftime("%d/%B")}"
                )
      end
 end
