@@ -3,10 +3,12 @@ class SlackService
           @user = user
           @time = time
           @message = message
-          if @user.email.ends_with?("@gmail.com") || !@time.is_a?(Time)
+          if @user.email.ends_with?("@gmail.com")
                @channel = ENV["TEST_CHANNEL"]
-          else
+          elsif @time.is_a?(Time)
                @channel = ENV["SLACK_CHANNEL"]
+          elsif
+               @channel = ENV["LEAVE_CHANNEL"]
           end
           @client = Slack::Web::Client.new
      end
@@ -19,7 +21,7 @@ class SlackService
        @request_user = User.find_by(id: @time.user_id)
        @client.chat_postMessage(channel: @channel,
           channel: @channel,
-          text: "<@#{@request_user.slack_member_id}> #{@message} #{@user.name} from #{@time.start_date.strftime("%d/%B")} to #{@time.end_date.strftime("%d/%B")}"
+          text: "<@#{@request_user.slack_member_id}> #{@message} #{@user.name} from #{@time.start_date.strftime("%d/%B/%Y")} to #{@time.end_date.strftime("%d/%B/%Y")}"
        )
      end
 end
