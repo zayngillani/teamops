@@ -35,7 +35,6 @@
 
     .login-card {
       background-color: white;
-      border: 1px solid rgba(0,0,0,0.1);
       border-radius: 10px;
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       padding: 43px;
@@ -80,6 +79,7 @@
       display: flex;
       justify-content: flex-end;
       font-size: 12px;
+      margin-top: -14px;
     }
 
     .log-in-button {
@@ -94,7 +94,7 @@
       border-radius: 5px;
       cursor: pointer;
       width: 100%;
-      margin-top: 20px;
+      margin-top: 50px;
       font-weight: bold;
     }
 
@@ -110,9 +110,9 @@
   <div class="background-image" style="background-image: url('<%= asset_path('tecerscreen.svg') %>');"></div>
   <div class="login-container">
     <div class="login-card">
-      <a href="/" class="logos">
-        <%= image_tag "tecerlogo.svg" %>
-      </a>
+    <h3>Login</h3>
+    <br>
+    <br>
       <div class="login-form">
         <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
           <% if notice %>
