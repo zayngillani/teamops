@@ -89,7 +89,7 @@ class LeavesController < ApplicationController
           @leave.user_id = current_user.id
           @leave.reason = params[:user][:reason]
           if @leave.save
-            SlackService.new(current_user, "Request leave from", @leave).request_leave
+            # SlackService.new(current_user, "Request leave from", @leave).request_leave
             redirect_to root_path, notice: 'Leave request submitted.'
           else
             render :new
@@ -120,7 +120,7 @@ class LeavesController < ApplicationController
      def reject
           leave = Leave.find_by(id: params[:id])
           if leave.update(status: 2)
-            SlackService.new(current_user, "Leave rejected by", leave).send_leave
+            # SlackService.new(current_user, "Leave rejected by", leave).send_leave
                flash[:success] = "Leave Rejected"
                redirect_to leaves_path
           else
