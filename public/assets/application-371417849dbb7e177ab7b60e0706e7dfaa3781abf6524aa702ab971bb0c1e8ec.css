@@ -104,12 +104,7 @@
     cursor: pointer;
     border-radius: 1px;
   }
-  
-  .leave-container {
-    display: flex;
-    gap: 10px;
-  }
-
+   
    .sign-out-button:hover {
      background-color: #F89320;
    }
@@ -294,8 +289,8 @@
    }
 
    body {
-    font-family: 'Poppins', sans-serif; 
-  }
+     font-family: Arial, sans-serif;
+   }
    
    /* Form container */
    .form-container {
@@ -426,7 +421,6 @@
 .alert-danger {
   background-color: #dc3545;
   text-align: center;
-  color: white;
 }
 
 .alert-warning {

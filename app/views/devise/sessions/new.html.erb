@@ -1,16 +1,117 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     <title>Login</title> 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"/>
-  </head>
+<html>
+<head>
+  <title>Login Page</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body, html {
+      height: 100%;
+      margin: 0;
+      font-family: 'Poppins', sans-serif; 
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-<body class="special-background">
-  <div class="container">
-      <div class="wrapper">
-        <div class="title"><span>Login</span></div>
+    .background-image {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-size: cover;
+      z-index: -1;
+    }
+
+    .login-container {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      width: 100%;
+      max-width: 1200px;
+      padding: 20px;
+    }
+
+    .login-card {
+      background-color: white;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      padding: 43px;
+      width: 100%;
+      max-width: 370px;
+    }
+
+    .login-form {
+      width: 100%;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px;
+      font-size: 14px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    .btn-primary {
+      width: 100%;
+      padding: 10px;
+      background-color: #007bff;
+      border: none;
+      color: white;
+      cursor: pointer;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    .btn-primary:hover {
+      background-color: #0056b3;
+    }
+
+    .f-link {
+      display: flex;
+      justify-content: flex-end;
+      font-size: 12px;
+      margin-top: -14px;
+    }
+
+    .log-in-button {
+      background-color: #F89320;
+      border: none;
+      color: white;
+      padding: 10px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 14px;
+      border-radius: 5px;
+      cursor: pointer;
+      width: 100%;
+      margin-top: 50px;
+      font-weight: bold;
+    }
+
+    .logos {
+      display: block;
+      margin: 0 111px 5px auto;
+      width: 100px;
+      height: auto;
+    }
+  </style>
+</head>
+<body>
+  <div class="background-image" style="background-image: url('<%= asset_path('login_screen.svg') %>');"></div>
+  <div class="login-container">
+    <div class="login-card">
+    <%= image_tag "tecerlogo.svg", class: "logos" %>
+    <br>
+    <br>
+      <div class="login-form">
         <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
           <% if notice %>
             <div class="alert alert-success fading-out" id="banner"><%= notice %></div>
@@ -18,21 +119,23 @@
           <% if alert %>
             <div class="alert alert-danger fading-out" id="banner"><%= alert %></div>
           <% end %>
-          <div class="row">
-            <i class="fas fa-user"></i>
-              <%= f.email_field :email, autofocus: true, autocomplete: "email", placeholder: "Email", required: true %>
+          <div class="form-group">
+            <%= f.label :email, style: "font-size: 14px" %>
+            <%= f.email_field :email, autofocus: true, class: 'form-control', autocomplete: "email", placeholder: "Enter your email", required: true %>
           </div>
-          <div class="row">
-            <i class="fas fa-lock"></i>
-              <%= f.password_field :password, autocomplete: "current-password", placeholder: "Password", required: true %>
+          <div class="form-group">
+            <%= f.label :password, style: "font-size: 14px" %>
+            <%= f.password_field :password, autocomplete: "current-password", class: 'form-control', placeholder: "Enter your password", required: true %>
           </div>
-              <%= f.submit "Log in", class: "sign-in-button" %>
-            <div class="doEnd">
-              <%= link_to "Forgot Password?", new_user_password_path(resource_name), :class => "btn btn-link" %>
-            </div>
-          <% end %>
+          <div class="f-link">
+            <%= link_to "Forgot Password?", new_user_password_path(resource_name), style: "color: black; font-weight: bold; text-decoration: none;" %>
+          </div>
+          <div class="form-group">
+            <%= f.submit "Login", class: "log-in-button" %>
+          </div>
+        <% end %>
       </div>
     </div>
-
-  </body>
+  </div>
+</body>
 </html>

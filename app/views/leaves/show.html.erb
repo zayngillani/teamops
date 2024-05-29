@@ -24,8 +24,10 @@
           </td>
           <% else %>
           <td>
-          <%= link_to "Approve", approve_path(id: item.id), class: "sign-out-button"%> 
-          <%= link_to "Reject", reject_path(id: item.id), class: "sign-out-button"%>
+          <div class="leave-container">
+            <%= button_to "Approve", approve_path, method: :get, params: { id: item.id }, class: "leave-request reject-btn", data: { disable_with: "Processing..." } %>
+            <%= button_to "Reject", reject_path, method: :get, params: { id: item.id }, class: "leave-request reject-btn", data: { disable_with: "Processing..." } %>
+          </div>
           </td>
           <% end %>
         </tr>
@@ -33,3 +35,21 @@
       </tbody>
     </table>
  </div>
+
+<script>
+    document.addEventListener("turbo:load", function() {
+      const buttons = document.querySelectorAll('form button.leave-request');
+
+      buttons.forEach(button => {
+        button.addEventListener('click', function(event) {
+          event.preventDefault();
+          button.disabled = true;
+          button.textContent = button.getAttribute('data-disable-with');
+          const form = button.closest('form');
+          if (form) {
+            form.submit();
+          }
+        });
+      });
+    });
+  </script>

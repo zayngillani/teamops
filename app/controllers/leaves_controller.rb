@@ -32,6 +32,33 @@ class LeavesController < ApplicationController
           end_date = params[:user][:end_date]
           leave_start = Date.parse(params[:user][:start_date])
           leave_end = Date.parse(params[:user][:end_date])
+          current_month_start = Date.today.beginning_of_month
+          current_month_end = Date.today.end_of_month
+          next_month_start = current_month_start.next_month
+          next_month_end = current_month_end.next_month
+          leaves_current_month = Leave.where(user_id: current_user.id)
+          .where("start_date >= ? AND start_date <= ?", current_month_start, current_month_end)
+          .count
+          leaves_next_month = Leave.where(user_id: current_user.id)
+          .where("start_date >= ? AND start_date <= ?", next_month_start, next_month_end)
+          .count
+          holiday = PublicHoliday.find_by(start_date: start_date..end_date)
+          if start_date.present?
+            if leave_start > next_month_end
+              redirect_to root_path, flash: { error: "You cannot request leaves for future months" }
+              return
+            elsif leave_start.between?(current_month_start, current_month_end)
+              if leaves_current_month >= 2
+                redirect_to root_path, flash: { error: "You can only request two leaves in the current month" }
+                return
+              end
+            elsif leave_start.between?(next_month_start, next_month_end)
+              if leaves_next_month >= 2
+                redirect_to root_path, flash: { error: "You can only request two leaves in the next month" }
+                return
+              end
+            end
+          end
           if leave_start.saturday? || leave_start.sunday? || leave_end.saturday? || leave_end.sunday?
             redirect_to root_path, flash: { error: "You can't request leave for weekends (Saturday or Sunday)." }
             return
@@ -48,15 +75,6 @@ class LeavesController < ApplicationController
             redirect_to root_path, flash: { error: "End date must be greater than or equal to start date" }
             return
           end
-          leaves_this_month = Leave.where(user_id: current_user.id)
-                                    .where("start_date >= ?", Date.today.beginning_of_month)
-                                    .where("start_date <= ?", Date.today.end_of_month)
-                                    .count
-          holiday = PublicHoliday.find_by(start_date: start_date..end_date)
-          if leaves_this_month >= 2
-            redirect_to root_path, flash: { error: "You can only request two leaves in one month" }
-            return
-          end
           if holiday.present?
             redirect_to root_path, flash: { error: "You can't request for Leave on Public Holiday" }
             return
@@ -71,6 +89,7 @@ class LeavesController < ApplicationController
           @leave.user_id = current_user.id
           @leave.reason = params[:user][:reason]
           if @leave.save
+            # SlackService.new(current_user, "Request leave from", @leave).request_leave
             redirect_to root_path, notice: 'Leave request submitted.'
           else
             render :new
@@ -90,6 +109,7 @@ class LeavesController < ApplicationController
      def approve
           leave = Leave.find_by(id: params[:id])
           if leave.update(status: 1)
+            SlackService.new(current_user, "Leave approved by", leave).send_leave
                flash[:success] = "Leave Approved"
                redirect_to leaves_path
           else
@@ -100,6 +120,7 @@ class LeavesController < ApplicationController
      def reject
           leave = Leave.find_by(id: params[:id])
           if leave.update(status: 2)
+            # SlackService.new(current_user, "Leave rejected by", leave).send_leave
                flash[:success] = "Leave Rejected"
                redirect_to leaves_path
           else

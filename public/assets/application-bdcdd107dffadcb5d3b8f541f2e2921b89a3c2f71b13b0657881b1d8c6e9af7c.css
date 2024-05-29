@@ -294,8 +294,8 @@
    }
 
    body {
-    font-family: 'Poppins', sans-serif; 
-  }
+     font-family: Arial, sans-serif;
+   }
    
    /* Form container */
    .form-container {
@@ -426,7 +426,6 @@
 .alert-danger {
   background-color: #dc3545;
   text-align: center;
-  color: white;
 }
 
 .alert-warning {
