@@ -40,8 +40,6 @@
       padding: 43px;
       width: 100%;
       max-width: 370px;
-      margin-right: -40%;
-      position: fixed;
     }
 
     .login-form {
@@ -98,19 +96,19 @@
       font-weight: bold;
     }
 
-    .logos img {
+    .logos {
       display: block;
-      margin: 0 111px 85px auto;
+      margin: 0 111px 5px auto;
       width: 100px;
       height: auto;
     }
   </style>
 </head>
 <body>
-  <div class="background-image" style="background-image: url('<%= asset_path('tecerscreen.svg') %>');"></div>
+  <div class="background-image" style="background-image: url('<%= asset_path('login_screen.svg') %>');"></div>
   <div class="login-container">
     <div class="login-card">
-    <h3>Login</h3>
+    <%= image_tag "tecerlogo.svg", class: "logos" %>
     <br>
     <br>
       <div class="login-form">
@@ -130,7 +128,7 @@
             <%= f.password_field :password, autocomplete: "current-password", class: 'form-control', placeholder: "Enter your password", required: true %>
           </div>
           <div class="f-link">
-            <%= link_to "Forgot Password?", new_user_password_path(resource_name), style: "color: black;" %>
+            <%= link_to "Forgot Password?", new_user_password_path(resource_name), style: "color: black; font-weight: bold; text-decoration: none;" %>
           </div>
           <div class="form-group">
             <%= f.submit "Login", class: "log-in-button" %>
