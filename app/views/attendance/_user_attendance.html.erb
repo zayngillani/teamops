@@ -1,3 +1,20 @@
+<style>
+   .report-button {
+     background-color: #F89320;
+     border: none;
+     color: white;
+     padding: 10px 142px;
+     text-align: center;
+     text-decoration: none;
+     display: inline-block;
+     font-size: 14px;
+     border-radius: 5px;
+     margin-left:5px;
+     cursor: pointer;
+     border-radius: 5px;
+   }
+</style>
+
 <div style="overflow-x: hidden;">
   <table style="width: 100%;">
     <thead>
@@ -7,6 +24,7 @@
         <th>Check Out</th>
         <th>Break</th>
         <th>Total Hours</th>
+        <th> </th>
         <tr><td colspan="6" style="border-bottom: 1px solid black;"></td></tr>
       </tr>
     </thead>
@@ -34,6 +52,38 @@
             <%= "#{item.total_hours / 3600} hours #{item.total_hours % 3600 / 60} minutes" %>
           <% else %>
             N/A
+          <% end %>
+        </td>
+        <td>
+          <% if item.check_out_time.present? %>
+              <% time_since_checkout = Time.zone.now - item.check_out_time %>
+            <% if time_since_checkout <= 2.hours %>
+              <div class="dropdown-action">
+                <%= image_tag("more.png", width: "20", height: "20", alt: "Edit User")%>
+                <div class="dropdown-content-action">
+                  <div class="actions-container">
+                    <button class="modal-btn" data-target="myModalReport<%= item.id %>"> Edit report</button>
+                    <div id="myModalReport<%= item.id %>" class="modal">
+                      <div class="modal-content">
+                        <%= form_with url: update_report_path, method: :put, remote: true, id: "checkout_form" do |f| %>
+                          <div class="modal-header">
+                          </div>
+                          <p style="text-align: center; margin-top: 10px;">
+                            <%= f.text_area :report, value: item.report, placeholder: "Enter Daily Report", style: "width: 100%; height: 150px; resize: vertical; padding: 10px; margin-top: 40px;" %>
+                            <%= f.hidden_field :id, value: item.id %>
+                          </p>
+                          <div class="modal-footer">
+                            <%= f.submit "Update", class: "report-button", data: { disable_with: "Processing..." } %>
+                          </div>
+                        <% end %>
+                        <div class="modal-footer">
+                        </div>
+                      </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            <% end %>
           <% end %>
         </td>
       </tr>

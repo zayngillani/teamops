@@ -45,28 +45,31 @@ class AttendanceController < ApplicationController
    
        @session = current_user.attendances.create!(check_in_time: Time.now.utc)
        flash[:success] = "Checked IN successfully"
-       SlackService.new(current_user, "Checked In", @session.check_in_time).send_message
+      #  SlackService.new(current_user, "Checked In", @session.check_in_time).send_message
        redirect_to attendance_index_path
      end
    
      def end_session
        @session = current_user.attendances.last
        if @session
-         @session.update!(check_out_time: Time.now.utc)
-         total_duration_seconds = @session.check_out_time - @session.check_in_time
+        if params[:report].present?
+          @session.update!(report: params[:report])
+        end
+        @session.update!(check_out_time: Time.now.utc)
+        total_duration_seconds = @session.check_out_time - @session.check_in_time
          total_break_time = calculate_total_break_time(@session)
          total_duration_seconds -= total_break_time
          @session.update!(total_hours: total_duration_seconds)
          flash[:success] = "Checked OUT successfully"
-         SlackService.new(current_user, "Checked Out", @session.check_out_time).send_message
+         #  SlackService.new(current_user, "Checked Out", @session.check_out_time).send_message
        else
          flash[:error] = "No active session found"
-       end
+        end
        redirect_to attendance_index_path
      end
    
      def break_session
-          @session = current_user.attendances.last
+      @session = current_user.attendances.last
           if @session && @session.check_out_time.nil?
             last_break = @session.breaks.last
             if last_break.nil? || (last_break.break_in_time.present? && last_break.break_out_time.present?)
@@ -86,8 +89,18 @@ class AttendanceController < ApplicationController
             flash[:error] = "No active session or session already checked out"
           end
           redirect_to attendance_index_path
-     end
+        end
         
+        def update_report
+          @attendance = Attendance.find_by(id: params[:id])
+          if @attendance.present?
+            @attendance.update!(report: params[:report])
+            flash[:success] = "Daily Report updated successfully"
+          else
+            flash[:error] = "Attendance Not Present"
+          end
+          redirect_to attendance_index_path
+        end
      private
      
      def calculate_total_break_time(session)
