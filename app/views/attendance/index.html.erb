@@ -5,7 +5,7 @@
     <h4>Have a nice day at work</h4>
     <div class="button-container">
       <% content_for :link_button do %>
-        <%= button_to "Request Leaves", new_leave_path, method: :get, class: "sign-out-button", data: { disable_with: "Request Leaves" } %>
+        <%= button_to "Request Leaves", new_leave_path, method: :get, class: "request-button" %>
       <% end %>
       <% session = current_user.attendances.order(created_at: :asc).last %>
       <% if current_user.attendances.empty? || current_user.attendances.last.check_in_time <= 16.hours.ago || session.total_hours.present? %>
@@ -48,15 +48,20 @@
           <button id="modal-btn" class="sign-out-button">Check Out</button>
         <% end %>
         <div id="myModal" class="modal">
-          <div class="modal-content">
-            <p style="text-align: center; margin-top: 10px;">Are you sure you want to checkout?</p>
-            <div id="timerDisplayModal"></div>
-            <div class="modal-footer">
-              <button id="closeModalBtn" class="close sign-out-button">No</button>
-              <%= button_to "Check-Out", end_session_path, class: "sign-out-button check-btn", id: "checkOutButtonModal", data: { disable_with: "Processing..." } %>
-            </div>
-          </div>
-        </div>
+  <div class="modal-content">
+    <%= form_with url: end_session_path, method: :post, remote: true, id: "checkout_form" do |f| %>
+      <div class="modal-header">
+      </div>
+      <p style="text-align: center; margin-top: 10px;">
+        <%= f.text_area :report, placeholder: "Enter Daily Report", style: "width: 100%; height: 150px; resize: vertical; padding: 10px;" %>
+      </p>
+      <div class="modal-footer">
+        <%= f.submit "Check-Out", class: "sign-out-button check-btn", data: { disable_with: "Processing..." } %>
+      </div>
+    <% end %>
+  </div>
+</div>
+
       </div>
     <% end %>
   <% end %>
@@ -87,11 +92,6 @@
 
   var modal = document.getElementById("myModal");
   var btn = document.getElementById("modal-btn");
-  var closeModalBtn = document.getElementById("closeModalBtn");
-
-  closeModalBtn.addEventListener("click", function() {
-    modal.style.display = "none";
-  });
 
   btn.onclick = function() {
     modal.style.display = "block";
