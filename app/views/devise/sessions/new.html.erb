@@ -103,6 +103,15 @@
       width: 100px;
       height: auto;
     }
+
+    .fading-out {
+      animation: fadeOut 3s forwards;
+    }
+
+    @keyframes fadeOut {
+      0% { opacity: 1; }
+      100% { opacity: 0; }
+    }
   </style>
 </head>
 <body>
@@ -118,7 +127,7 @@
             <div class="alert alert-success fading-out" id="banner"><%= notice %></div>
           <% end %>
           <% if alert %>
-            <div class="alert alert-danger fading-out" id="banner"><%= alert %></div>
+            <div class="alert alert-danger fading-out" id="alert-banner"><%= alert %></div>
           <% end %>
           <div class="form-group">
             <%= f.label :email, style: "font-size: 14px" %>
@@ -140,3 +149,16 @@
   </div>
 </body>
 </html>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const alertBanner = document.getElementById('alert-banner');
+  
+  if (noticeBanner) {
+    noticeBanner.addEventListener('animationend', function() {
+      noticeBanner.remove();
+    });
+  }
+});
+</script>
+
