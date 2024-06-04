@@ -226,17 +226,26 @@ class Admin::UsersController < ApplicationController
       @start_date = Date.new(@year, @month, 1)
       @end_date = @start_date.end_of_month
       @total_hours = {}
+      @leaves = {}
+      @public_holidays = PublicHoliday.where("start_date <= ? AND end_date >= ?", @start_date.end_of_month, @end_date.beginning_of_month)
       @users.each do |user|
         @user_sessions = user.attendances.where(check_in_time: @start_date.beginning_of_day..@end_date.end_of_day).order(created_at: :asc)
         total_hrs = 0
         @user_sessions.each do |attendance|
           total_hrs += attendance.total_hours.to_i unless attendance.total_hours.nil?
-        end    
+        end
         @total_hours[user.id] = total_hrs
         regular_hours_per_day = 8
         date_range = (@start_date..@end_date).to_a
-        working_days = date_range.reject { |date| date.saturday? || date.sunday? }
-        @total_working_hours = working_days.count * regular_hours_per_day
+        working_days = calculate_working_days(@start_date, @end_date, @public_holidays)
+        @total_working_hours = working_days * regular_hours_per_day
+        present_dates = @user_sessions.pluck(:check_in_time).map(&:to_date)
+        created_date = user.created_at.to_date
+        work_days = date_range.reject { |date| date.saturday? || date.sunday? }
+        leaves_count = work_days.count do |date|
+          !present_dates.include?(date) && date >= created_date && date <= Date.today
+        end
+        @leaves[user.id] = leaves_count
       end
       if @user_sessions.present?
         respond_to do |format|
@@ -248,7 +257,7 @@ class Admin::UsersController < ApplicationController
         redirect_to admin_monthly_users_list_path(month: Date.today.month, year: Date.today.year)
       end
     end
-
+    
     def monthly_users_list
       @users = User.where(role: "user", deleted: false).order(created_at: :desc)
       @month = params[:month].to_i
@@ -286,6 +295,19 @@ class Admin::UsersController < ApplicationController
           SlackService.new(user, "Checked Out", attendance.check_out_time).send_message
         end
       end
+    end
+
+    private
+
+    def calculate_working_days(start_date, end_date, public_holidays = [])
+      start_date = Date.parse(start_date.to_s) rescue nil
+      end_date = Date.parse(end_date.to_s) rescue nil
+      return 0 unless start_date && end_date
+      working_days = (start_date..end_date).to_a.reject do |date|
+        date.saturday? || date.sunday? ||
+        public_holidays.any? { |holiday| holiday.start_date <= date && holiday.end_date >= date }
+      end
+      working_days.length
     end
    end
    
