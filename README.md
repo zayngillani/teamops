@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # tech-time-tracker
 =======
 # README
