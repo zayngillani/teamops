@@ -128,4 +128,39 @@ document.addEventListener("turbo:load", function() {
       });
     }
   });
+
+
+function generatePDF() {
+    var month = document.getElementById('month').value;
+    var year = document.getElementById('year').value;
+    var selectedUsers = [];
+    document.querySelectorAll('.userCheckbox:checked').forEach(function(checkbox) {
+      selectedUsers.push(checkbox.value);
+    });
+    var form = document.createElement('form');
+    form.setAttribute('method', 'get');
+    form.setAttribute('action', '<%= admin_monthly_report_path(format: :pdf) %>');
   
+    var monthField = document.createElement('input');
+    monthField.setAttribute('type', 'hidden');
+    monthField.setAttribute('name', 'month');
+    monthField.setAttribute('value', month);
+    form.appendChild(monthField);
+  
+    var yearField = document.createElement('input');
+    yearField.setAttribute('type', 'hidden');
+    yearField.setAttribute('name', 'year');
+    yearField.setAttribute('value', year);
+    form.appendChild(yearField);
+  
+    selectedUsers.forEach(function(userId) {
+      var userField = document.createElement('input');
+      userField.setAttribute('type', 'hidden');
+      userField.setAttribute('name', 'selected_users[]');
+      userField.setAttribute('value', userId);
+      form.appendChild(userField);
+    });
+  
+    document.body.appendChild(form);
+    form.submit();
+  };

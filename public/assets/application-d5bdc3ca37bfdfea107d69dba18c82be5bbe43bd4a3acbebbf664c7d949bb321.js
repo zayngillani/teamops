@@ -114,7 +114,7 @@ document.addEventListener("turbo:load", function() {
   });
 
 
-  document.addEventListener('turbo:load', function() {
+  document.addEventListener('DOMContentLoaded', function() {
     const monthSelect = document.getElementById('month');
     const yearSelect = document.getElementById('year');
   
@@ -128,4 +128,3 @@ document.addEventListener("turbo:load", function() {
       });
     }
   });
-  

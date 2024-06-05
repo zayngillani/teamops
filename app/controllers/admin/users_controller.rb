@@ -140,9 +140,12 @@ class Admin::UsersController < ApplicationController
 
     def user_detail
       @user = User.find_by(id: params[:id])
-      start_date = Date.current.beginning_of_month
-      end_date = Date.current.end_of_month
+      @month = params[:month].to_i
+      @year = params[:year].to_i
+      start_date = Date.new(@year, @month, 1)
+      end_date = start_date.end_of_month
       @user_sessions = @user.attendances.where(check_in_time: start_date.beginning_of_day..end_date.end_of_day).order(created_at: :asc)
+      @all_sessions = @user.attendances
       date_range = (start_date.to_date..end_date.to_date).to_a
       date_range.reject! { |date| date.saturday? || date.sunday? }
       present_dates = @user_sessions.pluck(:check_in_time).map(&:to_date)
@@ -156,7 +159,9 @@ class Admin::UsersController < ApplicationController
           total_hrs += attendance.total_hours.to_i unless attendance.total_hours.nil?
         end
         @total_hours = total_hrs
-      else
+      elsif @all_sessions.present?
+        @sessions
+      elsif
         flash[:error] = "Attendance Not Present"
         redirect_to root_path
       end
@@ -216,7 +221,7 @@ class Admin::UsersController < ApplicationController
 
     def monthly_report
       if params[:selected_users].present?
-        user_ids = params[:selected_users].split(',').map(&:to_i)
+        user_ids = params[:selected_users].map(&:to_i)
         @users = User.where(id: user_ids)
       else
         @users = User.where(role: "user", deleted: false).order(created_at: :desc)
