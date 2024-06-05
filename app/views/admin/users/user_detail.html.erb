@@ -1,9 +1,9 @@
 <div class="main-content" style="margin-left: 220px; margin-top: 10px;">
 <div class="form-inline">
-<h1><%= @user.name %>'s Attendance</h1>
+<h1><%= @user&.name %>'s Attendance</h1>
 <div class="detail-page float-right">
 <%= form_tag admin_user_detail_path, method: :get, id: "filterForm" do %>
-    <%= hidden_field_tag 'id', @user.id %>
+    <%= hidden_field_tag 'id', @user&.id %>
     <%= select_tag 'month', options_for_select(Date::MONTHNAMES.compact.each_with_index.map { |month, index| [month, index + 1] }, params[:month].presence || Date.current.month), id: 'month', class: 'form-control select-month' %>
     <%= select_tag 'year', options_for_select((Date.current.year..Date.current.year + 5).to_a, params[:year].presence || Date.current.year), id: 'year', class: 'form-control select-year' %>
 <% end %>
