@@ -114,17 +114,15 @@ document.addEventListener("turbo:load", function() {
   });
 
 
-  document.addEventListener('turbo:load', function() {
-    const monthSelect = document.getElementById('month');
-    const yearSelect = document.getElementById('year');
+  document.addEventListener("turbo:load", function() {
+    var flashMessage = document.getElementById('flash-message');
+    if (flashMessage) {
+      setTimeout(function() {
+        flashMessage.classList.add('fading-out');
+      }, 3000); // 3000ms = 3 seconds
   
-    if (monthSelect && yearSelect) {
-      monthSelect.addEventListener('change', function() {
-        document.getElementById('filterForm').submit();
-      });
-  
-      yearSelect.addEventListener('change', function() {
-        document.getElementById('filterForm').submit();
+      flashMessage.addEventListener('transitionend', function() {
+        flashMessage.style.display = 'none';
       });
     }
   });

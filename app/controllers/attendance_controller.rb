@@ -80,7 +80,7 @@ class AttendanceController < ApplicationController
               last_break.update!(break_out_time: Time.now.utc)
               total_break_time = calculate_total_break_time(@session)
               @session.update!(total_break: total_break_time)
-              flash[:success] = "Break IN successfully"
+              flash[:success] = "Break Out successfully"
               SlackService.new(current_user, "Break Out", Time.now.utc).send_message
             else
               flash[:error] = "Unable to mark break"

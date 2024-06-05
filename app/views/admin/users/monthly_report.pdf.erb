@@ -91,6 +91,9 @@
         <th>Date</th>
         <th>Check In</th>
         <th>Check Out</th>
+        <th>Regular Hours</th>
+        <th>Overtime</th>
+        <th>Leaves</th>
         <th>Total Hours</th>
       </tr>
     </thead>
@@ -101,6 +104,33 @@
         <td><%= session.created_at.strftime("%A %b #{session.created_at.day.ordinalize}") %></td>
         <td><%= session.check_in_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") %></td>
         <td><%= session.check_out_time.present? ? session.check_out_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A" %></td>
+          <td>
+            <% if session.total_hours.present? %>
+              <% total_hours = session.total_hours %>
+              <% if total_hours > 28800 %> <!-- 28800 seconds = 8 hours -->
+                <% regular_hours = 28800 %>
+              <% else %>
+                <% regular_hours = total_hours %>
+              <% end %>
+              <%= "#{regular_hours / 3600}.#{regular_hours % 3600 / 60}" %>
+            <% else %>
+              N/A
+            <% end %>
+          </td>
+          <td>
+            <% if session.total_hours.present? %>
+              <% total_hours = session.total_hours %>
+              <% if total_hours > 28800 %> <!-- 28800 seconds = 8 hours -->
+                <% overtime_hours = total_hours - 28800 %>
+              <% else %>
+                <% overtime_hours = 0 %>
+              <% end %>
+              <%= "#{overtime_hours / 3600}.#{overtime_hours % 3600 / 60}" %>
+            <% else %>
+              N/A
+            <% end %>
+          </td>
+          <td></td>
         <td>
           <% if session.total_hours.present? %>
           <%= "#{session.total_hours / 3600} hours #{session.total_hours % 3600 / 60} minutes" %>
@@ -114,6 +144,9 @@
         <td><strong>Total</strong></td>
         <td></td>
         <td></td>
+        <td></td>
+        <td></td>
+        <td><%= @leaves[user.id] %></td>
         <td><strong><%= "#{@total_hours[user.id] / 3600 || 0} hours #{@total_hours[user.id] % 3600 / 60 || 0} minutes" %></strong></td>
       </tr>
     </tbody>

@@ -707,7 +707,7 @@ form .button input:hover{
   }
 
   .modal-footer button {
-    height: 39px !important;
+    height: 45px !important;
     border: none !important;
     margin-right: 3px; /* Adjust margin as needed */
   }

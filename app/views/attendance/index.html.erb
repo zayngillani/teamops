@@ -5,7 +5,7 @@
     <h4>Have a nice day at work</h4>
     <div class="button-container">
       <% content_for :link_button do %>
-        <%= button_to "Request Leaves", new_leave_path, method: :get, class: "sign-out-button", data: { disable_with: "Request Leaves" } %>
+        <%= button_to "Request Leaves", new_leave_path, method: :get, class: "request-button" %>
       <% end %>
       <% session = current_user.attendances.order(created_at: :asc).last %>
       <% if current_user.attendances.empty? || current_user.attendances.last.check_in_time <= 16.hours.ago || session.total_hours.present? %>

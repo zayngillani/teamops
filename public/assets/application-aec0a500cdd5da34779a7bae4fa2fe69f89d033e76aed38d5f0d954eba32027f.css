@@ -707,7 +707,7 @@ form .button input:hover{
   }
 
   .modal-footer button {
-    height: 39px !important;
+    height: 45px !important;
     border: none !important;
     margin-right: 3px; /* Adjust margin as needed */
   }
@@ -903,9 +903,6 @@ form .button input:hover{
   transition: background-color 0.3s ease;
 }
 
-.detail-page{
-  margin-right: 20px;
-}
 .form-control {
   width: 150px; /* Set a default width for all select tags */
   padding: 8px; /* Add padding for better appearance */
@@ -917,20 +914,10 @@ form .button input:hover{
 .select-month {
   width: 120px; /* Adjust width specifically for the month select tag */
   margin-right: 10px; /* Add some space between month and year select tags */
-  height: 40px;
 }
 
 .select-year {
   width: 80px; /* Adjust width specifically for the year select tag */
-  height: 40px;
-}
-
-.no-data {
-  text-align: center;
-  vertical-align: middle;
-  height: 100px; /* Adjust height as needed */
-  font-weight: bold;
-  color: #555;
 }
 
 .form-inline {

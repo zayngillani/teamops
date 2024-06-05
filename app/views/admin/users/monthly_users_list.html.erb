@@ -1,39 +1,67 @@
 <div class="main-content" style="margin-left: 220px; margin-top: 10px;">
-<div class="form-inline">
-  <%= form_tag admin_monthly_report_path(format: :pdf), method: :get, id: "pdfForm" do %>
-    <%= hidden_field_tag 'selected_users', nil %> <!-- Hidden field to store selected user IDs -->
-    <%= select_tag 'month', options_for_select(Date::MONTHNAMES.compact.each_with_index.map { |month, index| [month, index + 1] }, params[:month].presence || Date.current.month), class: 'form-control select-month' %>
-    <%= select_tag 'year', options_for_select((Date.current.year..Date.current.year + 5).to_a, params[:year].presence || Date.current.year), class: 'form-control select-year' %>
-    <%= submit_tag 'Generate PDF', class: 'btn btn-primary styled-button2', style: 'display: none;' %>
-  <% end %>
-  <button class="modal-btn btn-style float-right" data-target="myModalPdf" onclick="submitPdfForm()">Download PDF</button>
+  <div class="form-inline">
+    <%= form_tag admin_monthly_users_list_path, method: :get, id: "filterForm" do %>
+      <%= select_tag 'month', options_for_select(Date::MONTHNAMES.compact.each_with_index.map { |month, index| [month, index + 1] }, params[:month].presence || Date.current.month), id: 'month', class: 'form-control select-month' %>
+      <%= select_tag 'year', options_for_select((Date.current.year..Date.current.year + 5).to_a, params[:year].presence || Date.current.year), id: 'year', class: 'form-control select-year' %>
+    <% end %>
+    <button class="modal-btn btn-style float-right" onclick="generatePDF()">Download PDF</button>
   </div>
-  <script>
-    function submitPdfForm() {
-      var selectedUsers = [];
-      document.querySelectorAll('.userCheckbox:checked').forEach(function(checkbox) {
-        selectedUsers.push(checkbox.value);
-      });
-      document.getElementById('selected_users').value = selectedUsers.join(',');
-      document.getElementById('pdfForm').submit();
-    }
-  </script>
-  <table>
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Total Hours</th>
-        <th>Select</th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @users.each do |user| %>
+
+  <div id="users_data">
+    <table>
+      <thead>
         <tr>
-          <td><%= user.name %></td>
-          <td><%= "#{@total_hours[user.id] / 3600 || 0} hours #{@total_hours[user.id] % 3600 / 60 || 0} minutes" %></td>
-          <td><%= check_box_tag 'selected_users[]', user.id, false, class: 'userCheckbox' %></td>
+          <th>Name</th>
+          <th>Total Hours</th>
+          <th>Select</th>
         </tr>
-      <% end %>
-    </tbody>
-  </table>
+      </thead>
+      <tbody>
+        <% @users.each do |user| %>
+          <tr>
+            <td><%= user&.name %></td>
+            <td><%= "#{@total_hours[user.id] / 3600 || 0} hours #{@total_hours[user&.id] % 3600 / 60 || 0} minutes" %></td>
+            <td><%= check_box_tag 'selected_users[]', user.id, false, class: 'userCheckbox' %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
 </div>
+
+<script>
+  function generatePDF() {
+    var month = document.getElementById('month').value;
+    var year = document.getElementById('year').value;
+    var selectedUsers = [];
+    document.querySelectorAll('.userCheckbox:checked').forEach(function(checkbox) {
+      selectedUsers.push(checkbox.value);
+    });
+    var form = document.createElement('form');
+    form.setAttribute('method', 'get');
+    form.setAttribute('action', '<%= admin_monthly_report_path(format: :pdf) %>');
+
+    var monthField = document.createElement('input');
+    monthField.setAttribute('type', 'hidden');
+    monthField.setAttribute('name', 'month');
+    monthField.setAttribute('value', month);
+    form.appendChild(monthField);
+
+    var yearField = document.createElement('input');
+    yearField.setAttribute('type', 'hidden');
+    yearField.setAttribute('name', 'year');
+    yearField.setAttribute('value', year);
+    form.appendChild(yearField);
+
+    selectedUsers.forEach(function(userId) {
+      var userField = document.createElement('input');
+      userField.setAttribute('type', 'hidden');
+      userField.setAttribute('name', 'selected_users[]');
+      userField.setAttribute('value', userId);
+      form.appendChild(userField);
+    });
+
+    document.body.appendChild(form);
+    form.submit();
+  }
+</script>
