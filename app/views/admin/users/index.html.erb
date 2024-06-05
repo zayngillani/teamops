@@ -20,7 +20,7 @@
       <td><%= item.email %></td>
       <td><%= item.ip_address.present? ? item.ip_address : "N/A"%>
       <td>
-        <%= link_to "View", admin_user_detail_path(id: item.id), class: "sign-out-button"%>
+        <%= link_to "View", admin_user_detail_path(id: item.id, month: Date.current.month, year: Date.current.year), class: "sign-out-button"%>
       </td>
       <td>
       <div class="dropdown-action">

@@ -903,9 +903,6 @@ form .button input:hover{
   transition: background-color 0.3s ease;
 }
 
-.detail-page{
-  margin-right: 20px;
-}
 .form-control {
   width: 150px; /* Set a default width for all select tags */
   padding: 8px; /* Add padding for better appearance */
