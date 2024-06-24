@@ -243,7 +243,12 @@ class Admin::UsersController < ApplicationController
         regular_hours_per_day = 8
         date_range = (@start_date..@end_date).to_a
         working_days = calculate_working_days(@start_date, @end_date, @public_holidays)
-        @total_working_hours = working_days * regular_hours_per_day
+        if @public_holidays.present?
+          work_days = working_days - @public_holidays.count
+        else
+          work_days = working_days - (@public_holidays&.count || 0)
+        end
+        @total_working_hours = work_days * regular_hours_per_day
         present_dates = @user_sessions.pluck(:check_in_time).map(&:to_date)
         created_date = user.created_at.to_date
         work_days = date_range.reject { |date| date.saturday? || date.sunday? }
