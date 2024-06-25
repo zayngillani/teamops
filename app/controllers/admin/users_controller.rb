@@ -256,7 +256,11 @@ class Admin::UsersController < ApplicationController
           !present_dates.include?(date) && date >= created_date && date <= Date.today
         end
         holidays = work_days.count - working_days
-        @leaves[user.id] = leaves_count - holidays
+        if !leaves_count == 0
+          @leaves[user.id] = leaves_count - holidays
+        else
+          @leaves[user.id] = 0
+        end
       end
       if @user_sessions.present?
         respond_to do |format|
