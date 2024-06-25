@@ -246,10 +246,11 @@ class Admin::UsersController < ApplicationController
         @public_holidays.each do |holiday|
           working_days -= (holiday.start_date..holiday.end_date).count
         end
+        @current_leaves = Leave.where("start_date <= ? AND end_date >= ? AND status = ? AND user_id = ?", @end_date, @start_date, 1, user.id)
+        .sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }
         @total_working_hours = working_days * regular_hours_per_day
         present_dates = @user_sessions.pluck(:check_in_time).map(&:to_date)
         created_date = user.created_at.to_date
-        @current_leaves = Leave.where("start_date <= ? AND end_date >= ? AND status = ? AND user_id = ?", @start_date.end_of_month, @end_date.beginning_of_month, 1, user.id).count
         work_days = date_range.reject { |date| date.saturday? || date.sunday? }
         leaves_count = work_days.count do |date|
           !present_dates.include?(date) && date >= created_date && date <= Date.today
