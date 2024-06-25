@@ -242,7 +242,10 @@ class Admin::UsersController < ApplicationController
         @total_hours[user.id] = total_hrs
         regular_hours_per_day = 8
         date_range = (@start_date..@end_date).to_a
-        working_days = calculate_working_days(@start_date, @end_date, @public_holidays)
+        working_days = calculate_working_days(@start_date, @end_date)
+        @public_holidays.each do |holiday|
+          working_days -= (holiday.start_date..holiday.end_date).count
+        end
         @total_working_hours = working_days * regular_hours_per_day
         present_dates = @user_sessions.pluck(:check_in_time).map(&:to_date)
         created_date = user.created_at.to_date
@@ -251,7 +254,8 @@ class Admin::UsersController < ApplicationController
         leaves_count = work_days.count do |date|
           !present_dates.include?(date) && date >= created_date && date <= Date.today
         end
-        @leaves[user.id] = leaves_count
+        holidays = work_days.count - working_days
+        @leaves[user.id] = leaves_count - holidays
       end
       if @user_sessions.present?
         respond_to do |format|
@@ -310,8 +314,7 @@ class Admin::UsersController < ApplicationController
       end_date = Date.parse(end_date.to_s) rescue nil
       return 0 unless start_date && end_date
       working_days = (start_date..end_date).to_a.reject do |date|
-        date.saturday? || date.sunday? ||
-        public_holidays.any? { |holiday| holiday.start_date <= date && holiday.end_date >= date }
+        date.saturday? || date.sunday?
       end
       working_days.length
     end
