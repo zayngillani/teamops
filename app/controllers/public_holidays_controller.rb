@@ -8,7 +8,7 @@ class PublicHolidaysController < ApplicationController
       return
     end
   
-    if date_start == Date.today && Time.now.hour >= 12
+    if start_date == Date.today && Time.now.hour >= 12
       redirect_to public_holidays_path, flash: { error: "Holiday can only be added before 12 pm." }
       return
     end
