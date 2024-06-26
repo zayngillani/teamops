@@ -3,8 +3,8 @@ class PublicHolidaysController < ApplicationController
     start_date = Date.parse(params[:public_holiday][:start_date])
     end_date = Date.parse(params[:public_holiday][:end_date])
     
-    if start_date.saturday? || start_date.sunday?
-      redirect_to public_holidays_path, flash: { error: "Holidays cannot start on a weekend." }
+    if start_date.saturday? || start_date.sunday? || end_date.saturday? || end_date.sunday?
+      redirect_to public_holidays_path, flash: { error: "Holidays cannot start or end on a weekend." }
       return
     end
   
@@ -18,9 +18,10 @@ class PublicHolidaysController < ApplicationController
       return
     end
     
-    existing_holiday = PublicHoliday.find_by(start_date: start_date)
+    existing_holiday = PublicHoliday.where("start_date <= ? AND end_date >= ?", end_date, start_date).exists? ||
+    PublicHoliday.where(start_date: start_date..end_date).exists?
     if existing_holiday
-      redirect_to public_holidays_path, flash: { error: "A holiday already exists on this date." }
+      redirect_to public_holidays_path, flash: { error: "A holiday already exists within the specified date range." }
       return
     end
     

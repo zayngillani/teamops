@@ -47,14 +47,20 @@
       <th>Over Time</th>
       <th>Under Time</th>
       <th>Leaves</th>
+      <th>Absent</th>
     </tr>
   </thead>
   <tbody>
     <% @users.each do |user| %>
     <tr>
+    <% @current_user_leaves = Leave.where("start_date <= ? AND end_date >= ? AND status = ? AND user_id = ?", @end_date, @start_date, 1, user.id).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }%>
+    <% d_leaves = user.leaves.pluck(:start_date, :end_date)
+       %>
+       <%  @leave_dates = d_leaves.flat_map { |start_date, end_date| (start_date.to_date..end_date.to_date).to_a }.uniq
+ %>
       <td><%= user.name %></td>
       <% if user.leaves.present? %>
-      <% @working_hours = @total_working_hours - user.leaves.where(status: 1).count * 8 %>
+      <% @working_hours = @total_working_hours - @leave_dates.count * 8 %>
       <% else %>
       <% @working_hours = @total_working_hours %>
       <% end %>
@@ -74,13 +80,15 @@
       <% else %>
         <td><%= 0 %></td>
       <% end %>
-      <td><%= @leaves[user.id] + @current_leaves %></td>
+      <td><%=  @current_user_leaves %></td>
+      <td><%= @leaves[user.id] %></td>
     </tr>
     <% end %>
   </tbody>
 </table>
 
 <% @users.each do |user| %>
+  <% @current_user_leaves = Leave.where("start_date <= ? AND end_date >= ? AND status = ? AND user_id = ?", @end_date, @start_date, 1, user.id).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }%>
 <h1 class="attendance-heading">Timesheet</h1>
 <p style="float: left; margin: 5px;">Employee: <strong><%= user.name %></strong></p>
 <p style="float: right; margin: 5px;">Month:  <strong><%= Date::MONTHNAMES[@month] %></strong></p>
@@ -155,7 +163,7 @@
         <td></td>
         <td></td>
         <td></td>
-        <td><%= @leaves[user.id] %></td>
+        <td><%= @leaves[user.id] + @current_user_leaves %></td>
         <td><strong><%= "#{@total_hours[user.id] / 3600 || 0} hours #{@total_hours[user.id] % 3600 / 60 || 0} minutes" %></strong></td>
       </tr>
     </tbody>
