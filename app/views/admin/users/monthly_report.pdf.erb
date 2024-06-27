@@ -47,18 +47,16 @@
       <th>Over Time</th>
       <th>Under Time</th>
       <th>Leaves</th>
-      <th>Absent</th>
     </tr>
   </thead>
   <tbody>
     <% @users.each do |user| %>
     <tr>
+    <% binding.pry%>
     <% @current_user_leaves = Leave.where("start_date <= ? AND end_date >= ? AND status = ? AND user_id = ?", @end_date, @start_date, 1, user.id).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }%>
-    <% d_leaves = user.leaves.where(status: 1).pluck(:start_date, :end_date)%>
-       <%  @leave_dates = d_leaves.flat_map { |start_date, end_date| (start_date.to_date..end_date.to_date).to_a }.uniq %>
       <td><%= user.name %></td>
       <% if user.leaves.present? %>
-      <% @working_hours = @total_working_hours - @leave_dates.count * 8 %>
+      <% @working_hours = @total_working_hours - @current_user_leaves * 8 %>
       <% else %>
       <% @working_hours = @total_working_hours %>
       <% end %>
@@ -79,7 +77,6 @@
         <td><%= 0 %></td>
       <% end %>
       <td><%=  @current_user_leaves %></td>
-      <td><%= @leaves[user.id] %></td>
     </tr>
     <% end %>
   </tbody>
