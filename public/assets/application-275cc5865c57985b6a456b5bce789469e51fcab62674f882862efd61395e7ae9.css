@@ -64,7 +64,6 @@
      width: 110px;
      height: auto;
      margin-left: 40px;
-     margin-bottom: 63px;
     }
 
     .header {
@@ -827,11 +826,11 @@ form .button input:hover{
 
 #sidebar {
   position: absolute;
-  top: 0px;
+  top: 24px;
   left: 0;
   height: 100%;
   width: 240px; /* Adjust width as needed */
-  background-color: white; /* Example background color */
+  background-color: #f1f1f1; /* Example background color */
   padding: 20px;
   box-sizing: border-box;
   z-index: 1000; /* Ensure the sidebar is above other content */
