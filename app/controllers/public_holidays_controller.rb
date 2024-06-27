@@ -2,22 +2,16 @@ class PublicHolidaysController < ApplicationController
   def create
     start_date = Date.parse(params[:public_holiday][:start_date])
     end_date = Date.parse(params[:public_holiday][:end_date])
-    
-    if start_date.saturday? || start_date.sunday? || end_date.saturday? || end_date.sunday?
+    if (start_date..end_date).any? { |date| date.saturday? || date.sunday? }
       redirect_to public_holidays_path, flash: { error: "Holidays cannot start or end on a weekend." }
       return
-    end
-  
-    if start_date == Date.today && Time.now.hour >= 12
+    elsif start_date == Date.today && Time.now.hour >= 12
       redirect_to public_holidays_path, flash: { error: "Holiday can only be added before 12 pm." }
       return
-    end
-  
-    if start_date > end_date
+    elsif start_date > end_date
       redirect_to public_holidays_path, flash: { error: "End date must be greater than or equal to start date" }
       return
     end
-    
     existing_holiday = PublicHoliday.where("start_date <= ? AND end_date >= ?", end_date, start_date).exists? ||
     PublicHoliday.where(start_date: start_date..end_date).exists?
     if existing_holiday
