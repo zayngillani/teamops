@@ -36,42 +36,57 @@
 <h1 class="attendance-heading">Monthly Report</h1>
 <p style="float: right; margin: 5px;">Month:  <strong><%= Date::MONTHNAMES[@month] %></strong></p>
 <div style="display: flex; justify-content: space-between; align-items: center; margin: 5px;">
-  <p style="float: left; margin: 0; margin-right: 10px;">Regular Hours:<strong><%=" #{@total_working_hours}"%></strong></p>
+  <p style="float: left; margin: 0; margin-right: 10px;">Expected Hours:<strong><%=" #{@total_working_hours}"%></strong></p>
 </div>
 <table class="attendance-table user-data">
   <thead>
     <tr>
       <th>Name</th>
       <th>Regular Hours</th>
+      <th>Worked Hours</th>
       <th>Over Time</th>
-      <th>Total Hours</th>
+      <th>Under Time</th>
+      <th>Leaves</th>
+      <th>Absent</th>
     </tr>
   </thead>
   <tbody>
     <% @users.each do |user| %>
     <tr>
+    <% @current_user_leaves = Leave.where("start_date <= ? AND end_date >= ? AND status = ? AND user_id = ?", @end_date, @start_date, 1, user.id).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }%>
+    <% d_leaves = user.leaves.where(status: 1).pluck(:start_date, :end_date)%>
+       <%  @leave_dates = d_leaves.flat_map { |start_date, end_date| (start_date.to_date..end_date.to_date).to_a }.uniq %>
       <td><%= user.name %></td>
-      <% if @total_working_hours < @total_hours[user.id] / 3600 %>
-        <td><%= "#{@total_working_hours}" %></td>
+      <% if user.leaves.present? %>
+      <% @working_hours = @total_working_hours - @leave_dates.count * 8 %>
+      <% else %>
+      <% @working_hours = @total_working_hours %>
+      <% end %>
+      <td><%= @working_hours %></td>
+      <% if @working_hours < @total_hours[user.id] / 3600 %>
+        <td><%= "#{@working_hours}" %></td>
       <% else %>
         <td><%= "#{@total_hours[user.id] / 3600}" %></td>
       <% end %>
-      <% if @total_working_hours < @total_hours[user.id] / 3600 %>
-        <td><%= (@total_hours[user.id] / 3600) - @total_working_hours %></td>
+      <% if @working_hours < @total_hours[user.id] / 3600 %>
+        <td><%= (@total_hours[user.id] / 3600) - @working_hours %></td>
       <% else %>
         <td><%= 0 %></td>
       <% end %>
-      <% if @total_working_hours < @total_hours[user.id] / 3600 %>
-        <td><%= "#{@total_hours[user.id] / 3600}" %></td>
+      <% if @working_hours > @total_hours[user.id] / 3600 %>
+        <td><%= @working_hours - (@total_hours[user.id] / 3600) %></td>
       <% else %>
-        <td><%= "#{@total_hours[user.id] / 3600}" %></td>
+        <td><%= 0 %></td>
       <% end %>
+      <td><%=  @current_user_leaves %></td>
+      <td><%= @leaves[user.id] %></td>
     </tr>
     <% end %>
   </tbody>
 </table>
 
 <% @users.each do |user| %>
+  <% @current_user_leaves = Leave.where("start_date <= ? AND end_date >= ? AND status = ? AND user_id = ?", @end_date, @start_date, 1, user.id).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }%>
 <h1 class="attendance-heading">Timesheet</h1>
 <p style="float: left; margin: 5px;">Employee: <strong><%= user.name %></strong></p>
 <p style="float: right; margin: 5px;">Month:  <strong><%= Date::MONTHNAMES[@month] %></strong></p>
@@ -146,7 +161,7 @@
         <td></td>
         <td></td>
         <td></td>
-        <td><%= @leaves[user.id] %></td>
+        <td><%= @leaves[user.id] + @current_user_leaves %></td>
         <td><strong><%= "#{@total_hours[user.id] / 3600 || 0} hours #{@total_hours[user.id] % 3600 / 60 || 0} minutes" %></strong></td>
       </tr>
     </tbody>
