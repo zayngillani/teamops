@@ -52,7 +52,6 @@
   <tbody>
     <% @users.each do |user| %>
     <tr>
-    <% binding.pry%>
     <% @current_user_leaves = Leave.where("start_date <= ? AND end_date >= ? AND status = ? AND user_id = ?", @end_date, @start_date, 1, user.id).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }%>
       <td><%= user.name %></td>
       <% if user.leaves.present? %>
