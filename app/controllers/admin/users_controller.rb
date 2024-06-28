@@ -219,6 +219,80 @@ class Admin::UsersController < ApplicationController
       end
     end
 
+    def monthly_excel
+      if params[:selected_users].present?
+        user_ids = params[:selected_users].split(',')
+        @users = User.where(id: user_ids)
+      else
+        @users = User.where(role: "user", deleted: false).order(created_at: :desc)
+      end
+    
+      @month = params[:month].to_i
+      @year = params[:year].to_i
+      @start_date = Date.new(@year, @month, 1)
+      @end_date = @start_date.end_of_month
+      @total_hours = {}
+      @leaves = {}
+      current_month_start = @start_date.beginning_of_month
+      current_month_end = @end_date.end_of_month
+      @public_holidays = PublicHoliday.where("start_date <= ? AND end_date >= ?", current_month_end, current_month_start)
+      
+      @users.each do |user|
+        @user_sessions = user.attendances.where(check_in_time: @start_date.beginning_of_day..@end_date.end_of_day).order(created_at: :asc)
+        total_hrs = 0
+        @user_sessions.each do |attendance|
+          total_hrs += attendance.total_hours.to_i unless attendance.total_hours.nil?
+        end
+        @total_hours[user.id] = total_hrs
+        regular_hours_per_day = 8
+        date_range = (@start_date..@end_date).to_a
+        working_days = calculate_working_days(@start_date, @end_date)
+        @public_holidays.each do |holiday|
+          working_days -= (holiday.start_date..holiday.end_date).count
+        end
+        @total_working_hours = working_days * regular_hours_per_day
+      end
+    
+      respond_to do |format|
+        format.xlsx do
+          xlsx_package = Axlsx::Package.new
+          xlsx_package.use_shared_strings = true
+          wb = xlsx_package.workbook
+          wb.add_worksheet(name: "Your Data") do |sheet|
+            sheet.add_row ["Name", "Regular Hours", "Worked Hours", "Over Time", "Under Time", "Leaves"]
+    
+            @users.each do |user|
+              current_user_leaves = Leave.where("start_date <= ? AND end_date >= ? AND status = ? AND user_id = ?", @end_date, @start_date, 1, user.id).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }
+              if user.leaves.present?
+                reg_hours = @total_working_hours - current_user_leaves * 8
+              else
+                reg_hours = @total_working_hours
+              end
+              @regular_hours = reg_hours
+              if @regular_hours < @total_hours[user.id] / 3600
+                working_hours = @regular_hours
+              else
+                working_hours = @total_hours[user.id] / 3600
+              end
+              if @regular_hours < @total_hours[user.id] / 3600
+                overtime = (@total_hours[user.id] / 3600) - @regular_hours
+              else
+                overtime = 0
+              end
+              if @regular_hours > @total_hours[user.id] / 3600
+                undertime = @regular_hours - (@total_hours[user.id] / 3600)
+              else
+                undertime = 0
+              end
+              sheet.add_row [user.name, reg_hours, working_hours, overtime, undertime, current_user_leaves]
+            end
+          end
+          send_data xlsx_package.to_stream.read, filename: "monthly_report_#{Date::MONTHNAMES[@month]}#{@year}.xlsx", type: "application/xlsx", disposition: "attachment"
+        end
+      end
+    end
+    
+
     def monthly_report
       if params[:selected_users].present?
         user_ids = params[:selected_users].map(&:to_i)
