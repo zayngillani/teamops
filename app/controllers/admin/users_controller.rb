@@ -63,23 +63,20 @@ class Admin::UsersController < ApplicationController
       @last_name = name.split.last[0]
     end
 
-
-
-
     def generate_pdf
       @user = User.find(params[:id])
       @month = params[:month].to_i
       @year = params[:year].to_i
-      start_date = Date.new(@year, @month, 1)
-      end_date = start_date.end_of_month
-      @public_holidays = PublicHoliday.where("start_date <= ? AND end_date >= ?", start_date.end_of_month, end_date.beginning_of_month)
-      date_range = (start_date..end_date).reject { |date| date.saturday? || date.sunday? }
+      @start_date = Date.new(@year, @month, 1)
+      @end_date = @start_date.end_of_month
+      @public_holidays = PublicHoliday.where("start_date <= ? AND end_date >= ?", @start_date.end_of_month, @end_date.beginning_of_month)
+      date_range = (@start_date..@end_date).reject { |date| date.saturday? || date.sunday? }
       if @public_holidays.present?
         @public_holidays.each do |holiday|
           date_range.reject! { |date| date.between?(holiday.start_date, holiday.end_date) }
         end
       end
-      @user_sessions = @user.attendances.where(check_in_time: start_date.beginning_of_day..end_date.end_of_day).order(created_at: :asc)
+      @user_sessions = @user.attendances.where(check_in_time: @start_date.beginning_of_day..@end_date.end_of_day).order(created_at: :asc)
       present_dates = @user_sessions.pluck(:check_in_time).map(&:to_date)
       created_date = @user.created_at.to_date
       @leaves = date_range.count { |date|
@@ -142,17 +139,15 @@ class Admin::UsersController < ApplicationController
       @user = User.find_by(id: params[:id])
       @month = params[:month].to_i
       @year = params[:year].to_i
-      start_date = Date.new(@year, @month, 1)
-      end_date = start_date.end_of_month
-      @user_sessions = @user.attendances.where(check_in_time: start_date.beginning_of_day..end_date.end_of_day).order(created_at: :asc)
+      @start_date = Date.new(@year, @month, 1)
+      @end_date = @start_date.end_of_month
+      @user_sessions = @user.attendances.where(check_in_time: @start_date.beginning_of_day..@end_date.end_of_day).order(created_at: :asc)
       @all_sessions = @user.attendances
-      date_range = (start_date.to_date..end_date.to_date).to_a
+      date_range = (@start_date.to_date..@end_date.to_date).to_a
       date_range.reject! { |date| date.saturday? || date.sunday? }
       present_dates = @user_sessions.pluck(:check_in_time).map(&:to_date)
       created_date = @user.created_at.to_date
-      @leaves = date_range.count { |date|
-        !present_dates.include?(date) && date >= created_date && date <= Date.today
-      }
+
       if @user_sessions.present?
         total_hrs = 0
         @user_sessions.each do |attendance|
@@ -168,22 +163,12 @@ class Admin::UsersController < ApplicationController
     end
 
     def user_leave
+      @user = User.find_by(id: params[:id])
       @month = params[:month].to_i
       @year = params[:year].to_i
       @users = User.where(role: "user", deleted: false).order(created_at: :desc)
-      start_date = Date.new(@year, @month, 1)
-      end_date = start_date.end_of_month
-      @user_leaves = {}
-      @users.each do |user|
-        date_range = (start_date..end_date).to_a
-        date_range.reject! { |date| date.saturday? || date.sunday? }
-        present_dates = user.attendances.pluck(:check_in_time).map(&:to_date)
-        created_date = user.created_at.to_date
-        leaves = date_range.count { |date|
-          !present_dates.include?(date) && date >= created_date && date <= Date.today
-        }
-        @user_leaves[user.name] = leaves
-      end
+      @start_date = Date.new(@year, @month, 1)
+      @end_date = @start_date.end_of_month
     end
 
     def leave_report

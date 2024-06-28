@@ -14,11 +14,12 @@
     </tr>
   </thead>
   <tbody>
-  <% @user_leaves.each do |name, value| %>
-    <tr>
-      <td><%= name %></td>
-      <td><%= value %></td>
-    </tr>
+    <% @users.each do |user| %>
+      <% @user_leaves_count =  @current_user_leaves = Leave.where("start_date <= ? AND end_date >= ? AND status = ? AND user_id = ?", @end_date, @start_date, 1, user.id).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }%>
+      <tr>
+        <td><%= user.name %></td>
+        <td><%= @user_leaves_count %></td>
+      </tr>
     <% end %>
   </tbody>
 </table>
