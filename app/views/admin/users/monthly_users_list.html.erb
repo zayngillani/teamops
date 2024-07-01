@@ -4,7 +4,8 @@
       <%= select_tag 'month', options_for_select(Date::MONTHNAMES.compact.each_with_index.map { |month, index| [month, index + 1] }, params[:month].presence || Date.current.month), id: 'month', class: 'form-control select-month' %>
       <%= select_tag 'year', options_for_select((Date.current.year..Date.current.year + 5).to_a, params[:year].presence || Date.current.year), id: 'year', class: 'form-control select-year' %>
     <% end %>
-    <button class="modal-btn btn-style float-right" onclick="generatePDF()">Download PDF</button>
+    <button type="button" class="modal-btn btn-style float-right" onclick="generatePDF()">Download PDF</button>
+    <button type="button" id="download-excel-link" class="modal-btn btn-style" onclick="downloadExcel()">Download Excel</button>
   </div>
 
   <div id="users_data">
@@ -30,38 +31,70 @@
 </div>
 
 <script>
-  function generatePDF() {
-    var month = document.getElementById('month').value;
-    var year = document.getElementById('year').value;
-    var selectedUsers = [];
+document.addEventListener('DOMContentLoaded', function() {
+  const monthSelect = document.getElementById('month');
+  const yearSelect = document.getElementById('year');
+  function updateDownloadLink() {
+    const selectedMonth = monthSelect.value;
+    const selectedYear = yearSelect.value;
+    const selectedUsers = [];
     document.querySelectorAll('.userCheckbox:checked').forEach(function(checkbox) {
       selectedUsers.push(checkbox.value);
     });
-    var form = document.createElement('form');
-    form.setAttribute('method', 'get');
-    form.setAttribute('action', '<%= admin_monthly_report_path(format: :pdf) %>');
 
-    var monthField = document.createElement('input');
-    monthField.setAttribute('type', 'hidden');
-    monthField.setAttribute('name', 'month');
-    monthField.setAttribute('value', month);
-    form.appendChild(monthField);
+    const excelDownloadUrl = `/admin/monthly_excel/${selectedMonth}/${selectedYear}.xlsx?selected_users=${selectedUsers.join(',')}`;
 
-    var yearField = document.createElement('input');
-    yearField.setAttribute('type', 'hidden');
-    yearField.setAttribute('name', 'year');
-    yearField.setAttribute('value', year);
-    form.appendChild(yearField);
-
-    selectedUsers.forEach(function(userId) {
-      var userField = document.createElement('input');
-      userField.setAttribute('type', 'hidden');
-      userField.setAttribute('name', 'selected_users[]');
-      userField.setAttribute('value', userId);
-      form.appendChild(userField);
-    });
-
-    document.body.appendChild(form);
-    form.submit();
+    document.getElementById('download-excel-link').setAttribute('href', excelDownloadUrl);
   }
+  monthSelect.addEventListener('change', updateDownloadLink);
+  yearSelect.addEventListener('change', updateDownloadLink);
+  updateDownloadLink();
+});
+
+function generatePDF() {
+  var month = document.getElementById('month').value;
+  var year = document.getElementById('year').value;
+  var selectedUsers = [];
+  document.querySelectorAll('.userCheckbox:checked').forEach(function(checkbox) {
+    selectedUsers.push(checkbox.value);
+  });
+
+  var form = document.createElement('form');
+  form.setAttribute('method', 'get');
+  form.setAttribute('action', '<%= admin_monthly_report_path(format: :pdf) %>');
+  var monthField = document.createElement('input');
+  monthField.setAttribute('type', 'hidden');
+  monthField.setAttribute('name', 'month');
+  monthField.setAttribute('value', month);
+  form.appendChild(monthField);
+  var yearField = document.createElement('input');
+  yearField.setAttribute('type', 'hidden');
+  yearField.setAttribute('name', 'year');
+  yearField.setAttribute('value', year);
+  form.appendChild(yearField);
+  selectedUsers.forEach(function(userId) {
+    var userField = document.createElement('input');
+    userField.setAttribute('type', 'hidden');
+    userField.setAttribute('name', 'selected_users[]');
+    userField.setAttribute('value', userId);
+    form.appendChild(userField);
+  });
+  document.body.appendChild(form);
+  form.submit();
+}
+
+function downloadExcel() {
+  const selectedMonth = document.getElementById('month').value;
+  const selectedYear = document.getElementById('year').value;
+  const selectedUsers = [];
+  document.querySelectorAll('.userCheckbox:checked').forEach(function(checkbox) {
+    selectedUsers.push(checkbox.value);
+  });
+
+  const excelDownloadUrl = `/admin/monthly_excel/${selectedMonth}/${selectedYear}.xlsx?selected_users=${selectedUsers.join(',')}`;
+  const link = document.createElement('a');
+  link.setAttribute('href', excelDownloadUrl);
+  link.setAttribute('target', '_blank');
+  link.click();
+}
 </script>

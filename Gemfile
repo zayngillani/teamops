@@ -89,3 +89,6 @@ group :test do
 end
 
 gem 'momentjs-rails'
+
+gem 'caxlsx'
+gem 'caxlsx_rails'
