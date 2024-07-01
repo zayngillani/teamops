@@ -174,13 +174,13 @@ class Admin::UsersController < ApplicationController
     def leave_report
       @month = params[:month].to_i
       @year = params[:year].to_i
-      @users = User.where(role: "user", deleted: false)
-      start_date = Date.new(@year, @month, 1)
-      end_date = start_date.end_of_month
-      @public_holidays = PublicHoliday.where("start_date <= ? AND end_date >= ?", start_date.end_of_month, end_date.beginning_of_month)
+      @users = User.where(role: "user", deleted: false).order(created_at: :desc)
+      @start_date = Date.new(@year, @month, 1)
+      @end_date = @start_date.end_of_month
+      @public_holidays = PublicHoliday.where("start_date <= ? AND end_date >= ?", @start_date.end_of_month, @end_date.beginning_of_month)
       @user_leaves = {}
       @users.each do |user|
-        date_range = (start_date..end_date).reject { |date| date.saturday? || date.sunday? }
+        date_range = (@start_date..@end_date).reject { |date| date.saturday? || date.sunday? }
         if @public_holidays.present?
           @public_holidays.each do |holiday|
             date_range.reject! { |date| date.between?(holiday.start_date, holiday.end_date) }
