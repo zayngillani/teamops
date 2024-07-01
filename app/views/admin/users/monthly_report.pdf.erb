@@ -60,11 +60,7 @@
       <% @working_hours = @total_working_hours %>
       <% end %>
       <td><%= @working_hours %></td>
-      <% if @working_hours < @total_hours[user.id] / 3600 %>
-        <td><%= "#{@working_hours}" %></td>
-      <% else %>
-        <td><%= "#{@total_hours[user.id] / 3600}" %></td>
-      <% end %>
+      <td><%= "#{@total_hours[user.id] / 3600}" %></td>       
       <% if @working_hours < @total_hours[user.id] / 3600 %>
         <td><%= (@total_hours[user.id] / 3600) - @working_hours %></td>
       <% else %>
@@ -157,7 +153,7 @@
         <td></td>
         <td></td>
         <td></td>
-        <td><%= @leaves[user.id] + @current_user_leaves %></td>
+        <td><%= @current_user_leaves %></td>
         <td><strong><%= "#{@total_hours[user.id] / 3600 || 0} hours #{@total_hours[user.id] % 3600 / 60 || 0} minutes" %></strong></td>
       </tr>
     </tbody>
