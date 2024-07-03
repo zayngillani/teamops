@@ -59,6 +59,10 @@ class LeavesController < ApplicationController
         end
       end
     end
+    if (leave_start..leave_end).any? { |date| date.saturday? || date.sunday? }
+      redirect_to root_path, flash: { error: "You cannot request leave including weekends." }
+      return
+    end
     if leave_start.saturday? || leave_start.sunday? || leave_end.saturday? || leave_end.sunday?
       redirect_to root_path, flash: { error: "You can't request leave for weekends (Saturday or Sunday)." }
       return
