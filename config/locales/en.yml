@@ -31,4 +31,4 @@
 
 en:
   hello: "Hello world"
-  password: "Passwords don't match. Please check and re-type your confirm password."
+  password: "Passwords don't match. Please re-type"

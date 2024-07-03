@@ -4,37 +4,28 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   </head>
-  <body class="special-background">
-    <div class="container">
-      <div class="wrapper">
-        <div class="title"><span>Create new password</span></div>
-        <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
-          <% if resource.errors.full_messages.present? %>
-            <div class="alert alert-danger fading-out" id="banner"><%= I18n.t('password') %></div>
-          <% end %>
-          <div class="form-group">
-            <%= f.hidden_field :reset_password_token %>
-            <div class="password-input-container">
-              <%= f.password_field :password, class: "password-field", placeholder: "Password", required: true, minlength: 6, class: "password-input" %>
-              <button type="button" class="toggle-password" aria-label="Toggle password visibility">
-                <i class="fas fa-eye"></i>
-              </button>
-            </div>
-          </div>
-          <br>
-          <div class="form-group">
-            <div class="password-input-container">
-              <%= f.password_field :password_confirmation, class: "password-field", placeholder: "Confirm Password", required: true, minlength: 6, class: "password-input" %>
-              <button type="button" class="toggle-password" aria-label="Toggle password visibility">
-                <i class="fas fa-eye"></i>
-              </button>
-            </div>
-          </div>
-          <br>
-          <%= f.submit "Reset Password", class: "sign-in-button" %>
-        <% end %>
+  <div class="forgot-body">
+    <div class="forgot-container">
+      <div class="forgot-eclipse">
+        <img src="<%= asset_path('ellipse.png') %>" alt="ellipse Icon">
+        <img src="<%= asset_path('lock.png') %>" alt="Lock Icon" class="forgot-lock-icon">
       </div>
+
+      <div class="forgot-title" > Reset Password </div>
+
+      <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :put }) do |f| %>
+        <%= f.hidden_field :reset_password_token %>
+        <%= f.password_field :password, class: "password-field", placeholder: "Password", required: true, minlength: 6, class: "forgot-field" %>
+        <br>
+        <%= f.password_field :password_confirmation, class: "password-field", placeholder: "Confirm Password", required: true, minlength: 6, class: "forgot-field" %>
+        <br>
+        <% if resource.errors.full_messages.present? %>
+          <div class="forgot-error-message" id="banner"><%= I18n.t('password') %></div>
+        <% end %>
+        <%= f.submit "Reset Password", class: "forgot-btn" %>
+      <% end %>
     </div>
-  </body>
+  </div>
 </html>
