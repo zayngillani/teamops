@@ -123,16 +123,15 @@
       <br><br>
       <div class="login-form">
         <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-          <% if notice %>
-            <div class="alert alert-success fading-out" id="banner"><%= notice %></div>
-          <% end %>
-          <% if alert %>
-            <div class="alert alert-danger fading-out" id="alert-banner"><%= alert %></div>
-          <% end %>
           <div class="form-group">
             <%= f.label :email, style: "font-size: 14px" %>
             <%= f.email_field :email, autofocus: true, class: 'form-control', autocomplete: "email", placeholder: "Enter your email", required: true %>
           </div>
+          <% if notice %>
+            <div class="forgot-error-message" id="banner"><%= notice %></div>
+          <% else %>
+            <div class="forgot-error-message" id="alert-banner"><%= alert %></div>
+          <% end %>
           <div class="form-group">
             <%= f.label :password, style: "font-size: 14px" %>
             <%= f.password_field :password, autocomplete: "current-password", class: 'form-control', placeholder: "Enter your password", required: true %>
