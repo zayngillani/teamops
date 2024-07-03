@@ -254,11 +254,7 @@ class Admin::UsersController < ApplicationController
                 reg_hours = @total_working_hours
               end
               @regular_hours = reg_hours
-              if @regular_hours < @total_hours[user.id] / 3600
-                working_hours = @regular_hours
-              else
-                working_hours = @total_hours[user.id] / 3600
-              end
+              working_hours = @total_hours[user.id] / 3600
               if @regular_hours < @total_hours[user.id] / 3600
                 overtime = (@total_hours[user.id] / 3600) - @regular_hours
               else
