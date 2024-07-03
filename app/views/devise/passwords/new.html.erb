@@ -3,25 +3,32 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     <title>Login</title> 
+    <title>Forgot Password</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css"/>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   </head>
-  <body class="special-background">
-    <div class="container">
-      <div class="wrapper">
-        <div class="title"><span>Forgot Password?</span></div>
-        <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post }) do |f| %>
-          <% if resource.errors.full_messages.present? %>
-            <div class="alert alert-danger fading-out" id="banner"><%= resource.errors.full_messages[0] %></div>
-          <% end %>
-          <div class="row">
-            <i class="fas fa-user"></i>
-              <%= f.email_field :email, autofocus: true, autocomplete: "email", placeholder: "Email", required: true %>
-          </div>
-              <%= f.submit "Reset Password", class: "sign-in-button" %>
-          <% end %>
-      </div>
-    </div>
 
-  </body>
+  <div class="forgot-body">
+    <div class="forgot-container">
+      <div class="forgot-eclipse">
+        <img src="<%= asset_path('ellipse.png') %>" alt="ellipse Icon">
+        <img src="<%= asset_path('lock.png') %>" alt="Lock Icon" class="forgot-lock-icon">
+      </div>
+      
+      <div class="forgot-title" > Forgot your password? </div>
+      <p class="forgot-content"> Don’t worry, You can still reset it. Enter your registered email to 
+      receive password reset link. </p>
+      
+      <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post, class: "forgot-form" }) do |f| %>
+        <%= f.email_field :email, autocomplete: "email", placeholder: "Email", required: true, class: "forgot-field" %>
+        <% if resource.errors.has_key?(:email) %>
+          <div class="forgot-error-message" id="banner">Please enter your registered email address</div>
+        <% end %>
+        <br>
+        <%= f.submit "Send Link", class: "forgot-btn" %>
+      <% end %>
+
+      <%= link_to "<back to login", new_user_session_path, class: "forgot-back-btn" %>
+    </div>
+  </div>
 </html>
