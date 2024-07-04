@@ -11,8 +11,8 @@
   <div class="forgot-body">
     <div class="forgot-container">
       <div class="forgot-eclipse">
-        <img src="<%= asset_path('ellipse.png') %>" alt="ellipse Icon">
-        <img src="<%= asset_path('lock.png') %>" alt="Lock Icon" class="forgot-lock-icon">
+        <img src="<%= asset_path('ellipse.svg') %>" alt="ellipse Icon">
+        <img src="<%= asset_path('lock.svg') %>" alt="Lock Icon" class="forgot-lock-icon">
       </div>
       
       <div class="forgot-title" > Forgot your password? </div>
@@ -20,15 +20,16 @@
       receive password reset link. </p>
       
       <%= form_for(resource, as: resource_name, url: password_path(resource_name), html: { method: :post, class: "forgot-form" }) do |f| %>
-        <%= f.email_field :email, autocomplete: "email", placeholder: "Email", required: true, class: "forgot-field" %>
+        <%= f.email_field :email, autocomplete: "email", placeholder: "Enter email", required: true, class: "forgot-field" %>
         <% if resource.errors.has_key?(:email) %>
           <div class="forgot-error-message" id="banner">Please enter your registered email address</div>
         <% end %>
         <br>
         <%= f.submit "Send Link", class: "forgot-btn" %>
       <% end %>
-
-      <%= link_to "<back to login", new_user_session_path, class: "forgot-back-btn" %>
+      <div class="forgot-back-box">
+        <%= link_to "< Back to login", new_user_session_path, class: "forgot-back-btn" %>
+      </div>
     </div>
   </div>
 </html>
