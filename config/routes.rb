@@ -18,7 +18,6 @@ Rails.application.routes.draw do
     get '/monthly_report', :to => "users#monthly_report", as: 'monthly_report'
     get '/monthly_users_list', :to => "users#monthly_users_list", as: 'monthly_users_list'
     get '/monthly_excel/:month/:year', to: 'users#monthly_excel', as: :users_monthly_excel
-
   end
   
   resources :attendance, only: [:index]
@@ -32,6 +31,12 @@ Rails.application.routes.draw do
   get '/reject', :to => "leaves#reject", as: 'reject'
 
   resources :public_holidays, only: [:new, :create, :index, :destroy]
+
+  namespace :api do
+    namespace :v1 do
+      resources :job_applications, only: [:create]
+    end
+  end
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
