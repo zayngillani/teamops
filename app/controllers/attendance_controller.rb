@@ -45,7 +45,7 @@ class AttendanceController < ApplicationController
    
        @session = current_user.attendances.create!(check_in_time: Time.now.utc)
        flash[:success] = "Checked IN successfully"
-      #  SlackService.new(current_user, "Checked In", @session.check_in_time).send_message
+       SlackService.new(current_user, "Checked In", @session.check_in_time).send_message
        redirect_to attendance_index_path
      end
    
@@ -61,7 +61,7 @@ class AttendanceController < ApplicationController
          total_duration_seconds -= total_break_time
          @session.update!(total_hours: total_duration_seconds)
          flash[:success] = "Checked OUT successfully"
-         #  SlackService.new(current_user, "Checked Out", @session.check_out_time).send_message
+          SlackService.new(current_user, "Checked Out", @session.check_out_time).send_message
        else
          flash[:error] = "No active session found"
         end
