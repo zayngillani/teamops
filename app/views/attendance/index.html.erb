@@ -14,7 +14,7 @@
         <% end %>
       <% elsif session.present? && session.check_out_time.nil? %>
         <% create_at = session.created_at %>
-        <div id="timerDisplay" data-created-at="<%= create_at || nil %>" data-system-time="<%= Time.zone.now %>"></div>
+        <div id="timerDisplay" data-created-at="<%= create_at&.iso8601 || nil %>" data-system-time="<%= Time.zone.now.iso8601 %>"></div>
       <% end %>
     </div>
   </div>

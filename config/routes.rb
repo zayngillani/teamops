@@ -17,6 +17,7 @@ Rails.application.routes.draw do
     get '/leave_report', :to => "users#leave_report", as: 'leave_report'
     get '/monthly_report', :to => "users#monthly_report", as: 'monthly_report'
     get '/monthly_users_list', :to => "users#monthly_users_list", as: 'monthly_users_list'
+    get '/monthly_excel/:month/:year', to: 'users#monthly_excel', as: :users_monthly_excel
 
   end
   

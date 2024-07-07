@@ -122,13 +122,10 @@
       <%= image_tag "loginform.svg", class: "logos" %>
       <br><br>
       <div class="login-form">
+        <% if notice %>
+          <div class="alert alert-success" id="banner"><%= notice %></div>
+        <% end %>
         <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
-          <% if notice %>
-            <div class="alert alert-success fading-out" id="banner"><%= notice %></div>
-          <% end %>
-          <% if alert %>
-            <div class="alert alert-danger fading-out" id="alert-banner"><%= alert %></div>
-          <% end %>
           <div class="form-group">
             <%= f.label :email, style: "font-size: 14px" %>
             <%= f.email_field :email, autofocus: true, class: 'form-control', autocomplete: "email", placeholder: "Enter your email", required: true %>
@@ -137,9 +134,16 @@
             <%= f.label :password, style: "font-size: 14px" %>
             <%= f.password_field :password, autocomplete: "current-password", class: 'form-control', placeholder: "Enter your password", required: true %>
           </div>
-          <div class="f-link">
-            <%= link_to "Forgot Password?", new_user_password_path(resource_name), style: "color: black; font-weight: bold; text-decoration: none;" %>
+
+          <div class="forgot-link-align">
+            <% if alert %>
+              <div class="signin-error-message" id="alert-banner"><%= alert %></div>
+            <% end %>
+            <div class="f-link">
+              <%= link_to "Forgot Password?", new_user_password_path(resource_name), style: "color: black; font-weight: bold; text-decoration: none;" %>
+            </div>
           </div>
+
           <div class="form-group">
             <%= f.submit "Login", class: "log-in-button" %>
           </div>

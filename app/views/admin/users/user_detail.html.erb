@@ -22,6 +22,7 @@
     </tr>
   </thead>
   <tbody>
+    <% @user_leaves_count =  @current_user_leaves = Leave.where("start_date <= ? AND end_date >= ? AND status = ? AND user_id = ?", @end_date, @start_date, 1, @user.id).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }%>
     <% if @user_sessions.present? %>
       <% @user_sessions.each do |item| %>
       <tr>
@@ -41,7 +42,7 @@
       <td><strong>Total</strong></td>
             <td></td>
             <td></td>
-            <td><%= @leaves %></td>
+            <td><%= @user_leaves_count %></td>
       <td><strong><%= "#{@total_hours / 3600 || 0} hours #{@total_hours % 3600 / 60 || 0} minutes" %></strong></td>
     <% else %>
       <tr>
