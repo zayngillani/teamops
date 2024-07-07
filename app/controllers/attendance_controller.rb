@@ -99,7 +99,18 @@ class AttendanceController < ApplicationController
           else
             flash[:error] = "Attendance Not Present"
           end
-          redirect_to attendance_index_path
+          redirect_to show_report_path
+        end
+
+        def show_report
+          first_day_of_month = Date.current.beginning_of_month
+          last_day_of_month = Date.current.end_of_month
+          @session = current_user.attendances.where(created_at: first_day_of_month.beginning_of_day..last_day_of_month.end_of_day).order(created_at: :desc)
+          @user = current_user
+        end
+
+        def user_report
+          @daily_report = Attendance.find_by(id: params[:format])
         end
      private
      

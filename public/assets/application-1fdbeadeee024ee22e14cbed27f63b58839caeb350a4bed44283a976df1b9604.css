@@ -260,8 +260,12 @@
      border-collapse: collapse;
    }
    
-    th, td {
-      padding: 8px;
+    th {
+      padding: 10px;
+      text-align: left;
+    }
+    td{
+      padding: 10px;
       text-align: left;
     }
     
@@ -1122,38 +1126,12 @@ label {
 }
 
 .reportTable {
-  width: 79%;
+  width: 83%;
   margin: 20px auto;
   background-color: #ffffff;
   border-radius: 10px;
   padding: 20px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin-left: 20%;
+  margin-left: 16%;
   height: 500px;
-  position: relative;
-}
-
-.report-button {
-  background-color: #F89320;
-  border: none;
-  color: white;
-  padding: 10px 142px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 14px;
-  border-radius: 5px;
-  margin-left:5px;
-  cursor: pointer;
-  border-radius: 5px;
-}
-
-.view-report {
-  color: black;
-  padding: 10px 15px;
-  font-size: 16px;
-  border: none;
-  cursor: pointer;
-  margin-right: 10px;
-  width: 160px;
 }

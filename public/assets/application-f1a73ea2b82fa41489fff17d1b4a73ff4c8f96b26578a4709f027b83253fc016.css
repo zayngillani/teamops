@@ -265,6 +265,9 @@
       text-align: left;
     }
     
+    th {
+      background-color: #f2f2f2;
+    }
 
    .styled-form {
      max-width: 400px;
@@ -1122,38 +1125,37 @@ label {
 }
 
 .reportTable {
-  width: 79%;
+  width: 84%;
   margin: 20px auto;
   background-color: #ffffff;
   border-radius: 10px;
-  padding: 20px;
+  padding: 312px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  margin-left: 20%;
-  height: 500px;
-  position: relative;
+  margin-left: 16%;
 }
 
-.report-button {
-  background-color: #F89320;
-  border: none;
-  color: white;
-  padding: 10px 142px;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 14px;
-  border-radius: 5px;
-  margin-left:5px;
-  cursor: pointer;
-  border-radius: 5px;
+.reportTable h2 {
+  color: rgb(48, 48, 48);
+  margin-left: 2%;
+  margin-bottom: 3px;
+  margin-top: 3%;
 }
 
-.view-report {
-  color: black;
-  padding: 10px 15px;
-  font-size: 16px;
-  border: none;
-  cursor: pointer;
-  margin-right: 10px;
-  width: 160px;
+
+.reportTable p {
+  color: darkgray;
+  margin-left: 2%;
+  margin-bottom: 4%;
+  font-weight: bolder;
+}
+
+.reportTable table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-left: 2%;
+}
+
+.reportTable td {
+  padding: 10px; /* Adjust padding for spacing inside cells */
+  color: #423f3f;
 }

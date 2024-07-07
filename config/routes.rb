@@ -26,6 +26,8 @@ Rails.application.routes.draw do
   post '/break_session', :to => "attendance#break_session", as: 'break_session'
   post '/create_user', :to => "attendance#create_user", as: 'create_user'
   put '/update_report', :to => "attendance#update_report", as: 'update_report'
+  get '/show_report', :to => "attendance#show_report", as: 'show_report'
+  get '/user_report', :to => "attendance#user_report", as: 'user_report'
 
   resources :leaves, only: [:new, :create, :index, :edit, :update, :destroy, :show]
   get '/approve', :to => "leaves#approve", as: 'approve'
