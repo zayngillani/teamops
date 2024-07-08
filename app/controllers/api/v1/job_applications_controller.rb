@@ -38,22 +38,34 @@ module Api
           ftp.connect(ENV['FTP_HOST'], ENV['FTP_PORT'].to_i)
           ftp.login(ENV['FTP_USERNAME'], ENV['FTP_PASSWORD'])
           ftp.passive = true
-        
+      
+          # Directory where the resume will be uploaded
+          resume_directory = 'resume'
+      
+          # Check if the resume directory exists, if not create it
+          begin
+            ftp.chdir(resume_directory)
+          rescue Net::FTPPermError
+            ftp.mkdir(resume_directory)
+            ftp.chdir(resume_directory)
+          end
+      
           # Extract the original filename from the file object
           original_filename = file.original_filename
           remote_filename = original_filename
-        
+      
+          # Upload the file to the resume directory
           ftp.putbinaryfile(file.path, remote_filename)
-        
+      
           ftp.close
-          @job_application.update(resume_link: remote_filename)
-        
-          Rails.logger.info "Uploaded #{remote_filename} to FTP server"
+          @job_application.update(resume_link: "#{resume_directory}/#{remote_filename}")
+      
+          Rails.logger.info "Uploaded #{remote_filename} to FTP server in #{resume_directory} directory"
         rescue StandardError => e
           Rails.logger.error "FTP upload failed: #{e.message}"
           raise "FTP upload failed: #{e.message}"
         end
-      end
+      end      
     end
   end
 end
