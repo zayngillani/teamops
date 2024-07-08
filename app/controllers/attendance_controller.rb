@@ -50,23 +50,22 @@ class AttendanceController < ApplicationController
      end
    
      def end_session
-       @session = current_user.attendances.last
-       if @session
-        if params[:report].present?
-          @session.update!(report: params[:report])
-        end
+      @session = current_user.attendances.last
+      if @session.present?
         @session.update!(check_out_time: Time.now.utc)
         total_duration_seconds = @session.check_out_time - @session.check_in_time
-         total_break_time = calculate_total_break_time(@session)
-         total_duration_seconds -= total_break_time
-         @session.update!(total_hours: total_duration_seconds)
-         flash[:success] = "Checked OUT successfully"
-          SlackService.new(current_user, "Checked Out", @session.check_out_time).send_message
-       else
-         flash[:error] = "No active session found"
-        end
-       redirect_to attendance_index_path
-     end
+        total_break_time = calculate_total_break_time(@session)
+        total_duration_seconds -= total_break_time
+        @session.update!(total_hours: total_duration_seconds)
+        @session.update!(report: params[:report])
+        SlackService.new(current_user, "Checked Out", @session.check_out_time, ENV["TEST_CHANNEL"], params[:report]).send_report        
+        flash[:success] = "Checked OUT successfully"
+      else
+        flash[:error] = "No active session found"
+      end
+      redirect_to attendance_index_path
+    end
+    
    
      def break_session
       @session = current_user.attendances.last
