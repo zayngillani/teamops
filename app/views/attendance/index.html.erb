@@ -21,7 +21,7 @@
 
   <div style="float: right; margin-top: 20px;">
     <% if session.present? %>
-      <% if session.check_out_time.nil? %>
+      <% if session.check_out_time.nil? && session.check_in_time.today? %>
       <% if session.breaks.present? %>
         <% if session.breaks.last.break_out_time.nil? %>
           <% content_for :link_button do %>
