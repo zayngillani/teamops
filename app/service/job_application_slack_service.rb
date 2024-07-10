@@ -14,7 +14,7 @@ class JobApplicationSlackService
 
   def build_message
     <<~MESSAGE
-      *#{@job_application.name}* has applied for the *#{@job_title}* position through our job portal today, #{Time.now.strftime("%d/%B/%Y")}.
+      *#{@job_application.name}* has applied for the *#{@job_title}* position today, #{Time.now.strftime("%d/%B/%Y")}.
       *Contact details:*
       Email: #{@job_application.email}
     MESSAGE
