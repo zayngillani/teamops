@@ -3,6 +3,11 @@ class Admin::JobApplicationsController < ApplicationController
 
   def index
     @job_applications = JobApplication.all
+
+    respond_to do |format|
+      format.html
+      format.json { render json: @job_applications }
+    end
   end
 
   private
