@@ -1,4 +1,4 @@
-<div class="main-content" style="margin-left: 220px; margin-top: 10px;">
+<div class="main-content" style="margin-left: 260px; margin-top: 10px;">
   <div class="form-inline">
     <%= form_tag admin_monthly_users_list_path, method: :get, id: "filterForm" do %>
       <%= select_tag 'month', options_for_select(Date::MONTHNAMES.compact.each_with_index.map { |month, index| [month, index + 1] }, params[:month].presence || Date.current.month), id: 'month', class: 'form-control select-month' %>

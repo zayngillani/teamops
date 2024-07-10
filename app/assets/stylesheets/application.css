@@ -64,6 +64,7 @@
      width: 110px;
      height: auto;
      margin-left: 40px;
+     margin-bottom: 63px;
     }
 
     .header {
@@ -264,9 +265,6 @@
       text-align: left;
     }
     
-    th {
-      background-color: #f2f2f2;
-    }
 
    .styled-form {
      max-width: 400px;
@@ -707,7 +705,7 @@ form .button input:hover{
   }
 
   .modal-footer button {
-    height: 45px !important;
+    height: 39px !important;
     border: none !important;
     margin-right: 3px; /* Adjust margin as needed */
   }
@@ -826,11 +824,11 @@ form .button input:hover{
 
 #sidebar {
   position: absolute;
-  top: 128px;
+  top: 0px;
   left: 0;
   height: 100%;
-  width: 200px; /* Adjust width as needed */
-  background-color: #f1f1f1; /* Example background color */
+  width: 240px; /* Adjust width as needed */
+  background-color: white; /* Example background color */
   padding: 20px;
   box-sizing: border-box;
   z-index: 1000; /* Ensure the sidebar is above other content */
@@ -1121,4 +1119,42 @@ label {
 
 .right-info p {
   margin-left: 10px;
+}
+
+.reportTable {
+  width: 79%;
+  margin: 20px auto;
+  background-color: #ffffff;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-left: 20%;
+  height: 500px;
+  position: relative;
+  margin-top: 1%;
+}
+
+.report-button {
+  background-color: #F89320;
+  border: none;
+  color: white;
+  padding: 10px 142px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  border-radius: 5px;
+  margin-left:5px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.view-report {
+  color: black;
+  padding: 10px 15px;
+  font-size: 16px;
+  border: none;
+  cursor: pointer;
+  margin-right: 10px;
+  width: 160px;
 }
