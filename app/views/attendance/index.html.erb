@@ -48,20 +48,21 @@
           <button id="modal-btn" class="sign-out-button">Check Out</button>
         <% end %>
         <div id="myModal" class="modal">
-  <div class="modal-content">
-    <%= form_with url: end_session_path, method: :post, remote: true, id: "checkout_form" do |f| %>
-      <div class="modal-header">
-      </div>
-      <p style="text-align: center; margin-top: 10px;">
-        <%= f.text_area :report, id: "report_editor", placeholder: "Enter Daily Report", style: "width: 100%; height: 150px; resize: vertical; padding: 10px;", required: true %>
-      </p>
-      <div class="modal-footer">
-        <%= f.submit "Check-Out", class: "sign-out-button check-btn", data: { disable_with: "Processing..." } %>
-      </div>
-    <% end %>
-  </div>
-</div>
-
+          <div class="modal-checkout">
+            <%= form_with url: end_session_path, method: :post, remote: true, id: "checkout_form" do |f| %>
+              <div class="modal-header">
+                <span class="close-modal" onclick="document.getElementById('myModal').style.display='none'">&times;</span>
+              </div>
+              <h4>Daily Report</h4>
+              <p style="text-align: center; margin-top: 10px;">
+                <%= f.text_area :report, id: "report_editor", placeholder: "Enter Details", style: "width: 100%; height: 150px; resize: vertical; padding: 10px; border-radius: 8px;", required: true %>
+              </p>
+              <div class="modal-footer">
+                <%= f.submit "Submit Report and check out", class: "check-out-btn", data: { disable_with: "Processing..." } %>
+              </div>
+            <% end %>
+          </div>
+        </div>
       </div>
     <% end %>
   <% end %>
