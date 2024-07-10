@@ -131,7 +131,7 @@ class Admin::UsersController < ApplicationController
     end
 
     def report
-      session = User.where(role: "user", deleted: false, status: 0).order(created_at: :desc)
+      session = User.active.where(role: "user", deleted: false).order(created_at: :desc)
       @session = session.paginate(page: params[:page], per_page: 10)
     end
 
@@ -166,7 +166,7 @@ class Admin::UsersController < ApplicationController
       @user = User.find_by(id: params[:id])
       @month = params[:month].to_i
       @year = params[:year].to_i
-      @users = User.where(role: "user", deleted: false, status: 0).order(created_at: :desc)
+      @users = User.active.where(role: "user", deleted: false).order(created_at: :desc)
       @start_date = Date.new(@year, @month, 1)
       @end_date = @start_date.end_of_month
     end
@@ -174,7 +174,7 @@ class Admin::UsersController < ApplicationController
     def leave_report
       @month = params[:month].to_i
       @year = params[:year].to_i
-      @users = User.where(role: "user", deleted: false, status: 0).order(created_at: :desc)
+      @users = User.active.where(role: "user", deleted: false).order(created_at: :desc)
       @start_date = Date.new(@year, @month, 1)
       @end_date = @start_date.end_of_month
       @public_holidays = PublicHoliday.where("start_date <= ? AND end_date >= ?", @start_date.end_of_month, @end_date.beginning_of_month)
@@ -209,7 +209,7 @@ class Admin::UsersController < ApplicationController
         user_ids = params[:selected_users].split(',')
         @users = User.where(id: user_ids)
       else
-        @users = User.where(role: "user", deleted: false, status: 0).order(created_at: :desc)
+        @users = User.active.where(role: "user", deleted: false).order(created_at: :desc)
       end
     
       @month = params[:month].to_i
@@ -279,7 +279,7 @@ class Admin::UsersController < ApplicationController
         user_ids = params[:selected_users].map(&:to_i)
         @users = User.where(id: user_ids)
       else
-        @users = User.where(role: "user", deleted: false, status: 0).order(created_at: :desc)
+        @users = User.active.where(role: "user", deleted: false).order(created_at: :desc)
       end
       @month = params[:month].to_i
       @year = params[:year].to_i
@@ -338,7 +338,7 @@ class Admin::UsersController < ApplicationController
     end
     
     def monthly_users_list
-      @users = User.where(role: "user", deleted: false, status: 0).order(created_at: :desc)
+      @users = User.active.where(role: "user", deleted: false).order(created_at: :desc)
       @month = params[:month].to_i
       @year = params[:year].to_i
       @start_date = Date.new(@year, @month, 1)
