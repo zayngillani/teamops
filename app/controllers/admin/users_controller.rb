@@ -1,7 +1,7 @@
 class Admin::UsersController < ApplicationController
 
      def index
-      session = User.where(role: "user", deleted: false, status: 0).order(created_at: :desc)
+      session = User.where(role: "user", deleted: false).order(created_at: :desc)
       @session = session.paginate(page: params[:page], per_page: 10)
      end
 
