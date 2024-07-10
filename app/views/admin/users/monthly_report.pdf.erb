@@ -1,40 +1,40 @@
 <style>
-.attendance-table {
-  border-collapse: collapse;
-  width: 100%;
-}
-
-.attendance-table th, .attendance-table td {
-  padding: 10px;
-  border: 1px solid #ddd;
-  text-align: left;
-}
-
-.attendance-table th {
-  background-color: #87CEEB;
-  font-weight: bold;
-}
-
-.attendance-heading {
-  background-color: #87CEEB;
-  color: white; /* Set text color to ensure readability */
-  padding: 10px; /* Add padding for better appearance */
-}
-
-.absent-day {
-  color: red;
-  font-weight: bold;
-}
-
-@media print {
-  .user-attendance, .user-data {
-    page-break-after: always;
+  .attendance-table {
+    border-collapse: collapse;
+    width: 100%;
   }
-}
+
+  .attendance-table th, .attendance-table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+    text-align: left;
+  }
+
+  .attendance-table th {
+    background-color: #87CEEB;
+    font-weight: bold;
+  }
+
+  .attendance-heading {
+    background-color: #87CEEB;
+    color: white;
+    padding: 10px;
+  }
+
+  .absent-day {
+    color: red;
+    font-weight: bold;
+  }
+
+  @media print {
+    .user-attendance, .user-data {
+      page-break-after: always;
+    }
+  }
 </style>
 
 <h1 class="attendance-heading">Monthly Report</h1>
-<p style="float: right; margin: 5px;">Month:  <strong><%= Date::MONTHNAMES[@month] %></strong></p>
+<p style="float: right; margin: 5px;">Month: <strong><%= Date::MONTHNAMES[@month] %></strong></p>
 <table class="attendance-table user-data">
   <thead>
     <tr>
@@ -49,7 +49,7 @@
   <tbody>
     <% @users.each do |user| %>
     <tr>
-    <% @current_user_leaves = Leave.where("start_date <= ? AND end_date >= ? AND status = ? AND user_id = ?", @end_date, @start_date, 1, user.id).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }%>
+      <% @current_user_leaves = Leave.where("start_date <= ? AND end_date >= ? AND status = ? AND user_id = ?", @end_date, @start_date, 1, user.id).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 } %>
       <td><%= user.name %></td>
       <% if user.leaves.present? %>
       <% @working_hours = @total_working_hours - @current_user_leaves * 8 %>
@@ -57,7 +57,7 @@
       <% @working_hours = @total_working_hours %>
       <% end %>
       <td><%= @working_hours %></td>
-      <td><%= "#{@total_hours[user.id] / 3600}" %></td>       
+      <td><%= "#{@total_hours[user.id] / 3600}" %></td>
       <% if @working_hours < @total_hours[user.id] / 3600 %>
         <td><%= (@total_hours[user.id] / 3600) - @working_hours %></td>
       <% else %>
@@ -68,27 +68,25 @@
       <% else %>
         <td><%= 0 %></td>
       <% end %>
-      <td><%=  @current_user_leaves %></td>
+      <td><%= @current_user_leaves %></td>
     </tr>
     <% end %>
   </tbody>
 </table>
 
 <% @users.each do |user| %>
-  <% @current_user_leaves = Leave.where("start_date <= ? AND end_date >= ? AND status = ? AND user_id = ?", @end_date, @start_date, 1, user.id).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }%>
-<h1 class="attendance-heading">Timesheet</h1>
-<p style="float: left; margin: 5px;">Employee: <strong><%= user.name %></strong></p>
-<p style="float: right; margin: 5px;">Month:  <strong><%= Date::MONTHNAMES[@month] %></strong></p>
-  <br>
-  <br>
+  <% @current_user_leaves = Leave.where("start_date <= ? AND end_date >= ? AND status = ? AND user_id = ?", @end_date, @start_date, 1, user.id).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 } %>
+  <h1 class="attendance-heading">Timesheet</h1>
+  <p style="float: left; margin: 5px;">Employee: <strong><%= user.name %></strong></p>
+  <p style="float: right; margin: 5px;">Month: <strong><%= Date::MONTHNAMES[@month] %></strong></p>
+  <br><br>
   <p style="float: left; margin: 5px;">Supervisor:</p>
   <span style="float: left; margin: 5px;"><strong><%= user.supervisor.present? ? user.supervisor : "Fahad" %></strong></span>
   <span style="float: right; margin: 5px;"></span>
-<div style="display: flex; justify-content: space-between; align-items: center; margin: 5px;">
-  <p style="float: right; margin: 0; margin-right: 10px;">Regular Hours:8</p>
-</div>
-  <br>
-  <br>
+  <div style="display: flex; justify-content: space-between; align-items: center; margin: 5px;">
+    <p style="float: right; margin: 0; margin-right: 10px;">Regular Hours: 8</p>
+  </div>
+  <br><br>
   <table class="attendance-table user-attendance">
     <thead>
       <tr>
@@ -102,63 +100,63 @@
       </tr>
     </thead>
     <tbody>
-    <% @user_sessions = user.attendances.where(check_in_time: @start_date.beginning_of_day..@end_date.end_of_day).order(created_at: :asc)%>
-    <% public_holidays = {} %>
-    <% @public_holidays.each do |holiday| %>
-      <% (holiday.start_date..holiday.end_date).each do |date| %>
-        <% public_holidays[date] = holiday.title %>
+      <% @user_sessions = user.attendances.where(check_in_time: @start_date.beginning_of_day..@end_date.end_of_day).order(created_at: :asc) %>
+      <% public_holidays = {} %>
+      <% @public_holidays.each do |holiday| %>
+        <% (holiday.start_date..holiday.end_date).each do |date| %>
+          <% public_holidays[date] = holiday.title %>
+        <% end %>
       <% end %>
-    <% end %>
 
-    <% (@start_date..@end_date).each do |date| %>
-      <% next if date.saturday? || date.sunday? %> <!-- Skip weekends -->
-      <% session = @user_sessions.find { |s| s.check_in_time.to_date == date } %>
-      <tr>
-        <% if public_holidays.key?(date) %>
-            <td><%= date.strftime("%A %b #{date.day.ordinalize}") %></td>
-            <td style="text-align: center;" colspan="6"><strong><%= public_holidays[date] %></strong></td>
-        <% elsif session %>
-                <td><%= session.created_at.strftime("%A %b #{session.created_at.day.ordinalize}") %></td>
-                <td><%= session.check_in_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") %></td>
-                <td><%= session.check_out_time.present? ? session.check_out_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A" %></td>
-                <td>
-                  <% if session.total_hours.present? %>
-                    <% total_hours = session.total_hours %>
-                    <% if total_hours > 28800 %> <!-- 28800 seconds = 8 hours -->
-                      <% regular_hours = 28800 %>
-                    <% else %>
-                      <% regular_hours = total_hours %>
-                    <% end %>
-                    <%= "#{regular_hours / 3600}.#{regular_hours % 3600 / 60}" %>
+      <% (@start_date..@end_date).each do |date| %>
+        <% next if date.saturday? || date.sunday? %> <!-- Skip weekends -->
+        <% session = @user_sessions.find { |s| s.check_in_time.to_date == date } %>
+        <tr>
+          <% if public_holidays.key?(date) %>
+              <td><%= date.strftime("%A %b #{date.day.ordinalize}") %></td>
+              <td style="text-align: center;" colspan="6"><strong><%= public_holidays[date] %></strong></td>
+          <% elsif session %>
+              <td><%= session.created_at.strftime("%A %b #{session.created_at.day.ordinalize}") %></td>
+              <td><%= session.check_in_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") %></td>
+              <td><%= session.check_out_time.present? ? session.check_out_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A" %></td>
+              <td>
+                <% if session.total_hours.present? %>
+                  <% total_hours = session.total_hours %>
+                  <% if total_hours > 28800 %> <!-- 28800 seconds = 8 hours -->
+                    <% regular_hours = 28800 %>
                   <% else %>
-                    N/A
+                    <% regular_hours = total_hours %>
                   <% end %>
-                </td>
-                <td>
-                  <% if session.total_hours.present? %>
-                    <% total_hours = session.total_hours %>
-                    <% if total_hours > 28800 %> <!-- 28800 seconds = 8 hours -->
-                      <% overtime_hours = total_hours - 28800 %>
-                    <% else %>
-                      <% overtime_hours = 0 %>
-                    <% end %>
-                    <%= "#{overtime_hours / 3600}.#{overtime_hours % 3600 / 60}" %>
+                  <%= "#{regular_hours / 3600}.#{regular_hours % 3600 / 60}" %>
+                <% else %>
+                  N/A
+                <% end %>
+              </td>
+              <td>
+                <% if session.total_hours.present? %>
+                  <% total_hours = session.total_hours %>
+                  <% if total_hours > 28800 %> <!-- 28800 seconds = 8 hours -->
+                    <% overtime_hours = total_hours - 28800 %>
                   <% else %>
-                    N/A
+                    <% overtime_hours = 0 %>
                   <% end %>
-                </td>
-                <td></td>
-                <td>
-              <% if session.total_hours.present? %>
-                <%= "#{session.total_hours / 3600} hours #{session.total_hours % 3600 / 60} minutes" %>
-              <% else %>
-                N/A
-              <% end %>
-            </td>
-          <% else %>
-            <td><%= date.strftime("%A %b #{date.day.ordinalize}") %></td>
-            <td style="text-align: center;" colspan="6">No Session</td>
-          <% end %>
+                  <%= "#{overtime_hours / 3600}.#{overtime_hours % 3600 / 60}" %>
+                <% else %>
+                  N/A
+                <% end %>
+              </td>
+              <td></td>
+              <td>
+                <% if session.total_hours.present? %>
+                  <%= "#{session.total_hours / 3600} hours #{session.total_hours % 3600 / 60} minutes" %>
+                <% else %>
+                  N/A
+                <% end %>
+              </td>
+            <% else %>
+              <td><%= date.strftime("%A %b #{date.day.ordinalize}") %></td>
+              <td style="text-align: center;" colspan="6">No Session</td>
+            <% end %>
         </tr>
       <% end %>
       <tr>
