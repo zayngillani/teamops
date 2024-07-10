@@ -1,0 +1,30 @@
+<div class="main-content" style="margin-left: 220px;">
+  <table>
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Qualification</th>
+        <th>Experience</th>
+        <th>Contact Number</th>
+        <th>Current Salary</th>
+        <th>Expected Salary</th>
+        <th>Resume</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @job_applications.each do |application| %>
+        <tr>
+          <td><%= application&.name %></td>
+          <td><%= application&.email %></td>
+          <td><%= application&.qualification %></td>
+          <td><%= application&.current_experience %></td>
+          <td><%= application&.contact_number %></td>
+          <td><%= application&.current_salary %></td>
+          <td><%= application&.expected_salary %></td>
+          <td><%= link_to 'View Resume', '#' %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
