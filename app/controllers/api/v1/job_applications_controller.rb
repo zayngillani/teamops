@@ -16,6 +16,8 @@ module Api
             JobApplicationSlackService.new(@job_application, params[:job_title]).notify_submission
             # Upload resume to FTP
             upload_to_ftp(params[:resume])
+            # Send notification emails
+            send_notification_emails(params[:job_title])
 
             render json: { status: 'SUCCESS', message: 'Job application submitted', data: @job_application }, status: :ok
           else
@@ -30,6 +32,11 @@ module Api
 
       def job_application_params
         params.require(:job_application).permit(:name, :email, :qualification, :cnic, :current_experience, :contact_number, :current_salary, :expected_salary)
+      end
+
+      def send_notification_emails(job_title)
+        JobApplicationMailer.confirmation_email(@job_application, job_title).deliver_now
+        JobApplicationMailer.notification_email(@job_application, job_title).deliver_now
       end
 
       def upload_to_ftp(file)
@@ -65,7 +72,8 @@ module Api
           Rails.logger.error "FTP upload failed: #{e.message}"
           raise "FTP upload failed: #{e.message}"
         end
-      end      
+      end
+      
     end
   end
 end
