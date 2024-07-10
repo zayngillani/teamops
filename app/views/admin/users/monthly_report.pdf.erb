@@ -26,6 +26,10 @@
     font-weight: bold;
   }
 
+  .page-break {
+    page-break-before: always;
+  }
+
   @media print {
     .user-attendance, .user-data {
       page-break-after: always;
@@ -73,7 +77,7 @@
     <% end %>
   </tbody>
 </table>
-
+<div class="page-break"></div>
 <% @users.each do |user| %>
   <% @current_user_leaves = Leave.where("start_date <= ? AND end_date >= ? AND status = ? AND user_id = ?", @end_date, @start_date, 1, user.id).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 } %>
   <h1 class="attendance-heading">Timesheet</h1>
@@ -170,4 +174,7 @@
       </tr>
     </tbody>
   </table>
+  <% if user != @users.last %>
+    <div class="page-break"></div>
+  <% end %>
 <% end %>
