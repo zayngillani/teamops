@@ -95,6 +95,7 @@
     background-color: #F89320;
     border: none;
     color: white;
+    padding: 10px 165px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
@@ -102,14 +103,6 @@
     cursor: pointer;
     border-radius: 6px;
     margin-bottom: -3%;
-    width: 100%;
-    height: 38px;
-   }
-
-   .close-modal{
-    float: right;
-    margin-top: -10px;
-    cursor: pointer;
    }
 
    .request-button {
@@ -424,16 +417,6 @@
     padding: 20px;
     border: 1px solid #888;
     width: 30%; /* Could be more or less, depending on screen size */
-  }
-
-    
-  .modal-checkout {
-    background-color: #fefefe;
-    margin: 15% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 40%;
-    border-radius: 10px;
   }
   
   .close {
