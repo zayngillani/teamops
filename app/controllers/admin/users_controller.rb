@@ -1,7 +1,7 @@
 class Admin::UsersController < ApplicationController
 
      def index
-      session = User.where(role: "user", deleted: false).order(created_at: :desc)
+      session = User.where(role: "user", deleted: false, status: 0).order(created_at: :desc)
       @session = session.paginate(page: params[:page], per_page: 10)
      end
 
@@ -131,7 +131,7 @@ class Admin::UsersController < ApplicationController
     end
 
     def report
-      session = User.where(role: "user", deleted: false).order(created_at: :desc)
+      session = User.where(role: "user", deleted: false, status: 0).order(created_at: :desc)
       @session = session.paginate(page: params[:page], per_page: 10)
     end
 
@@ -166,7 +166,7 @@ class Admin::UsersController < ApplicationController
       @user = User.find_by(id: params[:id])
       @month = params[:month].to_i
       @year = params[:year].to_i
-      @users = User.where(role: "user", deleted: false).order(created_at: :desc)
+      @users = User.where(role: "user", deleted: false, status: 0).order(created_at: :desc)
       @start_date = Date.new(@year, @month, 1)
       @end_date = @start_date.end_of_month
     end
@@ -174,7 +174,7 @@ class Admin::UsersController < ApplicationController
     def leave_report
       @month = params[:month].to_i
       @year = params[:year].to_i
-      @users = User.where(role: "user", deleted: false).order(created_at: :desc)
+      @users = User.where(role: "user", deleted: false, status: 0).order(created_at: :desc)
       @start_date = Date.new(@year, @month, 1)
       @end_date = @start_date.end_of_month
       @public_holidays = PublicHoliday.where("start_date <= ? AND end_date >= ?", @start_date.end_of_month, @end_date.beginning_of_month)
@@ -209,7 +209,7 @@ class Admin::UsersController < ApplicationController
         user_ids = params[:selected_users].split(',')
         @users = User.where(id: user_ids)
       else
-        @users = User.where(role: "user", deleted: false).order(created_at: :desc)
+        @users = User.where(role: "user", deleted: false, status: 0).order(created_at: :desc)
       end
     
       @month = params[:month].to_i
@@ -279,7 +279,7 @@ class Admin::UsersController < ApplicationController
         user_ids = params[:selected_users].map(&:to_i)
         @users = User.where(id: user_ids)
       else
-        @users = User.where(role: "user", deleted: false).order(created_at: :desc)
+        @users = User.where(role: "user", deleted: false, status: 0).order(created_at: :desc)
       end
       @month = params[:month].to_i
       @year = params[:year].to_i
@@ -338,19 +338,30 @@ class Admin::UsersController < ApplicationController
     end
     
     def monthly_users_list
-      @users = User.where(role: "user", deleted: false).order(created_at: :desc)
+      @users = User.where(role: "user", deleted: false, status: 0).order(created_at: :desc)
       @month = params[:month].to_i
       @year = params[:year].to_i
-      start_date = Date.new(@year, @month, 1)
-      end_date = start_date.end_of_month
+      @start_date = Date.new(@year, @month, 1)
+      @end_date = @start_date.end_of_month
       @total_hours = {}
+      current_month_start = @start_date.beginning_of_month
+      current_month_end = @end_date.end_of_month
+      @public_holidays = PublicHoliday.where("start_date <= ? AND end_date >= ?", current_month_end, current_month_start)
       @users.each do |user|
-        user_sessions = user.attendances.where(check_in_time: start_date.beginning_of_day..end_date.end_of_day).order(created_at: :asc)
+        user_sessions = user.attendances.where(check_in_time: @start_date.beginning_of_day..@end_date.end_of_day).order(created_at: :asc)
         total_hrs = 0
         user_sessions.each do |attendance|
           total_hrs += attendance.total_hours.to_i unless attendance.total_hours.nil?
         end
         @total_hours[user.id] = total_hrs
+        regular_hours_per_day = 8
+        date_range = (@start_date..@end_date).to_a
+        working_days = calculate_working_days(@start_date, @end_date)
+        @public_holidays.each do |holiday|
+          working_days -= (holiday.start_date..holiday.end_date).count
+        end
+        @current_leaves = Leave.where("start_date <= ? AND end_date >= ? AND status = ? AND user_id = ?", @end_date, @start_date, 1, user.id).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }
+        @total_working_hours = working_days * regular_hours_per_day
       end
     end
     
