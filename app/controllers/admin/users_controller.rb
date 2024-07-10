@@ -3,13 +3,13 @@ class Admin::UsersController < ApplicationController
      def index
       session = User.where(role: "user", deleted: false).order(created_at: :desc)
       @session = session.paginate(page: params[:page], per_page: 10)
-
      end
+
      def new
        @user = User.new
      end
    
-     def create
+    def create
       unless params[:user][:password] == params[:user][:password_confirmation]
         flash[:error] = "Passwords don't match. Please check and re-type your confirm password."
         redirect_to new_admin_user_path and return
@@ -38,7 +38,7 @@ class Admin::UsersController < ApplicationController
       end
     end
 
-     def edit
+    def edit
       @user = User.find_by(id: params[:id]) if params[:id].present?
     end
     
@@ -54,9 +54,9 @@ class Admin::UsersController < ApplicationController
       else
         flash[:error] = "User not found"
       end
-     end
+    end
 
-     def user_profile
+    def user_profile
       @user = User.find_by(id: params[:format]) if params[:format].present?
       name = @user.name
       @first_name = name.split.first[0]
@@ -354,13 +354,13 @@ class Admin::UsersController < ApplicationController
       end
     end
     
-     private
+    private
    
-     def user_params
-       params.require(:user).permit(:email, :name, :slack_member_id, :supervisor)
-     end
+    def user_params
+      params.require(:user).permit(:email, :name, :slack_member_id, :supervisor)
+    end
 
-     def disable_attendance(user)
+    def disable_attendance(user)
       attendance = user.attendances.last
       if attendance.present?
         if attendance.check_out_time.nil?
@@ -375,8 +375,6 @@ class Admin::UsersController < ApplicationController
         end
       end
     end
-
-    private
 
     def calculate_working_days(start_date, end_date, public_holidays = [])
       start_date = Date.parse(start_date.to_s) rescue nil
