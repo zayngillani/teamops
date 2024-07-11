@@ -267,8 +267,8 @@ class Admin::UsersController < ApplicationController
             end
           end
           @users.each do |user|
-          current_user_leaves = Leave.where("start_date <= ? AND end_date >= ? AND status = ? AND user_id = ?", @end_date, @start_date, 1, user.id).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }
-            wb.add_worksheet(name: user.name) do |sheet|
+            current_user_leaves = Leave.where("start_date <= ? AND end_date >= ? AND status = ? AND user_id = ?", @end_date, @start_date, 1, user.id).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }
+            wb.add_worksheet(name: "#{user.name}_#{user.id}") do |sheet|
               sheet.add_row ["Date", "Check In", "Check Out", "Regular Hours", "Overtime", "Leaves", "Total Hours"]
               user.attendances.where(check_in_time: @start_date.beginning_of_day..@end_date.end_of_day).order(created_at: :asc).each do |attendance|
                 total_hours = attendance.total_hours || 0
@@ -284,6 +284,7 @@ class Admin::UsersController < ApplicationController
                   total_hours / 3600
                 ]
               end
+    
               reg_hours = @total_working_hours - current_user_leaves * 8 if user.leaves.present?
               reg_hours ||= @total_working_hours
               working_hours = @total_hours[user.id] / 3600
@@ -291,10 +292,11 @@ class Admin::UsersController < ApplicationController
               undertime = reg_hours > working_hours ? reg_hours - working_hours : 0
             end
           end
-          send_data xlsx_package.to_stream.read, filename: "monthly_report_#{Date::MONTHNAMES[@month]}#{@year}.xlsx", type: "application/xlsx", disposition: "attachment"
+          send_data xlsx_package.to_stream.read, filename: "monthly_report_#{Date::MONTHNAMES[@month]}_#{@year}.xlsx", type: "application/xlsx", disposition: "attachment"
         end
       end
     end
+    
     
 
     def monthly_report
