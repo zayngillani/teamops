@@ -5,7 +5,7 @@ module Api
   module V1
     class JobApplicationsController < ApplicationController
       protect_from_forgery with: :null_session
-      skip_before_action :authenticate_user!, only: [:create]
+      skip_before_action :authenticate_user!
 
       def create
         @job_application = JobApplication.new(job_application_params)
@@ -26,6 +26,11 @@ module Api
         else
           render json: { status: 'ERROR', message: 'Resume file not provided' }, status: :unprocessable_entity
         end
+      end
+
+      def get_job_post_list
+        job_posts = JobPost.active.all
+        render json: job_posts
       end
 
       private
