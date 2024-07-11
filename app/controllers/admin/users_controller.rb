@@ -221,7 +221,6 @@ class Admin::UsersController < ApplicationController
       current_month_start = @start_date.beginning_of_month
       current_month_end = @end_date.end_of_month
       @public_holidays = PublicHoliday.where("start_date <= ? AND end_date >= ?", current_month_end, current_month_start)
-      
       @users.each do |user|
         @user_sessions = user.attendances.where(check_in_time: @start_date.beginning_of_day..@end_date.end_of_day).order(created_at: :asc)
         total_hrs = 0
@@ -243,9 +242,8 @@ class Admin::UsersController < ApplicationController
           xlsx_package = Axlsx::Package.new
           xlsx_package.use_shared_strings = true
           wb = xlsx_package.workbook
-          wb.add_worksheet(name: "Your Data") do |sheet|
+          wb.add_worksheet(name: "Monthly Report") do |sheet|
             sheet.add_row ["Name", "Regular Hours", "Worked Hours", "Over Time", "Under Time", "Leaves"]
-    
             @users.each do |user|
               current_user_leaves = Leave.where("start_date <= ? AND end_date >= ? AND status = ? AND user_id = ?", @end_date, @start_date, 1, user.id).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }
               if user.leaves.present?
@@ -266,6 +264,31 @@ class Admin::UsersController < ApplicationController
                 undertime = 0
               end
               sheet.add_row [user.name, reg_hours, working_hours, overtime, undertime, current_user_leaves]
+            end
+          end
+          @users.each do |user|
+          current_user_leaves = Leave.where("start_date <= ? AND end_date >= ? AND status = ? AND user_id = ?", @end_date, @start_date, 1, user.id).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }
+            wb.add_worksheet(name: user.name) do |sheet|
+              sheet.add_row ["Date", "Check In", "Check Out", "Regular Hours", "Overtime", "Leaves", "Total Hours"]
+              user.attendances.where(check_in_time: @start_date.beginning_of_day..@end_date.end_of_day).order(created_at: :asc).each do |attendance|
+                total_hours = attendance.total_hours || 0
+                regular_hours = total_hours > 28800 ? 28800 : total_hours
+                overtime_hours = total_hours > 28800 ? total_hours - 28800 : 0
+                sheet.add_row [
+                  attendance.check_in_time&.strftime("%Y-%m-%d"),
+                  attendance.check_in_time&.strftime("%H:%M"),
+                  attendance.check_out_time&.strftime("%H:%M") || "N/A",
+                  regular_hours / 3600,
+                  overtime_hours / 3600,
+                  current_user_leaves,
+                  total_hours / 3600
+                ]
+              end
+              reg_hours = @total_working_hours - current_user_leaves * 8 if user.leaves.present?
+              reg_hours ||= @total_working_hours
+              working_hours = @total_hours[user.id] / 3600
+              overtime_hours = working_hours > reg_hours ? working_hours - reg_hours : 0
+              undertime = reg_hours > working_hours ? reg_hours - working_hours : 0
             end
           end
           send_data xlsx_package.to_stream.read, filename: "monthly_report_#{Date::MONTHNAMES[@month]}#{@year}.xlsx", type: "application/xlsx", disposition: "attachment"
