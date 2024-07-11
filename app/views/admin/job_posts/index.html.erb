@@ -1,0 +1,24 @@
+<div class="main-content" style="margin-left: 260px;">
+  <table class="dashboard-table-container">
+    <thead>
+      <tr class="dashboard-table-lines">
+        <th>Title</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @job_posts.each do |job_post| %>
+        <tr class="dashboard-table-lines">
+          <td class="table-first-column"><%= job_post&.title %></td>
+          <td class="table-second-column">
+            <span><%= job_post&.job_status %><span>
+          </td>
+          <td>
+            <%= image_tag("more.png", width: "20", height: "20", alt: "Edit User") %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
