@@ -3,7 +3,7 @@ class JobApplicationSlackService
     @job_title = job_title
     @job_application = job_application
     @resume_file = resume_file
-    @slack_client = Slack::Web::Client.new(token: ENV['SLACK_API_TOKEN'])
+    @slack_client = Slack::Web::Client.new(token: ENV['SLACK_TX_ALERT_TOKEN'])
   end
 
   def notify_submission
