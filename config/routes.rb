@@ -10,6 +10,7 @@ Rails.application.routes.draw do
     resources :users, only: [:new, :create, :index, :edit, :update, :destroy]
     resources :job_applications, only: [:index]
     resources :job_posts
+    resources :contact_details, only: [:index]
     get '/generate_pdf', :to => "users#generate_pdf", as: 'generate_pdf'
     get '/user_profile', :to => "users#user_profile", as: 'user_profile'
     put '/disable_user', :to => "users#disable_user", as: 'disable_user'
