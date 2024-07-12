@@ -941,21 +941,6 @@ form .button input:hover{
   transition: background-color 0.3s ease;
 }
 
-.excel-btn{
-  margin-left: 31%;
-  margin-top: 7%;
-  display: block;
-  padding: 10px;
-  background-color: #F89320;
-  color: #fff;
-  border: none;
-  border-radius: 5px;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-
 .detail-page{
   margin-right: 20px;
 }
