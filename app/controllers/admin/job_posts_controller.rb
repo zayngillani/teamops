@@ -22,6 +22,9 @@ class Admin::JobPostsController < ApplicationController
     end
   end
 
+  def show
+  end
+
   private
 
   def set_job_post

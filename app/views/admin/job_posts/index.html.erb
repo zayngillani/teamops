@@ -18,8 +18,8 @@
             <div class="dropdown">
               <%= image_tag("more.png", width: "20", height: "20", alt: "Edit User", class: "dropdown-toggle") %>
               <div class="dropdown-menu">
-                <a href="#">Edit</a>
-                <a class="delete-btn-color" href="#">Delete</a>
+                <%= link_to 'Details', admin_job_post_path(job_post) %>
+                <%= link_to 'Delete', admin_job_post_path(job_post), method: :delete, data: { confirm: 'Are you sure?' }, class: 'delete-btn-color' %>
               </div>
             </div>
           </td>
