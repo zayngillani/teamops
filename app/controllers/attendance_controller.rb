@@ -50,21 +50,26 @@ class AttendanceController < ApplicationController
      end
    
      def end_session
-      @session = current_user.attendances.last
-      if @session.present?
-        @session.update!(check_out_time: Time.now.utc)
-        total_duration_seconds = @session.check_out_time - @session.check_in_time
-        total_break_time = calculate_total_break_time(@session)
-        total_duration_seconds -= total_break_time
-        @session.update!(total_hours: total_duration_seconds)
-        @session.update!(report: params[:report])
-        SlackService.new(current_user, "Checked Out", @session.check_out_time, ENV["REPORT_CHANNEL"], params[:report]).send_report        
-        flash[:success] = "Report submitted and checkout successfully."
+      if params[:report].present?
+        @session = current_user.attendances.last
+        if @session.present?
+          @session.update!(check_out_time: Time.now.utc)
+          total_duration_seconds = @session.check_out_time - @session.check_in_time
+          total_break_time = calculate_total_break_time(@session)
+          total_duration_seconds -= total_break_time
+          @session.update!(total_hours: total_duration_seconds)
+          @session.update!(report: params[:report])
+          SlackService.new(current_user, "Checked Out", @session.check_out_time, ENV["REPORT_CHANNEL"], params[:report]).send_report        
+          flash[:success] = "Report submitted and checkout successfully."
+        else
+          flash[:error] = "No active session found"
+        end
+        redirect_to attendance_index_path
       else
-        flash[:error] = "No active session found"
+        flash[:error] = "Daily Report can't be empty"
+        redirect_to root_path and return
       end
-      redirect_to attendance_index_path
-    end
+     end
     
    
      def break_session

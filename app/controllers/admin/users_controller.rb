@@ -281,8 +281,8 @@ class Admin::UsersController < ApplicationController
                 overtime_hours = total_hours > 28800 ? total_hours - 28800 : 0
                 sheet.add_row [
                   attendance.check_in_time&.strftime("%Y-%m-%d"),
-                  attendance.check_in_time&.strftime("%I:%M"),
-                  attendance.check_out_time&.strftime("%I:%M") || "N/A",
+                  attendance.check_in_time&.in_time_zone("Asia/Karachi").strftime("%I:%M"),
+                  attendance.check_out_time&.in_time_zone("Asia/Karachi").strftime("%I:%M") || "N/A",
                   regular_hours / 3600,
                   overtime_hours / 3600,
                   current_user_leaves,
@@ -302,6 +302,7 @@ class Admin::UsersController < ApplicationController
           send_data xlsx_package.to_stream.read, filename: "monthly_report_#{Date::MONTHNAMES[@month]}_#{@year}.xlsx", type: "application/xlsx", disposition: "attachment"
         end
       end
+      return
     end
     
     
