@@ -9,15 +9,16 @@ module Api
 
       def create
         @job_application = JobApplication.new(job_application_params)
-
+        debugger
         if params[:resume].present?
           if @job_application.save
+            @job_post = JobPost.find(params[:job_application][:job_post_id])
             # Call the Slack notification service
-            JobApplicationSlackService.new(@job_application, params[:job_title]).notify_submission
+            JobApplicationSlackService.new(@job_application, @job_post.title).notify_submission
             # Upload resume to FTP
             upload_to_ftp(params[:resume])
             # Send notification emails
-            send_notification_emails(params[:job_title])
+            send_notification_emails(@job_post.title)
 
             render json: { status: 'SUCCESS', message: 'Job application submitted', data: @job_application }, status: :ok
           else
@@ -43,7 +44,7 @@ module Api
       private
 
       def job_application_params
-        params.require(:job_application).permit(:name, :email, :qualification, :cnic, :current_experience, :contact_number, :current_salary, :expected_salary)
+        params.require(:job_application).permit(:name, :email, :qualification, :cnic, :current_experience, :contact_number, :current_salary, :expected_salary, :job_post_id)
       end
 
       def send_notification_emails(job_title)
