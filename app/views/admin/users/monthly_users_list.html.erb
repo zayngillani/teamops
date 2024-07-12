@@ -106,12 +106,18 @@ function downloadExcel() {
   const selectedMonth = document.getElementById('month').value;
   const selectedYear = document.getElementById('year').value;
   const selectedColumns = [];
-  document.querySelectorAll('.columnCheckbox:checked').forEach(function(checkbox) {
-    selectedColumns.push(checkbox.value);
-  });
+  const columnCheckboxes = document.querySelectorAll('.columnCheckbox:checked');
+  if (columnCheckboxes.length === 0) {
+    alert('Please select at least one column.');
+    return; // Exit function if no column checkbox is checked
+  }
   const selectedUsers = [];
   document.querySelectorAll('.userCheckbox:checked').forEach(function(checkbox) {
     selectedUsers.push(checkbox.value);
+  });
+
+  columnCheckboxes.forEach(function(checkbox) {
+    selectedColumns.push(checkbox.value);
   });
 
   const excelDownloadUrl = `/admin/monthly_excel/${selectedMonth}/${selectedYear}.xlsx?selected_columns=${selectedColumns.join(',')}&selected_users=${selectedUsers.join(',')}`;
