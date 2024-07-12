@@ -42,8 +42,8 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :job_applications, only: [:create]
       resources :contact_details, only: [:create]
-      get '/job_post_list', :to => "job_applications#get_job_post_list", as: 'job_post_list'
-      get '/show_job_post/:id', to: "job_applications#show_job_post", as: 'show_job_post'
+      get '/job_posts', :to => "job_applications#get_job_post_list", as: 'job_post_list'
+      get '/job_posts/:id', to: "job_applications#show_job_post", as: 'show_job_post'
     end
   end
 
