@@ -10,6 +10,7 @@ Rails.application.routes.draw do
     resources :users, only: [:new, :create, :index, :edit, :update, :destroy]
     resources :job_applications, only: [:index]
     resources :job_posts
+    resources :contact_details, only: [:index]
     get '/generate_pdf', :to => "users#generate_pdf", as: 'generate_pdf'
     get '/user_profile', :to => "users#user_profile", as: 'user_profile'
     put '/disable_user', :to => "users#disable_user", as: 'disable_user'
@@ -40,7 +41,9 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :job_applications, only: [:create]
+      resources :contact_details, only: [:create]
       get '/job_post_list', :to => "job_applications#get_job_post_list", as: 'job_post_list'
+      get '/show_job_post/:id', to: "job_applications#show_job_post", as: 'show_job_post'
     end
   end
 

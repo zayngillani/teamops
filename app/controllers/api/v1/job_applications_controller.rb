@@ -13,7 +13,7 @@ module Api
         if params[:resume].present?
           if @job_application.save
             # Call the Slack notification service
-            JobApplicationSlackService.new(@job_application, params[:job_title], params[:resume]).notify_submission
+            JobApplicationSlackService.new(@job_application, params[:job_title]).notify_submission
             # Upload resume to FTP
             upload_to_ftp(params[:resume])
             # Send notification emails
@@ -31,6 +31,13 @@ module Api
       def get_job_post_list
         job_posts = JobPost.active.all
         render json: job_posts
+      end
+
+      def show_job_post
+        job_post = JobPost.find(params[:id])
+        render json: job_post
+      rescue ActiveRecord::RecordNotFound
+        render json: { error: 'Job post not found' }, status: :not_found
       end
 
       private

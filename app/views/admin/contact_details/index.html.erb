@@ -1,0 +1,22 @@
+<div class="main-content" style="margin-left: 260px;">
+  <table class="dashboard-table-container">
+    <thead>
+      <tr class="dashboard-table-lines">
+        <th>Name</th>
+        <th>Email</th>
+        <th>Contact Number</th>
+        <th>Project Details</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @contact_details.each do |contact_detail| %>
+        <tr class="dashboard-table-lines">
+          <td class="table-first-column"><%= contact_detail.details['name'] %></td>
+          <td class="table-first-column"><%= contact_detail.details['email'] %></td>
+          <td class="table-first-column"><%= contact_detail.details['contact_no'] %></td>
+          <td class="table-first-column"><%= contact_detail.details['project_details'] %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

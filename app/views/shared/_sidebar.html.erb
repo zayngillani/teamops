@@ -172,9 +172,15 @@
                     </div>
                 </a>
                 <a href="<%= admin_job_posts_path %>">
-                    <div class="menu-item <%= 'active' if current_page?(admin_job_applications_path) %>">
-                        <%= image_tag("holiday.svg", class: "menu-icon") %>
+                    <div class="menu-item <%= 'active' if current_page?(admin_job_posts_path) %>">
+                        <%= image_tag("jobs-icon.svg", class: "menu-icon") %>
                         Jobs
+                    </div>
+                </a>
+                <a href="<%= admin_contact_details_path %>">
+                    <div class="menu-item <%= 'active' if current_page?(admin_contact_details_path) %>">
+                        <%= image_tag("contact-us-icon.svg", class: "menu-icon") %>
+                        Contact Details
                     </div>
                 </a>
             </div>
