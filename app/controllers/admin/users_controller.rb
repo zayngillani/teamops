@@ -285,12 +285,15 @@ class Admin::UsersController < ApplicationController
                   attendance.check_out_time&.strftime("%I:%M") || "N/A",
                   regular_hours / 3600,
                   overtime_hours / 3600,
-                  current_user_leaves,
+                  "",
                   total_hours / 3600
                 ]
                 total_hours_sum += total_hours
               end
-              sheet.add_row ["Total:", "", "", "", "", "", total_hours_sum / 3600]
+              total_h = total_hours_sum / 3600
+              total_m = (total_hours_sum % 3600) / 60
+              time_format = "%02d.%02d" % [total_h, total_m]
+              sheet.add_row ["Total:", "", "", "", "", current_user_leaves, time_format]
     
               reg_hours = @total_working_hours - current_user_leaves * 8 if user.leaves.present?
               reg_hours ||= @total_working_hours
@@ -302,6 +305,7 @@ class Admin::UsersController < ApplicationController
           send_data xlsx_package.to_stream.read, filename: "monthly_report_#{Date::MONTHNAMES[@month]}_#{@year}.xlsx", type: "application/xlsx", disposition: "attachment"
         end
       end
+      return
     end
     
     
