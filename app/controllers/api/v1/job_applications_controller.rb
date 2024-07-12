@@ -9,7 +9,6 @@ module Api
 
       def create
         @job_application = JobApplication.new(job_application_params)
-        debugger
         if params[:resume].present?
           if @job_application.save
             @job_post = JobPost.find(params[:job_application][:job_post_id])
