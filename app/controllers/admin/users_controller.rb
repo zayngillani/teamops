@@ -270,20 +270,23 @@ class Admin::UsersController < ApplicationController
             current_user_leaves = Leave.where("start_date <= ? AND end_date >= ? AND status = ? AND user_id = ?", @end_date, @start_date, 1, user.id).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }
             wb.add_worksheet(name: "#{user.name}_#{user.id}") do |sheet|
               sheet.add_row ["Date", "Check In", "Check Out", "Regular Hours", "Overtime", "Leaves", "Total Hours"]
+              total_hours_sum = 0
               user.attendances.where(check_in_time: @start_date.beginning_of_day..@end_date.end_of_day).order(created_at: :asc).each do |attendance|
                 total_hours = attendance.total_hours || 0
                 regular_hours = total_hours > 28800 ? 28800 : total_hours
                 overtime_hours = total_hours > 28800 ? total_hours - 28800 : 0
                 sheet.add_row [
                   attendance.check_in_time&.strftime("%Y-%m-%d"),
-                  attendance.check_in_time&.strftime("%H:%M"),
-                  attendance.check_out_time&.strftime("%H:%M") || "N/A",
+                  attendance.check_in_time&.strftime("%I:%M"),
+                  attendance.check_out_time&.strftime("%I:%M") || "N/A",
                   regular_hours / 3600,
                   overtime_hours / 3600,
                   current_user_leaves,
                   total_hours / 3600
                 ]
+                total_hours_sum += total_hours
               end
+              sheet.add_row ["Total:", "", "", "", "", "", total_hours_sum / 3600]
     
               reg_hours = @total_working_hours - current_user_leaves * 8 if user.leaves.present?
               reg_hours ||= @total_working_hours
