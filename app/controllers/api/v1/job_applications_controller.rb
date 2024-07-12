@@ -33,6 +33,13 @@ module Api
         render json: job_posts
       end
 
+      def show_job_post
+        job_post = JobPost.find(params[:id])
+        render json: job_post
+      rescue ActiveRecord::RecordNotFound
+        render json: { error: 'Job post not found' }, status: :not_found
+      end
+
       private
 
       def job_application_params
