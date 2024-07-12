@@ -1,4 +1,4 @@
-<div class="content">
+<div class="content" style="margin-left: 220px;">
   <div class="card">
     <h3>Welcome</h3>
     <h1><%= current_user.name %></h1>
@@ -48,12 +48,19 @@
           <button id="modal-btn" class="sign-out-button">Check Out</button>
         <% end %>
         <div id="myModal" class="modal">
-         <div class="modal-content">
-            <p style="text-align: center; margin-top: 10px;">Are you sure you want to checkout?</p>
-            <div id="timerDisplayModal"></div>
-            <div class="modal-footer">
-              <%= button_to "Check-Out", end_session_path, class: "sign-out-button check-btn", id: "checkOutButtonModal", data: { disable_with: "Processing..." } %>
-            </div>
+          <div class="modal-checkout">
+            <%= form_with url: end_session_path, method: :post, remote: true, id: "checkout_form" do |f| %>
+              <div class="modal-header">
+                <span class="close-modal" onclick="document.getElementById('myModal').style.display='none'">&times;</span>
+              </div>
+              <h4>Daily Report</h4>
+              <p style="text-align: center; margin-top: 10px;">
+                <%= f.text_area :report, id: "report_editor", placeholder: "Enter Details", style: "width: 100%; height: 150px; resize: vertical; padding: 10px; border-radius: 8px;", required: true %>
+              </p>
+              <div class="modal-footer">
+                <%= f.submit "Submit Report and check out", class: "check-out-btn", data: { disable_with: "Processing..." } %>
+              </div>
+            <% end %>
           </div>
         </div>
       </div>
@@ -96,7 +103,6 @@
       modal.style.display = "none";
     }
   }
-
 
 
 </script>

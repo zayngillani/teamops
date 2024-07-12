@@ -9,6 +9,8 @@ Rails.application.routes.draw do
   namespace :admin do
     resources :users, only: [:new, :create, :index, :edit, :update, :destroy]
     resources :job_applications, only: [:index]
+    resources :job_posts
+    resources :contact_details, only: [:index]
     get '/generate_pdf', :to => "users#generate_pdf", as: 'generate_pdf'
     get '/user_profile', :to => "users#user_profile", as: 'user_profile'
     put '/disable_user', :to => "users#disable_user", as: 'disable_user'
@@ -26,6 +28,9 @@ Rails.application.routes.draw do
   post '/end_session', :to => "attendance#end_session", as: 'end_session'
   post '/break_session', :to => "attendance#break_session", as: 'break_session'
   post '/create_user', :to => "attendance#create_user", as: 'create_user'
+  put '/update_report', :to => "attendance#update_report", as: 'update_report'
+  get '/show_report', :to => "attendance#show_report", as: 'show_report'
+  get '/user_report', :to => "attendance#user_report", as: 'user_report'
 
   resources :leaves, only: [:new, :create, :index, :edit, :update, :destroy, :show]
   get '/approve', :to => "leaves#approve", as: 'approve'
@@ -36,6 +41,9 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :job_applications, only: [:create]
+      resources :contact_details, only: [:create]
+      get '/job_post_list', :to => "job_applications#get_job_post_list", as: 'job_post_list'
+      get '/show_job_post/:id', to: "job_applications#show_job_post", as: 'show_job_post'
     end
   end
 

@@ -1,0 +1,50 @@
+<div class="main-content" style="margin-left: 260px;">
+  <table class="dashboard-table-container">
+    <thead>
+      <tr class="dashboard-table-lines">
+        <th>Title</th>
+        <th>Status</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @job_posts.each do |job_post| %>
+        <tr class="dashboard-table-lines">
+          <td class="table-first-column"><%= job_post&.title %></td>
+          <td class="table-second-column">
+            <span><%= job_post&.job_status %></span>
+          </td>
+          <td class="action-cell">
+            <div class="dropdown">
+              <%= image_tag("more.png", width: "20", height: "20", alt: "Edit User", class: "dropdown-toggle") %>
+              <div class="dropdown-menu">
+                <a href="#">Edit</a>
+                <a class="delete-btn-color" href="#">Delete</a>
+              </div>
+            </div>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll('.dropdown-toggle').forEach(function(toggle) {
+      toggle.addEventListener('click', function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        var menu = this.nextElementSibling;
+        menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+      });
+    });
+
+    document.addEventListener('click', function() {
+      document.querySelectorAll('.dropdown-menu').forEach(function(menu) {
+        menu.style.display = 'none';
+      });
+    });
+  });
+</script>

@@ -2,7 +2,7 @@ class JobApplicationSlackService
   def initialize(job_application, job_title)
     @job_title = job_title
     @job_application = job_application
-    @slack_client = Slack::Web::Client.new(token: ENV['SLACK_API_TOKEN'])
+    @slack_client = Slack::Web::Client.new(token: ENV['SLACK_TX_ALERT_TOKEN'])
   end
 
   def notify_submission
