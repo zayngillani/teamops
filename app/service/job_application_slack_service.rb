@@ -21,6 +21,10 @@ class JobApplicationSlackService
   end  
 
   def post_message(message)
-    @slack_client.chat_postMessage(channel: ENV['TEST_CHANNEL'], text: message)
+    if Rails.env.production?
+      @slack_client.chat_postMessage(channel: ENV['JOB_APPLICATION_CHANNEL'], text: message)
+    else
+      @slack_client.chat_postMessage(channel: ENV['TEST_CHANNEL'], text: message)
+    end
   end
 end
