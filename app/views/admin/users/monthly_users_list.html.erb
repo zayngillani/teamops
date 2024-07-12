@@ -12,15 +12,15 @@
         <div class="modal-header">
           <span class="close-modal" onclick="document.getElementById('myModal').style.display='none'">&times;</span>
         </div>
-        <h4>Select Columns to Export</h4>
+        <h4>Select Columns to Export</h4><br>
           <%= form_tag admin_users_monthly_excel_path(params[:month], params[:year]), method: :get, id: "exportForm" do %>
-            <label><%= check_box_tag 'name[]', 'name', true, class: 'columnCheckbox' %>Name</label>
-            <label><%= check_box_tag 'regular_hours[]', 'regular_hours', true, class: 'columnCheckbox' %>Regular Hours</label>
-            <label><%= check_box_tag 'working_hours[]', 'working_hours', true, class: 'columnCheckbox' %>Working Hours</label>
-            <label><%= check_box_tag 'overtime[]', 'overtime', true, class: 'columnCheckbox' %>Overtime</label>
-            <label><%= check_box_tag 'undertime[]', 'undertime', true, class: 'columnCheckbox' %>Undertime</label>
-            <label><%= check_box_tag 'leaves[]', 'leaves', true, class: 'columnCheckbox' %>Leaves</label>
-            <label><%= submit_tag 'Download Excel', id: "download-excel-btn", class: "modal-btn btn-style", onclick: "downloadExcel()" %>
+            <label><%= check_box_tag 'name[]', 'name', true, class: 'columnCheckbox' %>  Name</label><br>
+            <label><%= check_box_tag 'regular_hours[]', 'regular_hours', true, class: 'columnCheckbox' %>  Regular Hours</label><br>
+            <label><%= check_box_tag 'working_hours[]', 'working_hours', true, class: 'columnCheckbox' %>  Working Hours</label><br>
+            <label><%= check_box_tag 'overtime[]', 'overtime', true, class: 'columnCheckbox' %>  Overtime</label><br>
+            <label><%= check_box_tag 'undertime[]', 'undertime', true, class: 'columnCheckbox' %>  Undertime</label><br>
+            <label><%= check_box_tag 'leaves[]', 'leaves', true, class: 'columnCheckbox' %>  Leaves</label>
+            <label><%= submit_tag 'Download Excel', id: "download-excel-btn", class: "modal-btn excel-btn", onclick: "downloadExcel()" %>
           <% end %>
         <p style="text-align: center; margin-top: 10px;"></p>
         <div class="modal-footer"></div>
