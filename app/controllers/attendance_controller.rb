@@ -58,8 +58,8 @@ class AttendanceController < ApplicationController
         total_duration_seconds -= total_break_time
         @session.update!(total_hours: total_duration_seconds)
         @session.update!(report: params[:report])
-        SlackService.new(current_user, "Checked Out", @session.check_out_time, ENV["TEST_CHANNEL"], params[:report]).send_report        
-        flash[:success] = "Checked OUT successfully"
+        SlackService.new(current_user, "Checked Out", @session.check_out_time, ENV["REPORT_CHANNEL"], params[:report]).send_report        
+        flash[:success] = "Report submitted and checkout successfully."
       else
         flash[:error] = "No active session found"
       end

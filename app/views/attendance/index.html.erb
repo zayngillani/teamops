@@ -58,7 +58,7 @@
                 <%= f.text_area :report, id: "report_editor", placeholder: "Enter Details", style: "width: 100%; height: 150px; resize: vertical; padding: 10px; border-radius: 8px;", required: true %>
               </p>
               <div class="modal-footer">
-                <%= f.submit "Submit Report and check out", class: "check-out-btn", data: { disable_with: "Processing..." } %>
+                <%= f.submit "Submit Report and check out", class: "check-out-btn", onclick: "this.disabled = true; this.value = 'Processing...'; this.form.submit();" %>
               </div>
             <% end %>
           </div>
