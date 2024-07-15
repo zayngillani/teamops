@@ -242,7 +242,7 @@ class Admin::UsersController < ApplicationController
           wb = xlsx_package.workbook
           columns_to_include = params[:selected_columns].split(',') || []
           wb.add_worksheet(name: "Monthly Report") do |sheet|
-            headers = []
+            headers = ["Name"]
             headers += columns_to_include.map(&:humanize)
             sheet.add_row headers
             @users.each do |user|
