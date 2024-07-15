@@ -25,8 +25,8 @@
           <% else %>
           <td>
           <div class="leave-container">
-            <%= button_to "Approve", approve_path, method: :get, params: { id: item.id }, class: "leave-request approve-btn", data: { disable_with: "Processing..." } %>
-            <%= button_to "Reject", reject_path, method: :get, params: { id: item.id }, class: "leave-request reject-btn", data: { disable_with: "Processing..." } %>
+            <%= button_to "Approve", approve_path, method: :get, params: { id: item.id }, class: "leave-request approve-btn", data: { disable_with: "Approve" } %>
+            <%= button_to "Reject", reject_path, method: :get, params: { id: item.id }, class: "leave-request reject-btn", data: { disable_with: "Reject" } %>
           </div>
           </td>
           <% end %>
