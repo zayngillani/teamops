@@ -211,7 +211,6 @@ class Admin::UsersController < ApplicationController
       else
         @users = User.active.where(role: "user", deleted: false).order(created_at: :desc)
       end
-    
       @month = params[:month].to_i
       @year = params[:year].to_i
       @start_date = Date.new(@year, @month, 1)
@@ -236,54 +235,65 @@ class Admin::UsersController < ApplicationController
         end
         @total_working_hours = working_days * regular_hours_per_day
       end
-    
       respond_to do |format|
         format.xlsx do
           xlsx_package = Axlsx::Package.new
           xlsx_package.use_shared_strings = true
           wb = xlsx_package.workbook
+          columns_to_include = params[:selected_columns].split(',') || []
           wb.add_worksheet(name: "Monthly Report") do |sheet|
-            sheet.add_row ["Name", "Regular Hours", "Worked Hours", "Over Time", "Under Time", "Leaves"]
+            headers = []
+            headers += columns_to_include.map(&:humanize)
+            sheet.add_row headers
             @users.each do |user|
               current_user_leaves = Leave.where("start_date <= ? AND end_date >= ? AND status = ? AND user_id = ?", @end_date, @start_date, 1, user.id).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }
-              if user.leaves.present?
-                reg_hours = @total_working_hours - current_user_leaves * 8
-              else
-                reg_hours = @total_working_hours
-              end
+              reg_hours = user.leaves.present? ? (@total_working_hours - current_user_leaves * 8) : @total_working_hours
               @regular_hours = reg_hours
               working_hours = @total_hours[user.id] / 3600
-              if @regular_hours < @total_hours[user.id] / 3600
-                overtime = (@total_hours[user.id] / 3600) - @regular_hours
-              else
-                overtime = 0
+              overtime = @regular_hours < working_hours ? (working_hours - @regular_hours) : 0
+              undertime = @regular_hours > working_hours ? (@regular_hours - working_hours) : 0
+              data_row = [user.name]
+              columns_to_include.each do |column|
+                case column
+                when 'regular_hours'
+                  data_row << reg_hours
+                when 'working_hours'
+                  data_row << working_hours
+                when 'overtime'
+                  data_row << overtime
+                when 'undertime'
+                  data_row << undertime
+                when 'leaves'
+                  data_row << current_user_leaves
+                end
               end
-              if @regular_hours > @total_hours[user.id] / 3600
-                undertime = @regular_hours - (@total_hours[user.id] / 3600)
-              else
-                undertime = 0
-              end
-              sheet.add_row [user.name, reg_hours, working_hours, overtime, undertime, current_user_leaves]
+              sheet.add_row data_row
             end
           end
           @users.each do |user|
             current_user_leaves = Leave.where("start_date <= ? AND end_date >= ? AND status = ? AND user_id = ?", @end_date, @start_date, 1, user.id).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }
             wb.add_worksheet(name: "#{user.name}_#{user.id}") do |sheet|
               sheet.add_row ["Date", "Check In", "Check Out", "Regular Hours", "Overtime", "Leaves", "Total Hours"]
+              total_hours_sum = 0
               user.attendances.where(check_in_time: @start_date.beginning_of_day..@end_date.end_of_day).order(created_at: :asc).each do |attendance|
                 total_hours = attendance.total_hours || 0
                 regular_hours = total_hours > 28800 ? 28800 : total_hours
                 overtime_hours = total_hours > 28800 ? total_hours - 28800 : 0
                 sheet.add_row [
                   attendance.check_in_time&.strftime("%Y-%m-%d"),
-                  attendance.check_in_time&.strftime("%H:%M"),
-                  attendance.check_out_time&.strftime("%H:%M") || "N/A",
+                  attendance.check_in_time.present? ? attendance.check_in_time.in_time_zone("Asia/Karachi").strftime("%I:%M") : "N/A",
+                  attendance.check_out_time.present? ? attendance.check_out_time.in_time_zone("Asia/Karachi").strftime("%I:%M") : "N/A",
                   regular_hours / 3600,
                   overtime_hours / 3600,
-                  current_user_leaves,
+                  "",
                   total_hours / 3600
                 ]
+                total_hours_sum += total_hours
               end
+              total_h = total_hours_sum / 3600
+              total_m = (total_hours_sum % 3600) / 60
+              time_format = "%02d.%02d" % [total_h, total_m]
+              sheet.add_row ["Total:", "", "", "", "", current_user_leaves, time_format]
     
               reg_hours = @total_working_hours - current_user_leaves * 8 if user.leaves.present?
               reg_hours ||= @total_working_hours
@@ -295,6 +305,7 @@ class Admin::UsersController < ApplicationController
           send_data xlsx_package.to_stream.read, filename: "monthly_report_#{Date::MONTHNAMES[@month]}_#{@year}.xlsx", type: "application/xlsx", disposition: "attachment"
         end
       end
+      return
     end
     
     

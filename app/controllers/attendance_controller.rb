@@ -21,6 +21,11 @@ class AttendanceController < ApplicationController
          redirect_to attendance_index_path
          return
        end
+       if Date.today.saturday? || Date.today.sunday?
+        flash[:error] = "You can't check in on weekends."
+        redirect_to attendance_index_path
+        return
+       end
        existing_session = current_user.attendances.where(check_in_time: Date.today.beginning_of_day..Date.today.end_of_day).first
        leave = current_user.leaves.where(start_date: Date.today.beginning_of_day..Date.today.end_of_day, status: "approved")
        if leave.present?
@@ -50,21 +55,26 @@ class AttendanceController < ApplicationController
      end
    
      def end_session
-      @session = current_user.attendances.last
-      if @session.present?
-        @session.update!(check_out_time: Time.now.utc)
-        total_duration_seconds = @session.check_out_time - @session.check_in_time
-        total_break_time = calculate_total_break_time(@session)
-        total_duration_seconds -= total_break_time
-        @session.update!(total_hours: total_duration_seconds)
-        @session.update!(report: params[:report])
-        SlackService.new(current_user, "Checked Out", @session.check_out_time, ENV["TEST_CHANNEL"], params[:report]).send_report        
-        flash[:success] = "Checked OUT successfully"
+      if params[:report].present?
+        @session = current_user.attendances.last
+        if @session.present?
+          @session.update!(check_out_time: Time.now.utc)
+          total_duration_seconds = @session.check_out_time - @session.check_in_time
+          total_break_time = calculate_total_break_time(@session)
+          total_duration_seconds -= total_break_time
+          @session.update!(total_hours: total_duration_seconds)
+          @session.update!(report: params[:report])
+          SlackService.new(current_user, "Checked Out", @session.check_out_time, ENV["REPORT_CHANNEL"], params[:report]).send_report        
+          flash[:success] = "Report submitted and checkout successfully."
+        else
+          flash[:error] = "No active session found"
+        end
+        redirect_to attendance_index_path
       else
-        flash[:error] = "No active session found"
+        flash[:error] = "Daily Report can't be empty"
+        redirect_to root_path and return
       end
-      redirect_to attendance_index_path
-    end
+     end
     
    
      def break_session

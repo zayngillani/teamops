@@ -1196,7 +1196,6 @@ label {
   height: 500px;
   position: relative;
   margin-top: 1%;
-  overflow-x: hidden;
 }
 
 .report-button {

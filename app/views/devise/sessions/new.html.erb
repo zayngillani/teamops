@@ -80,6 +80,7 @@
       justify-content: flex-end;
       font-size: 12px;
       margin-top: -14px;
+      width: 100%;
     }
 
     .log-in-button {
@@ -137,7 +138,7 @@
 
           <div class="forgot-link-align">
             <% if alert %>
-              <div class="signin-error-message" id="alert-banner">Invalid email or password</div>
+              <div class="signin-error-message" id="alert-banner"><%= alert %></div>
             <% end %>
             <div class="f-link">
               <%= link_to "Forgot Password?", new_user_password_path(resource_name), style: "color: black; font-weight: bold; text-decoration: none;" %>
