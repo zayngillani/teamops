@@ -21,6 +21,10 @@ Rails.application.routes.draw do
     get '/monthly_report', :to => "users#monthly_report", as: 'monthly_report'
     get '/monthly_users_list', :to => "users#monthly_users_list", as: 'monthly_users_list'
     get '/monthly_excel/:month/:year', to: 'users#monthly_excel', as: :users_monthly_excel
+    get '/users_daily_reports', :to => "users#users_daily_reports", as: :users_daily_reports
+    get '/show_daily_report', :to => "users#show_daily_report", as: :show_daily_report
+    get '/daily_report', :to => "users#daily_report", as: 'daily_report'
+
   end
   
   resources :attendance, only: [:index]
