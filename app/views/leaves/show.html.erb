@@ -25,7 +25,7 @@
           <% else %>
           <td>
           <div class="leave-container">
-            <%= button_to "Approve", approve_path, method: :get, params: { id: item.id }, class: "leave-request reject-btn", data: { disable_with: "Processing..." } %>
+            <%= button_to "Approve", approve_path, method: :get, params: { id: item.id }, class: "leave-request approve-btn", data: { disable_with: "Processing..." } %>
             <%= button_to "Reject", reject_path, method: :get, params: { id: item.id }, class: "leave-request reject-btn", data: { disable_with: "Processing..." } %>
           </div>
           </td>
@@ -37,19 +37,19 @@
  </div>
 
 <script>
-    document.addEventListener("turbo:load", function() {
-      const buttons = document.querySelectorAll('form button.leave-request');
-
-      buttons.forEach(button => {
-        button.addEventListener('click', function(event) {
-          event.preventDefault();
-          button.disabled = true;
-          button.textContent = button.getAttribute('data-disable-with');
-          const form = button.closest('form');
-          if (form) {
-            form.submit();
-          }
-        });
+document.addEventListener("turbo:load", function() {
+  const buttons = document.querySelectorAll('form button.leave-request');
+  buttons.forEach(button => {
+    button.addEventListener('click', function(event) {
+      buttons.forEach(btn => {
+        btn.disabled = true;
+        btn.textContent = btn.getAttribute('data-disable-with');
       });
+      const form = button.closest('form');
+      if (form) {
+        form.submit();
+      }
     });
-  </script>
+  });
+});
+</script>
