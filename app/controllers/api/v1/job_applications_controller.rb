@@ -47,8 +47,9 @@ module Api
       end
 
       def send_notification_emails(job_title)
-        JobApplicationMailer.confirmation_email(@job_application, job_title).deliver_now
-        JobApplicationMailer.notification_email(@job_application, job_title).deliver_now
+        # Email configs are pending on prod. 
+        # JobApplicationMailer.confirmation_email(@job_application, job_title).deliver_now
+        # JobApplicationMailer.notification_email(@job_application, job_title).deliver_now
       end
 
       def upload_to_ftp(file)
