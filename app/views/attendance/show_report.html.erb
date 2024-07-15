@@ -1,5 +1,5 @@
 <div class="reportTable">
-  <table>
+  <table style="width: 100%;">
     <thead>
       <tr>
         <th>Date</th>
@@ -19,11 +19,6 @@
             <%= image_tag("more.png", width: "20", height: "20", alt: "Edit User") %>
             <div class="dropdown-content-action">
             <%= button_to "View report", user_report_path(item.id), method: :get, class: "view-report" %>
-              <% if item.check_out_time.present? %>
-                <% time_since_checkout = Time.zone.now - item.check_out_time %>
-                <% if time_since_checkout <= 2.hours %>
-                  <div class="actions-container">
-                    <button class="modal-btn" data-target="myModalEdit<%= item.id %>">Edit report</button>
                     <div id="myModalEdit<%= item.id %>" class="modal">
                       <div class="modal-content">
                         <%= form_with url: update_report_path, method: :put, remote: true, id: "checkout_form" do |f| %>
@@ -38,9 +33,6 @@
                         <% end %>
                       </div>
                     </div>
-                  </div>
-                <% end %>
-              <% end %>
             </div>
           </div>
         </td>
