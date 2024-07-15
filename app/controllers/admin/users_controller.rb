@@ -400,7 +400,23 @@ class Admin::UsersController < ApplicationController
         @total_working_hours = working_days * regular_hours_per_day
       end
     end
+
+    def users_daily_reports
+      @users = User.active.where(role: "user", deleted: false).order(created_at: :desc)
+    end
     
+    def show_daily_report
+      @month = params[:month].present? ? params[:month].to_i : Date.current.month
+      @year = params[:year].present? ? params[:year].to_i : Date.current.year
+      @start_date = Date.new(@year, @month, 1)
+      @end_date = @start_date.end_of_month
+      @user = User.find_by(id: params[:format])
+      @sessions = Attendance.where(user_id: @user.id, check_in_time: @start_date.beginning_of_day..@end_date.end_of_day).order(created_at: :asc)
+    end
+
+    def daily_report
+      @daily_report = Attendance.find_by(id: params[:format])
+    end
     private
    
     def user_params

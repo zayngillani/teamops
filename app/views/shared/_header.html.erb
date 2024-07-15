@@ -1,5 +1,6 @@
 <div class="header">
   <div class="spacer"></div> <!-- Spacer to push buttons to the right -->
+  <%= yield(:user_name) %>
   <%= yield(:link_button) %>
   <div class="profile">
     <span class="initial"><%= current_user.name.split.first[0] + current_user.name.split.last[0] %></span>
