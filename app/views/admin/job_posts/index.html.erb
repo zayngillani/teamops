@@ -19,7 +19,7 @@
               <%= image_tag("more.png", width: "20", height: "20", alt: "Edit User", class: "dropdown-toggle") %>
               <div class="dropdown-menu">
                 <%= link_to 'Details', admin_job_post_path(job_post) %>
-                <%= link_to 'Delete', admin_job_post_path(job_post), method: :delete, data: { confirm: 'Are you sure?' }, class: 'delete-btn-color' %>
+                <%= button_to 'Delete', admin_job_post_path(job_post), method: :delete, data: { confirm: 'Are you sure?' }, class: 'delete-btn-color' %>
               </div>
             </div>
           </td>
@@ -31,7 +31,7 @@
 
 
 <script>
-  document.addEventListener("DOMContentLoaded", function() {
+  document.addEventListener('turbo:load', function() {
     document.querySelectorAll('.dropdown-toggle').forEach(function(toggle) {
       toggle.addEventListener('click', function(event) {
         event.preventDefault();

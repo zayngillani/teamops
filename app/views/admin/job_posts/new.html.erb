@@ -1,0 +1,32 @@
+<div class="main-content" style="margin-left: 260px;">
+  <div class="dashboard-table-container">
+    <div class="job-form">
+      <%= form_with(model: @job_post, url: admin_job_posts_path, method: :post, local: true) do |form| %>
+        <div class="job-title-field">
+          <%= form.text_field :title, class: 'form-control', placeholder: 'Job Title' %>
+        </div>
+
+        <div class="job-detail-field">
+          <%= form.text_area :details, class: 'form-control', placeholder: 'Job Deatails' %>
+        </div>
+
+        <div class="job-detail-field">
+          <%= form.text_area :requirements_and_qualification, class: 'form-control', placeholder: 'Requirements & Qualifications', rows: 5, id: 'requirements_and_qualification' %>
+        </div>
+
+        <div class="job-post-btn">
+          <%= form.submit 'Create Job Post', class: 'job-post-btn-text' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('turbo:load', function() {
+    var textarea = document.querySelector('#requirements_and_qualification');
+    if (textarea) {
+      textarea.value = '';
+    }
+  });
+</script>
