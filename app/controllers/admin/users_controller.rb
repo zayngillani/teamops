@@ -351,15 +351,9 @@ class Admin::UsersController < ApplicationController
         leaves_count = work_days.count do |date|
           !present_dates.include?(date) && date >= created_date && date <= Date.today
         end
-        
+        absences_count = work_days.count { |date| !present_dates.include?(date) && date >= created_date && date <= Date.today } - @public_holidays.count
         holidays = work_days.count - working_days
-        if leaves_count == 0
-          @leaves[user.id] = 0
-        elsif leaves_count < holidays
-          @leaves[user.id] = leaves_count
-        else
-          @leaves[user.id] = leaves_count - holidays
-        end
+        @leaves[user.id] = absences_count
       end
       if @user_sessions.present?
         respond_to do |format|
