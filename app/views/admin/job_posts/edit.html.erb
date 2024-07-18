@@ -1,13 +1,13 @@
 <div class="main-content" style="margin-left: 260px;">
   <div class="dashboard-table-container">
     <div class="job-form">
-      <%= form_with(model: @job_post, url: admin_job_posts_path, method: :post, local: true) do |form| %>
+      <%= form_with(model: @job_post, url: admin_job_post_path(@job_post), method: :patch, local: true) do |form| %>
         <div class="job-title-field">
           <%= form.text_field :title, class: 'form-control', placeholder: 'Job Title' %>
         </div>
 
         <div class="job-detail-field">
-          <%= form.text_area :details, class: 'form-control', placeholder: 'Job Deatails' %>
+          <%= form.text_area :details, class: 'form-control', placeholder: 'Job Details' %>
         </div>
 
         <div class="job-detail-field">
@@ -15,18 +15,19 @@
         </div>
 
         <div class="job-post-btn">
-          <%= form.submit 'Create Job Post', class: 'job-post-btn-text' %>
+          <%= form.submit 'Update Job Post', class: 'job-post-btn-text' %>
         </div>
       <% end %>
     </div>
   </div>
 </div>
 
+# Custom handling of array field.
 <script>
   document.addEventListener('turbo:load', function() {
     console.log('Turbolinks load event fired');
     var textarea = document.querySelector('#requirements_and_qualification');
-    if (textarea) {
+    if (textarea && textarea.value == '[]') {
       textarea.value = '';
     }
   });

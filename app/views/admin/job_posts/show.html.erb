@@ -3,7 +3,9 @@
     <div class="dashboard-heading-position">
       <div class="dashboard-heading">
         <%= @job_post.title %>
-        <img src="<%= asset_path('edit-icon.svg') %>" alt="Lock Icon" class="edit-icon-style">
+        <%= link_to edit_admin_job_post_path(@job_post) do %>
+          <img src="<%= asset_path('edit-icon.svg') %>" alt="Lock Icon" class="edit-icon-style">
+        <% end %>
       </div>
 
       <%= link_to admin_job_applications_path, class: "applicants-list-btn" do %>
@@ -16,12 +18,12 @@
     <div class="job-description-box">
       <h3> Job Deatils </h3><br>
       <div class="job-description-details">
-        <p class="job-description-box-text">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+        <p class="job-description-box-text"><%= @job_post.details %></p>
       </div>
 
       <h3> Requirements & Qualifications </h3><br>
       <div class="job-description-requirements">
-        <p class="job-description-box-text">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+        <p class="job-description-box-text"><%= @job_post.requirements_and_qualification %></p>
       </div>
     </div>
   </div>
