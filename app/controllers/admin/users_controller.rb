@@ -303,9 +303,9 @@ class Admin::UsersController < ApplicationController
             end
           end
           send_data xlsx_package.to_stream.read, filename: "monthly_report_#{Date::MONTHNAMES[@month]}_#{@year}.xlsx", type: "application/xlsx", disposition: "attachment"
+          return
         end
       end
-      return
     end
     
     
