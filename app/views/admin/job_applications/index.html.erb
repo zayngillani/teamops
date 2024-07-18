@@ -15,12 +15,40 @@
           <td class="table-first-column"><%= application&.name %></td>
           <td class="table-first-column"><%= application&.email %></td>
           <td class="table-first-column"><%= application&.current_experience %></td>
-          <td class="table-second-column">
+          <td class="applicants-table-second-column">
             <span><%= "Pending" %></span>
           </td>
-          <td><%= "--" %></td>
+          <td class="action-cell">
+            <div class="dropdown">
+              <%= image_tag("more.png", width: "20", height: "20", alt: "Edit User", class: "dropdown-toggle") %>
+              <div class="dropdown-menu">
+                <%= link_to 'Details', admin_job_application_path(application) %>
+                <%= link_to 'Reject', reject_applicant_admin_job_application_path(application), class: 'delete-btn-color' %>
+              </div>
+            </div>
+          </td>
         </tr>
       <% end %>
     </tbody>
   </table>
 </div>
+
+
+<script>
+  document.addEventListener('turbo:load', function() {
+    document.querySelectorAll('.dropdown-toggle').forEach(function(toggle) {
+      toggle.addEventListener('click', function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        var menu = this.nextElementSibling;
+        menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+      });
+    });
+
+    document.addEventListener('click', function() {
+      document.querySelectorAll('.dropdown-menu').forEach(function(menu) {
+        menu.style.display = 'none';
+      });
+    });
+  });
+</script>

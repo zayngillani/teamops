@@ -8,7 +8,11 @@ Rails.application.routes.draw do
   
   namespace :admin do
     resources :users, only: [:new, :create, :index, :edit, :update, :destroy]
-    resources :job_applications, only: [:index]
+    resources :job_applications, only: [:index, :show] do 
+      member do 
+        get :reject_applicant
+      end
+    end
     resources :job_posts
     resources :contact_details, only: [:index]
     get '/generate_pdf', :to => "users#generate_pdf", as: 'generate_pdf'
