@@ -48,6 +48,7 @@
       <th>Over Time</th>
       <th>Under Time</th>
       <th>Leaves</th>
+      <th>Absentees</th>
     </tr>
   </thead>
   <tbody>
@@ -73,6 +74,7 @@
         <td><%= 0 %></td>
       <% end %>
       <td><%= @current_user_leaves %></td>
+      <td><%= @leaves[user.id] - @current_user_leaves %></td>
     </tr>
     <% end %>
   </tbody>
