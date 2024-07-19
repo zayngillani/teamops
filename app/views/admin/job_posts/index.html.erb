@@ -19,10 +19,30 @@
               <%= image_tag("more.png", width: "20", height: "20", alt: "Edit User", class: "dropdown-toggle") %>
               <div class="dropdown-menu">
                 <%= link_to 'Details', admin_job_post_path(job_post) %>
-                <%= button_to 'Delete', admin_job_post_path(job_post), method: :delete, data: { confirm: 'Are you sure?' }, class: 'delete-btn-color' %>
+                <button id="modal-btn" class="delete-btn-color">Delete</button>
               </div>
             </div>
           </td>
+
+          <div id="myModal" class="modal">
+            <div class="modal-checkout jobs-modal-box">
+              <span class="close-modal" onclick="document.getElementById('myModal').style.display='none'">&times;</span>
+              <img src="<%= asset_path('delete-job-icon1.svg') %>" alt="Delete Job Icon" class="delete-job-icon">
+              <img src="<%= asset_path('delete-job-icon.svg') %>" alt="Delete Job Icon" class="delete-job-icon-style">
+              <br>
+              <h2 class="delete-job-warning"> Delete Job? </h2>
+              <p class= "delete-job-warning-msg"> Are you sure you want to delete this job? </p>
+
+              <div class= "applicants-button-container">
+                <div class= "delete-job-confirmation-btn">
+                  <%= button_to 'Yes, Delete', admin_job_post_path(job_post), method: :delete, class: "delete-job-confirmation-btn-text" %>
+                </div>
+                <div class="delete-job-cancel-btn">
+                  <button id="cancelBtn" class="delete-job-cancel-btn-text" onclick="document.getElementById('myModal').style.display='none'"> Cancel </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </tr>
       <% end %>
     </tbody>
@@ -56,4 +76,18 @@
       });
     });
   });
+
+  var modal = document.getElementById("myModal");
+  var btn = document.getElementById("modal-btn");
+
+  btn.onclick = function() {
+    modal.style.display = "block";
+  }
+
+  window.onclick = function(event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  }
+  
 </script>
