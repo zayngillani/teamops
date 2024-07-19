@@ -8,7 +8,7 @@
         <% end %>
       </div>
 
-      <%= link_to admin_job_applications_path, class: "applicants-list-btn" do %>
+      <%= link_to admin_job_applications_path(job_post_id: @job_post.id), class: "applicants-list-btn" do %>
         <div class="applicants-list-btn-text">
           <span><%= @job_post.job_applications.count %></span> Applicants
         </div>

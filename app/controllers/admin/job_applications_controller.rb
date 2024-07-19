@@ -2,12 +2,17 @@ class Admin::JobApplicationsController < ApplicationController
   before_action :authorize_admin!
 
   def index
-    @job_applications = JobApplication.available.all
+    @job_post = JobPost.find (params[:job_post_id])
+    @job_applications = @job_post.job_applications.available.all
 
     respond_to do |format|
       format.html
       format.json { render json: @job_applications }
     end
+  end
+
+  def show
+    @job_application = JobApplication.find (params[:id])
   end
 
   def reject_applicant

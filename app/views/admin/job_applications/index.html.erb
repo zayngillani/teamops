@@ -16,7 +16,7 @@
           <td class="table-first-column"><%= application&.email %></td>
           <td class="table-first-column"><%= application&.current_experience %></td>
           <td class="applicants-table-second-column">
-            <span><%= "Pending" %></span>
+            <span><%= application.interview_status %></span>
           </td>
           <td class="action-cell">
             <div class="dropdown">
