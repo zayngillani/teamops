@@ -14,7 +14,6 @@
         </div>
         <h4>Select Columns to Export</h4><br>
           <%= form_tag admin_users_monthly_excel_path(params[:month], params[:year]), method: :get, id: "exportForm" do %>
-            <label><%= check_box_tag 'name[]', 'name', true, class: 'columnCheckbox' %>  Name</label><br>
             <label><%= check_box_tag 'regular_hours[]', 'regular_hours', true, class: 'columnCheckbox' %>  Regular Hours</label><br>
             <label><%= check_box_tag 'working_hours[]', 'working_hours', true, class: 'columnCheckbox' %>  Working Hours</label><br>
             <label><%= check_box_tag 'overtime[]', 'overtime', true, class: 'columnCheckbox' %>  Overtime</label><br>
@@ -128,6 +127,10 @@ function downloadExcel() {
   document.body.appendChild(link);
   link.click();
   document.body.removeChild(link);
+
+  setTimeout(() => {
+  location.reload();
+  }, 2000);
 }
 
   var modal = document.getElementById("myModal");

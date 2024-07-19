@@ -141,8 +141,8 @@
                         Employees
                     </div>
                 </a>
-                <a href="#">
-                    <div class="menu-item <%= 'active' if current_page?(root_path) %>">
+                <a href="<%= admin_users_daily_reports_path %>">
+                    <div class="menu-item <%= 'active' if current_page?(admin_users_daily_reports_path) %>">
                         <%= image_tag("dailyreport.svg", class: "menu-icon") %>
                         Daily Reports
                     </div>
