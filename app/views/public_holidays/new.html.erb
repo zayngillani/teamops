@@ -8,11 +8,11 @@
 
 <div class="form-group">
 <%= form.label :start_date, class: "label" %>
-<%= form.date_field :start_date, min: Date.today, class: "text-field", required: true %>
+<%= form.date_field :start_date, min: Date.tomorrow, class: "text-field", required: true %>
 </div>
 <div class="form-group">
 <%= form.label :end_date, class: "label" %>
-<%= form.date_field :end_date, min: Date.today, class: "password-field", required: true %>
+<%= form.date_field :end_date, min: Date.tomorrow, class: "password-field", required: true %>
 </div>
 
 <div class="form-actions">

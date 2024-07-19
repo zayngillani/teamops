@@ -8,6 +8,9 @@ Rails.application.routes.draw do
   
   namespace :admin do
     resources :users, only: [:new, :create, :index, :edit, :update, :destroy]
+    resources :job_applications, only: [:index]
+    resources :job_posts
+    resources :contact_details, only: [:index]
     get '/generate_pdf', :to => "users#generate_pdf", as: 'generate_pdf'
     get '/user_profile', :to => "users#user_profile", as: 'user_profile'
     put '/disable_user', :to => "users#disable_user", as: 'disable_user'
@@ -18,6 +21,9 @@ Rails.application.routes.draw do
     get '/monthly_report', :to => "users#monthly_report", as: 'monthly_report'
     get '/monthly_users_list', :to => "users#monthly_users_list", as: 'monthly_users_list'
     get '/monthly_excel/:month/:year', to: 'users#monthly_excel', as: :users_monthly_excel
+    get '/users_daily_reports', :to => "users#users_daily_reports", as: :users_daily_reports
+    get '/show_daily_report', :to => "users#show_daily_report", as: :show_daily_report
+    get '/daily_report', :to => "users#daily_report", as: 'daily_report'
 
   end
   
@@ -26,12 +32,24 @@ Rails.application.routes.draw do
   post '/end_session', :to => "attendance#end_session", as: 'end_session'
   post '/break_session', :to => "attendance#break_session", as: 'break_session'
   post '/create_user', :to => "attendance#create_user", as: 'create_user'
+  put '/update_report', :to => "attendance#update_report", as: 'update_report'
+  get '/show_report', :to => "attendance#show_report", as: 'show_report'
+  get '/user_report', :to => "attendance#user_report", as: 'user_report'
 
   resources :leaves, only: [:new, :create, :index, :edit, :update, :destroy, :show]
   get '/approve', :to => "leaves#approve", as: 'approve'
   get '/reject', :to => "leaves#reject", as: 'reject'
 
   resources :public_holidays, only: [:new, :create, :index, :destroy]
+
+  namespace :api do
+    namespace :v1 do
+      resources :job_applications, only: [:create]
+      resources :contact_details, only: [:create]
+      get '/job_posts', :to => "job_applications#get_job_post_list", as: 'job_post_list'
+      get '/job_posts/:id', to: "job_applications#show_job_post", as: 'show_job_post'
+    end
+  end
 
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

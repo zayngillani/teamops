@@ -1,4 +1,3 @@
-// Configure your import map in config/importmap.rb. Read more: https://github.com/rails/importmap-rails
 import "@hotwired/turbo-rails"
 import "controllers"
 
@@ -129,3 +128,15 @@ document.addEventListener("turbo:load", function() {
     }
   });
   
+  document.addEventListener('turbo:load', function() {
+    const cells = document.querySelectorAll('.clickable-cell');
+
+    cells.forEach(cell => {
+      cell.addEventListener('click', function() {
+        const userPath = cell.getAttribute('data-user-path');
+        if (userPath) {
+          window.location.href = userPath;
+        }
+      });
+    });
+  });

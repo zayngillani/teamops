@@ -1,13 +1,31 @@
-<div class="main-content" style="margin-left: 220px; margin-top: 10px;">
+<div class="main-content" style="margin-left: 260px; margin-top: 10px;">
   <div class="form-inline">
     <%= form_tag admin_monthly_users_list_path, method: :get, id: "filterForm" do %>
       <%= select_tag 'month', options_for_select(Date::MONTHNAMES.compact.each_with_index.map { |month, index| [month, index + 1] }, params[:month].presence || Date.current.month), id: 'month', class: 'form-control select-month' %>
       <%= select_tag 'year', options_for_select((Date.current.year..Date.current.year + 5).to_a, params[:year].presence || Date.current.year), id: 'year', class: 'form-control select-year' %>
     <% end %>
+    <p class="form-control select-hours">Expected Hours:<strong> <%= @total_working_hours %></strong></p>
     <button type="button" class="modal-btn btn-style float-right" onclick="generatePDF()">Download PDF</button>
-    <button type="button" id="download-excel-link" class="modal-btn btn-style" onclick="downloadExcel()">Download Excel</button>
+    <button type="button" id="modal-btn" class="modal-btn btn-style">Download Excel</button>
+    <div id="myModal" class="modal">
+      <div class="modal-export">
+        <div class="modal-header">
+          <span class="close-modal" onclick="document.getElementById('myModal').style.display='none'">&times;</span>
+        </div>
+        <h4>Select Columns to Export</h4><br>
+          <%= form_tag admin_users_monthly_excel_path(params[:month], params[:year]), method: :get, id: "exportForm" do %>
+            <label><%= check_box_tag 'regular_hours[]', 'regular_hours', true, class: 'columnCheckbox' %>  Regular Hours</label><br>
+            <label><%= check_box_tag 'working_hours[]', 'working_hours', true, class: 'columnCheckbox' %>  Working Hours</label><br>
+            <label><%= check_box_tag 'overtime[]', 'overtime', true, class: 'columnCheckbox' %>  Overtime</label><br>
+            <label><%= check_box_tag 'undertime[]', 'undertime', true, class: 'columnCheckbox' %>  Undertime</label><br>
+            <label><%= check_box_tag 'leaves[]', 'leaves', true, class: 'columnCheckbox' %>  Leaves</label>
+            <label><%= submit_tag 'Download Excel', id: "download-excel-btn", class: "modal-btn excel-btn", onclick: "downloadExcel()" %>
+          <% end %>
+        <p style="text-align: center; margin-top: 10px;"></p>
+        <div class="modal-footer"></div>
+      </div>
+    </div>
   </div>
-
   <div id="users_data">
     <table>
       <thead>
@@ -86,15 +104,46 @@ function generatePDF() {
 function downloadExcel() {
   const selectedMonth = document.getElementById('month').value;
   const selectedYear = document.getElementById('year').value;
+  const selectedColumns = [];
+  const columnCheckboxes = document.querySelectorAll('.columnCheckbox:checked');
+  if (columnCheckboxes.length === 0) {
+    alert('Please select at least one column.');
+    return; // Exit function if no column checkbox is checked
+  }
   const selectedUsers = [];
   document.querySelectorAll('.userCheckbox:checked').forEach(function(checkbox) {
     selectedUsers.push(checkbox.value);
   });
 
-  const excelDownloadUrl = `/admin/monthly_excel/${selectedMonth}/${selectedYear}.xlsx?selected_users=${selectedUsers.join(',')}`;
+  columnCheckboxes.forEach(function(checkbox) {
+    selectedColumns.push(checkbox.value);
+  });
+
+  const excelDownloadUrl = `/admin/monthly_excel/${selectedMonth}/${selectedYear}.xlsx?selected_columns=${selectedColumns.join(',')}&selected_users=${selectedUsers.join(',')}`;
+
   const link = document.createElement('a');
   link.setAttribute('href', excelDownloadUrl);
   link.setAttribute('target', '_blank');
+  document.body.appendChild(link);
   link.click();
+  document.body.removeChild(link);
+
+  setTimeout(() => {
+  location.reload();
+  }, 2000);
 }
+
+  var modal = document.getElementById("myModal");
+  var btn = document.getElementById("modal-btn");
+
+  btn.onclick = function() {
+    modal.style.display = "block";
+  }
+
+  window.onclick = function(event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  }
+
 </script>

@@ -1,27 +1,46 @@
 class SlackService
-     def initialize(user, message, time)
+     def initialize(user, message, time, channel = nil, report = nil)
           @user = user
           @time = time
           @message = message
-          if @user.email.ends_with?("@gmail.com")
-               @channel = ENV["TEST_CHANNEL"]
-          elsif @time.is_a?(Time)
-               @channel = ENV["SLACK_CHANNEL"]
-          elsif
-               @channel = ENV["LEAVE_CHANNEL"]
-          end
+          @report = report
+          @channel = channel || determine_channel
           @client = Slack::Web::Client.new
      end
-
+     
+     def determine_channel
+       if @user.email.ends_with?("@gmail.com")
+         ENV["TEST_CHANNEL"]
+       elsif @time.is_a?(Time)
+         ENV["SLACK_CHANNEL"]
+     else
+          ENV["LEAVE_CHANNEL"]
+     end
+     end
+   
      def send_message
-          @client.chat_postMessage(channel: @channel,text: " <@#{@user.slack_member_id}> #{@message} at #{@time.in_time_zone('Asia/Karachi').strftime("%b %d, %I:%M%p %Z")}")
+          @client.chat_postMessage(
+               channel: @channel,
+               text: "<@#{@user.slack_member_id}> #{@message} at #{@time.in_time_zone('Asia/Karachi').strftime('%b %d, %I:%M%p %Z')}"
+       )
      end
      
      def send_leave
-       @request_user = User.find_by(id: @time.user_id)
-       @client.chat_postMessage(channel: @channel,
-          channel: @channel,
-          text: "<@#{@request_user.slack_member_id}> #{@message} #{@user.name} from #{@time.start_date.strftime("%d/%B/%Y")} to #{@time.end_date.strftime("%d/%B/%Y")}"
-       )
+          @request_user = User.find_by(id: @time.user_id)
+          @client.chat_postMessage(
+               channel: @channel,
+               text: "<@#{@request_user.slack_member_id}> #{@message} #{@user.name} from #{@time.start_date.strftime('%d/%B/%Y')} to #{@time.end_date.strftime('%d/%B/%Y')}"
+          )
      end
-end
+     
+     def send_report
+          report_lines = @report.split("\n").map { |line| "• #{line.strip}" }.join("\n")
+          @client.chat_postMessage(
+            channel: @channel,
+            text: "<@#{@user.slack_member_id}> #{@message} at #{@time.in_time_zone('Asia/Karachi').strftime('%b %d, %I:%M%p %Z')}\n\n" \
+                  "Here is the report of <@#{@user.slack_member_id}> at #{@time.in_time_zone('Asia/Karachi').strftime('%b %d, %I:%M%p %Z')}:\n\n" \
+                  "#{report_lines}"
+          )
+     end
+   end
+   

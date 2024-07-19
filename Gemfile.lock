@@ -183,6 +183,9 @@ GEM
       railties (>= 3.1)
     msgpack (1.7.2)
     multipart-post (2.4.0)
+    net-ftp (0.3.7)
+      net-protocol
+      time
     net-http (0.4.1)
       uri
     net-imap (0.4.10)
@@ -195,6 +198,8 @@ GEM
     net-smtp (0.4.0.1)
       net-protocol
     nio4r (2.7.0)
+    nokogiri (1.16.2-x86_64-darwin)
+      racc (~> 1.4)
     nokogiri (1.16.2-x86_64-linux)
       racc (~> 1.4)
     orm_adapter (0.5.0)
@@ -221,6 +226,8 @@ GEM
       nio4r (~> 2.0)
     racc (1.7.3)
     rack (2.2.8.1)
+    rack-cors (2.0.2)
+      rack (>= 2.0.0)
     rack-test (2.1.0)
       rack (>= 1.3)
     rails (7.0.8.1)
@@ -285,6 +292,8 @@ GEM
       railties (>= 6.0.0)
     stringio (3.1.0)
     thor (1.3.0)
+    time (0.3.0)
+      date
     timeout (0.4.1)
     timers (4.3.5)
     traces (0.11.1)
@@ -315,6 +324,7 @@ GEM
     zeitwerk (2.6.13)
 
 PLATFORMS
+  x86_64-darwin-23
   x86_64-linux
 
 DEPENDENCIES
@@ -330,9 +340,11 @@ DEPENDENCIES
   importmap-rails
   jbuilder
   momentjs-rails
+  net-ftp
   pg
   pry
   puma (~> 5.0)
+  rack-cors
   rails (~> 7.0.8, >= 7.0.8.1)
   redis (~> 4.0)
   selenium-webdriver
