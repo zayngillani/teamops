@@ -21,17 +21,32 @@ class Admin::JobPostsController < ApplicationController
     if @job_post.save
       redirect_to admin_job_posts_path, notice: 'Job has been Published'
     else
-      redirect_to new_admin_job_post_path, error: 'There was an error saving the job post'
+      redirect_to new_admin_job_post_path, error: 'There was an error saving the Job'
     end
   end
 
   def show
+    @requirements = @job_post.requirements_and_qualification.map do |req|
+      req.strip.gsub(/^[\s\u00a0]+|[\s\u00a0]+$/, '').gsub("\n", "")
+    end
   end
 
   def edit
+    @job_post.requirements_and_qualification = @job_post.requirements_and_qualification.map do |req|
+      req.strip.gsub(/^[\s\u00a0]+|[\s\u00a0]+$/, '').gsub("\n", "")
+    end
   end
 
   def update
+    @job_post.title = params.dig(:job_post, :title)
+    @job_post.details = params.dig(:job_post, :details)
+    @job_post.requirements_and_qualification = JSON.parse(params.dig(:job_post, :requirements_and_qualification))
+    
+    if @job_post.save!
+      redirect_to admin_job_posts_path, notice: 'Job has been updated.'
+    else
+      redirect_to edit_admin_job_post_path, error: 'There was an error editinf the Job'
+    end
   end
 
   def destroy
@@ -46,9 +61,8 @@ class Admin::JobPostsController < ApplicationController
   end
 
   def job_post_params
-    params.require(:job_post).permit(:title, :details, :requirements_and_qualification)
+    params.require(:job_post).permit(:title, :details)
   end
-  
 
   def authorize_admin!
     redirect_to root_path, alert: 'Access Denied!' unless current_user.admin?
