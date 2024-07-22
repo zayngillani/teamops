@@ -261,11 +261,11 @@ class Admin::UsersController < ApplicationController
                 case column
                 when 'regular_hours'
                   data_row << reg_hours
-                when 'working_hours'
+                when 'worked_hours'
                   data_row << working_hours
-                when 'overtime'
+                when 'over_time'
                   data_row << overtime
-                when 'undertime'
+                when 'under_time'
                   data_row << undertime
                 when 'leaves'
                   data_row << current_user_leaves
