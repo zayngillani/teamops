@@ -19,7 +19,7 @@
             <label><%= check_box_tag 'overtime[]', 'overtime', true, class: 'columnCheckbox' %>  Over Time</label><br>
             <label><%= check_box_tag 'undertime[]', 'undertime', true, class: 'columnCheckbox' %>  Under Time</label><br>
             <label><%= check_box_tag 'leaves[]', 'leaves', true, class: 'columnCheckbox' %>  Leaves</label>
-            <label><%= submit_tag 'Download Excel', class: "modal-btn excel-btn", onclick: "downloadExcel()" %>
+            <%= submit_tag 'Download Excel', class: "excel-btn", onclick: "downloadExcel()" %>
           <% end %>
         <p style="text-align: center; margin-top: 10px;"></p>
         <div class="modal-footer"></div>
@@ -102,6 +102,7 @@ function generatePDF() {
 }
 
 function downloadExcel() {
+  debugger
   const selectedMonth = document.getElementById('month').value;
   const selectedYear = document.getElementById('year').value;
   const selectedColumns = [];
