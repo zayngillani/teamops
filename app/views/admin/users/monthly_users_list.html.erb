@@ -15,11 +15,11 @@
         <h4>Select Columns to Export</h4><br>
           <%= form_tag admin_users_monthly_excel_path(params[:month], params[:year]), method: :get, id: "exportForm" do %>
             <label><%= check_box_tag 'regular_hours[]', 'regular_hours', true, class: 'columnCheckbox' %>  Regular Hours</label><br>
-            <label><%= check_box_tag 'working_hours[]', 'working_hours', true, class: 'columnCheckbox' %>  Worked Hours</label><br>
-            <label><%= check_box_tag 'overtime[]', 'overtime', true, class: 'columnCheckbox' %>  Over Time</label><br>
-            <label><%= check_box_tag 'undertime[]', 'undertime', true, class: 'columnCheckbox' %>  Under Time</label><br>
+            <label><%= check_box_tag 'worked_hours[]', 'worked_hours', true, class: 'columnCheckbox' %>  Worked Hours</label><br>
+            <label><%= check_box_tag 'over_time[]', 'over_time', true, class: 'columnCheckbox' %>  Over Time</label><br>
+            <label><%= check_box_tag 'under_time[]', 'under_time', true, class: 'columnCheckbox' %>  Under Time</label><br>
             <label><%= check_box_tag 'leaves[]', 'leaves', true, class: 'columnCheckbox' %>  Leaves</label>
-            <label><%= submit_tag 'Download Excel', class: "modal-btn excel-btn", onclick: "downloadExcel()" %>
+            <%= submit_tag 'Download Excel', class: "excel-btn", onclick: "downloadExcel()" %>
           <% end %>
         <p style="text-align: center; margin-top: 10px;"></p>
         <div class="modal-footer"></div>
@@ -102,6 +102,7 @@ function generatePDF() {
 }
 
 function downloadExcel() {
+  debugger
   const selectedMonth = document.getElementById('month').value;
   const selectedYear = document.getElementById('year').value;
   const selectedColumns = [];

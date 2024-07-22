@@ -261,11 +261,11 @@ class Admin::UsersController < ApplicationController
                 case column
                 when 'regular_hours'
                   data_row << reg_hours
-                when 'working_hours'
+                when 'worked_hours'
                   data_row << working_hours
-                when 'overtime'
+                when 'over_time'
                   data_row << overtime
-                when 'undertime'
+                when 'under_time'
                   data_row << undertime
                 when 'leaves'
                   data_row << current_user_leaves
@@ -278,9 +278,10 @@ class Admin::UsersController < ApplicationController
             current_user_leaves = Leave.where("start_date <= ? AND end_date >= ? AND status = ? AND user_id = ?", @end_date, @start_date, 1, user.id).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }
             wb.add_worksheet(name: "#{user.name}_#{user.id}") do |sheet|
               styles = wb.styles
-              header_style = wb.styles.add_style(b: true, alignment: { horizontal: :center })
+              header_style = wb.styles.add_style(b: true)
+              entry_style = wb.styles.add_style(b: true, alignment: { horizontal: :center })
               session_style = wb.styles.add_style(alignment: { horizontal: :center })
-              sheet.add_row ["Date", "Check In", "Check Out", "Regular Hours", "Overtime", "Leaves", "Total Hours"]
+              sheet.add_row ["Date", "Check In", "Check Out", "Regular Hours", "Overtime", "Leaves", "Total Hours"], style: header_style
               total_hours_sum = 0
               @public_holidays.each do |holiday|
                 (holiday.start_date..holiday.end_date).each do |date|
@@ -304,14 +305,14 @@ class Admin::UsersController < ApplicationController
                     "","","",
                     "#{public_holidays[date]}",
                     "","",
-                  ], style: [nil, nil, nil, nil, header_style, nil, nil]
+                  ], style: [nil, nil, nil, nil, entry_style, nil, nil]
                 elsif is_leave
                   sheet.add_row [
                     date.strftime("%A %b #{date.day.ordinalize}"),
                     "","","",
                     leaves[date],
                     "","",
-                  ], style: [nil, nil, nil, nil, header_style, nil, nil]
+                  ], style: [nil, nil, nil, nil, entry_style, nil, nil]
                 elsif attendance
                   total_hours = attendance.total_hours || 0
                   regular_hours = total_hours > 28800 ? 28800 : total_hours
