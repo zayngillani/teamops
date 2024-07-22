@@ -4,7 +4,7 @@
   <%= yield(:link_button) %>
   <% if current_page?(admin_job_posts_path) %>
     <div class="create-job-btn">
-      <%= link_to "+ Create job", new_admin_job_post_path, class: "create-job-btn-text" %>
+      <%= button_to "+ Create job", new_admin_job_post_path, class: "create-job-btn-text" %>
     </div>
   <% end %>
   <div class="profile">
