@@ -7,26 +7,17 @@
         </div>
 
         <div class="job-detail-field">
-          <%= form.text_area :details, class: 'form-control', placeholder: 'Job Deatails' %>
+          <%= form.text_area :details, class: 'form-control', placeholder: 'Job Details' %>
         </div>
 
         <div class="job-detail-field">
-          <%= form.text_area :requirements_and_qualification, class: 'form-control', placeholder: 'Requirements & Qualifications', rows: 5, id: 'requirements_and_qualification' %>
+          <%= form.text_area :requirements_and_qualification, class: 'form-control', placeholder: 'Requirements & Qualifications' %>
         </div>
 
         <div class="job-post-btn">
-          <%= form.submit 'Create Job Post', class: 'job-post-btn-text' %>
+          <%= form.submit 'Publish Job', class: 'job-post-btn-text' %>
         </div>
       <% end %>
     </div>
   </div>
 </div>
-
-<script>
-  document.addEventListener('turbo:load', function() {
-    var textarea = document.querySelector('#requirements_and_qualification');
-    if (textarea) {
-      textarea.value = '';
-    }
-  });
-</script>
