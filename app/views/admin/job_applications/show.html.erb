@@ -1,0 +1,60 @@
+<div class="main-content" style="margin-left: 260px;">
+  <div class="dashboard-table-container">
+    <div class="applicants-button-container">
+      <div class="download-resume-btn">
+        <span><img src="<%= asset_path('download-icon.svg') %>" alt="Download Icon" class="download-icon-style"></span><%= link_to "Download Resume", '#', class: "download-resume-btn-text" %>
+      </div>
+      <div class="download-resume-btn shedule-interview-btn">
+        <%= link_to "Shedule interview", '#', class: "shedule-interview-btn-text" %>
+      </div>
+    </div>
+
+    <div class="applicants-container">
+      <div class="applicants-column">
+        <span class="applicants-label"> Name <span>
+        <div class="applicants-rectangle-fields">
+          <span class="applicants-rectangle-fields-text"><%= @job_application.name %></span>
+        </div>
+
+        <span class="applicants-label"> Qualification <span>
+        <div class="applicants-rectangle-fields">
+          <span class="applicants-rectangle-fields-text"><%= @job_application.qualification %></span>
+        </div>
+        
+        <span class="applicants-label"> Expected Salary <span>
+        <div class="applicants-rectangle-fields">
+          <span class="applicants-rectangle-fields-text"><%= @job_application.expected_salary %></span>
+        </div>
+      </div>
+
+      <div class="applicants-column">
+        <span class="applicants-label"> E-mail <span>
+        <div class="applicants-rectangle-fields">
+          <span class="applicants-rectangle-fields-text"><%= @job_application.email %></span>
+        </div>
+
+        <span class="applicants-label"> CNIC <span>
+        <div class="applicants-rectangle-fields">
+          <span class="applicants-rectangle-fields-text"><%= @job_application.cnic %></span>
+        </div>
+
+        <span class="applicants-label"> Current Salary <span>
+        <div class="applicants-rectangle-fields">
+          <span class="applicants-rectangle-fields-text"><%= @job_application.current_salary %></span>
+        </div>
+      </div>
+
+      <div class="applicants-column">
+        <span class="applicants-label"> Experience <span>
+        <div class="applicants-rectangle-fields">
+          <span class="applicants-rectangle-fields-text"><%= @job_application.current_experience %></span>
+        </div>
+
+        <span class="applicants-label"> Contact Number <span>
+        <div class="applicants-rectangle-fields">
+          <span class="applicants-rectangle-fields-text"><%= @job_application.contact_number %></span>
+        </div>
+      </div>
+    </div>
+  </div>
+<div>

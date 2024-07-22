@@ -15,6 +15,11 @@ Rails.application.routes.draw do
       end
     end
     resources :job_applications, only: [:index]
+    resources :job_applications, only: [:index, :show] do 
+      member do 
+        get :reject_applicant
+      end
+    end
     resources :job_posts
     resources :contact_details, only: [:index]
     #Users
