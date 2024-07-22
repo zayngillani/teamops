@@ -1,30 +1,64 @@
-<div class="main-content" style="margin-left: 220px;">
-  <table>
+<div class="main-content" style="margin-left: 260px;">
+  <table class="dashboard-table-container">
     <thead>
-      <tr>
+      <tr class="dashboard-table-lines">
         <th>Name</th>
         <th>Email</th>
-        <th>Qualification</th>
         <th>Experience</th>
-        <th>Contact Number</th>
-        <th>Current Salary</th>
-        <th>Expected Salary</th>
-        <th>Resume</th>
+        <th>Status</th>
+        <th>Actions</th>
       </tr>
     </thead>
     <tbody>
       <% @job_applications.each do |application| %>
-        <tr>
-          <td><%= application&.name %></td>
-          <td><%= application&.email %></td>
-          <td><%= application&.qualification %></td>
-          <td><%= application&.current_experience %></td>
-          <td><%= application&.contact_number %></td>
-          <td><%= application&.current_salary %></td>
-          <td><%= application&.expected_salary %></td>
-          <td><%= link_to 'View Resume', '#' %></td>
+        <tr class="dashboard-table-lines">
+          <td class="table-first-column"><%= application&.name %></td>
+          <td class="table-first-column"><%= application&.email %></td>
+          <td class="table-first-column"><%= application&.current_experience %></td>
+          <td class="applicants-table-second-column">
+            <span><%= application.interview_status %></span>
+          </td>
+          <td class="action-cell">
+            <div class="dropdown">
+              <%= image_tag("more.png", width: "20", height: "20", alt: "Edit User", class: "dropdown-toggle") %>
+              <div class="dropdown-menu">
+                <%= link_to 'Details', admin_job_application_path(application) %>
+                <%= link_to 'Reject', reject_applicant_admin_job_application_path(application), class: 'delete-link_to-color' %>
+              </div>
+            </div>
+          </td>
         </tr>
       <% end %>
     </tbody>
   </table>
 </div>
+
+
+<script>
+  document.addEventListener('turbo:load', function() {
+    var dropdownToggles = document.querySelectorAll('.dropdown-toggle');
+    var dropdownMenus = document.querySelectorAll('.dropdown-menu');
+
+    dropdownToggles.forEach(function(toggle) {
+      toggle.addEventListener('mouseenter', function() {
+        var menu = this.nextElementSibling;
+        menu.style.display = 'block';
+      });
+
+      toggle.addEventListener('mouseleave', function() {
+        var menu = this.nextElementSibling;
+        menu.style.display = 'none';
+      });
+    });
+
+    dropdownMenus.forEach(function(menu) {
+      menu.addEventListener('mouseenter', function() {
+        this.style.display = 'block';
+      });
+
+      menu.addEventListener('mouseleave', function() {
+        this.style.display = 'none';
+      });
+    });
+  });
+</script>
