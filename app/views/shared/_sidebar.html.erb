@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sidebar</title>
-    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet">
     <style>
         .sidebar {
             height: 100vh;
@@ -77,9 +77,6 @@
             background-size: contain;
         }
 
-        .menu-item:nth-child(1)::before {
-            background-image: url('dashboard.svg');
-        }
 
         .menu-item:nth-child(2)::before {
             background-image: url('attendance-icon.svg');
@@ -141,8 +138,8 @@
                         Employees
                     </div>
                 </a>
-                <a href="<%= admin_users_daily_reports_path %>">
-                    <div class="menu-item <%= 'active' if current_page?(admin_users_daily_reports_path) %>">
+                <a href="<%= admin_daily_reports_path %>">
+                    <div class="menu-item <%= 'active' if current_page?(admin_daily_reports_path) %>">
                         <%= image_tag("dailyreport.svg", class: "menu-icon") %>
                         Daily Reports
                     </div>

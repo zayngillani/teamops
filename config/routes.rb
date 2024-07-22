@@ -8,6 +8,13 @@ Rails.application.routes.draw do
   
   namespace :admin do
     resources :users, only: [:new, :create, :index, :edit, :update, :destroy]
+    resources :daily_reports, only: [:index, :show] do
+      collection do
+        get :search
+        get 'report', to:  'daily_reports#report'
+      end
+    end
+    resources :job_applications, only: [:index]
     resources :job_applications, only: [:index, :show] do 
       member do 
         get :reject_applicant
@@ -15,6 +22,7 @@ Rails.application.routes.draw do
     end
     resources :job_posts
     resources :contact_details, only: [:index]
+    #Users
     get '/generate_pdf', :to => "users#generate_pdf", as: 'generate_pdf'
     get '/user_profile', :to => "users#user_profile", as: 'user_profile'
     put '/disable_user', :to => "users#disable_user", as: 'disable_user'
@@ -25,9 +33,8 @@ Rails.application.routes.draw do
     get '/monthly_report', :to => "users#monthly_report", as: 'monthly_report'
     get '/monthly_users_list', :to => "users#monthly_users_list", as: 'monthly_users_list'
     get '/monthly_excel/:month/:year', to: 'users#monthly_excel', as: :users_monthly_excel
-    get '/users_daily_reports', :to => "users#users_daily_reports", as: :users_daily_reports
-    get '/show_daily_report', :to => "users#show_daily_report", as: :show_daily_report
-    get '/daily_report', :to => "users#daily_report", as: 'daily_report'
+
+    #Daily Reports
 
   end
   
