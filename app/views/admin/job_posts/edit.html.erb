@@ -11,23 +11,14 @@
         </div>
 
         <div class="job-detail-field">
-          <%= form.text_area :requirements_and_qualification, class: 'form-control', placeholder: 'Requirements & Qualifications', rows: 5, id: 'requirements_and_qualification' %>
+          <%= form.text_area :requirements_and_qualification, class: 'form-control', placeholder: 'Requirements & Qualifications' %>
         </div>
 
         <div class="job-post-btn">
-          <%= form.submit 'Update Job Post', class: 'job-post-btn-text' %>
+          <%= form.submit 'Update', class: 'job-post-btn-text' %>
         </div>
       <% end %>
     </div>
   </div>
 </div>
 
-<script>
-  document.addEventListener('turbo:load', function() {
-    console.log('Turbolinks load event fired');
-    var textarea = document.querySelector('#requirements_and_qualification');
-    if (textarea && textarea.value == '[]') {
-      textarea.value = '';
-    }
-  });
-</script>

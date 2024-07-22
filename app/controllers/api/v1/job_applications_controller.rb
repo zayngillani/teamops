@@ -30,15 +30,27 @@ module Api
 
       def get_job_post_list
         job_posts = JobPost.active.all
-        render json: job_posts
-      end
+      
+        # Transform the requirements_and_qualification field for each job post
+        formatted_job_posts = job_posts.map do |job_post|
+          formatted_requirements = job_post.requirements_and_qualification.split("\n")
+          job_post.as_json.merge(requirements_and_qualification: formatted_requirements)
+        end
+      
+        render json: formatted_job_posts
+      end      
 
       def show_job_post
         job_post = JobPost.find(params[:id])
-        render json: job_post
+      
+        # Transform the requirements_and_qualification field
+        formatted_requirements = job_post.requirements_and_qualification.split("\n")
+      
+        render json: job_post.as_json.merge(requirements_and_qualification: formatted_requirements)
       rescue ActiveRecord::RecordNotFound
         render json: { error: 'Job post not found' }, status: :not_found
       end
+      
 
       private
 
