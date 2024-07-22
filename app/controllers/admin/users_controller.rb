@@ -351,9 +351,15 @@ class Admin::UsersController < ApplicationController
         leaves_count = work_days.count do |date|
           !present_dates.include?(date) && date >= created_date && date <= Date.today
         end
-        absences_count = work_days.count { |date| !present_dates.include?(date) && date >= created_date && date <= Date.today } - @public_holidays.count
+        absences_count = work_days.count { |date| !present_dates.include?(date) && date >= created_date && date <= Date.today }
         holidays = work_days.count - working_days
-        @leaves[user.id] = absences_count
+        if absences_count == 0
+          @leaves[user.id] = 0
+        elsif leaves_count < holidays
+          @leaves[user.id] = absences_count
+        else
+          @leaves[user.id] = absences_count - @public_holidays.count
+        end
       end
       if @user_sessions.present?
         respond_to do |format|
@@ -394,22 +400,6 @@ class Admin::UsersController < ApplicationController
       end
     end
 
-    def users_daily_reports
-      @users = User.active.where(role: "user", deleted: false).order(created_at: :desc)
-    end
-    
-    def show_daily_report
-      @month = params[:month].present? ? params[:month].to_i : Date.current.month
-      @year = params[:year].present? ? params[:year].to_i : Date.current.year
-      @start_date = Date.new(@year, @month, 1)
-      @end_date = @start_date.end_of_month
-      @user = User.find_by(id: params[:format])
-      @sessions = Attendance.where(user_id: @user.id, check_in_time: @start_date.beginning_of_day..@end_date.end_of_day).order(created_at: :asc)
-    end
-
-    def daily_report
-      @daily_report = Attendance.find_by(id: params[:format])
-    end
     private
    
     def user_params

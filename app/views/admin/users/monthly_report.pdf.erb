@@ -129,7 +129,7 @@
               <td style="text-align: center;" colspan="6"><strong><%= public_holidays[date] %></strong></td>
           <% elsif leaves.key?(date) %>
               <td><%= date.strftime("%A %b #{date.day.ordinalize}") %></td>
-              <td style="text-align: center;" colspan="6"><strong><%= leaves[date] %></strong></td>
+              <td style="text-align: center;" colspan="6"><strong>On Leave</strong></td>
           <% elsif session %>
               <td><%= session.created_at.strftime("%A %b #{session.created_at.day.ordinalize}") %></td>
               <td><%= session.check_in_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") %></td>

@@ -96,3 +96,5 @@ gem 'momentjs-rails'
 
 gem 'caxlsx'
 gem 'caxlsx_rails'
+gem 'ransack'
+gem 'rack-cors'
