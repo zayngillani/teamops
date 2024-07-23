@@ -19,7 +19,7 @@
               <%= image_tag("more.png", width: "20", height: "20", alt: "More Actions", class: "dropdown-toggle") %>
               <div class="dropdown-menu">
                 <%= link_to 'Details', admin_job_post_path(job_post) %>
-                <button class="modal-btn delete-btn-color" data-job-post-id="<%= job_post.id %>">Delete</button>
+                <button data-job-post-id="<%= job_post.id %>">Delete</button>
               </div>
             </div>
           </td>
@@ -55,6 +55,13 @@
 
 <script>
   document.addEventListener('turbo:load', function() {
+    // Function to close all dropdown menus
+    function closeAllDropdowns() {
+      document.querySelectorAll('.dropdown-menu').forEach(function(menu) {
+        menu.style.display = 'none';
+      });
+    }
+
     // Dropdown menu handling
     document.querySelectorAll('.dropdown-toggle').forEach(function(toggle) {
       toggle.addEventListener('mouseenter', function() {
@@ -78,7 +85,8 @@
 
     // Event delegation for modal buttons
     document.getElementById('job-posts-table-body').addEventListener('click', function(event) {
-      if (event.target.classList.contains('modal-btn')) {
+      // Check if the clicked element is a button with data-job-post-id
+      if (event.target.tagName.toLowerCase() === 'button' && event.target.hasAttribute('data-job-post-id')) {
         var jobPostId = event.target.getAttribute('data-job-post-id');
         var modal = document.getElementById('modal-' + jobPostId);
         modal.style.display = 'block';
@@ -100,5 +108,10 @@
         event.target.style.display = 'none';
       }
     };
+
+    // Close all dropdowns when navigating
+    document.addEventListener('turbo:visit', function() {
+      closeAllDropdowns();
+    });
   });
 </script>
