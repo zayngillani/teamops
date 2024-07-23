@@ -10,13 +10,13 @@
     <tbody id="job-posts-table-body">
       <% @job_posts.each do |job_post| %>
         <tr class="dashboard-table-lines" data-job-post-id="<%= job_post.id %>">
-          <td class="table-first-column"><%= job_post&.title %></td>
-          <td class="table-second-column">
+          <td class="table-title-column"><%= job_post&.title %></td>
+          <td class="table-status-column">
             <span><%= job_post&.job_status %></span>
           </td>
-          <td class="action-cell">
+          <td class="table-actions-column">
             <div class="dropdown">
-              <%= image_tag("more.png", width: "20", height: "20", alt: "Edit User", class: "dropdown-toggle") %>
+              <%= image_tag("more.png", width: "20", height: "20", alt: "More Actions", class: "dropdown-toggle") %>
               <div class="dropdown-menu">
                 <%= link_to 'Details', admin_job_post_path(job_post) %>
                 <button class="modal-btn delete-btn-color" data-job-post-id="<%= job_post.id %>">Delete</button>

@@ -15,7 +15,8 @@ class Admin::JobPostsController < ApplicationController
     @job_post = JobPost.new(job_post_params)
 
     if @job_post.save
-      redirect_to admin_job_posts_path, notice: 'Job has been Published'
+      flash[:success] = 'Job has been Published'
+      redirect_to admin_job_posts_path
     else
       error_message = @job_post.errors.full_messages.to_sentence
       flash[:error] = "#{error_message}"
@@ -31,7 +32,8 @@ class Admin::JobPostsController < ApplicationController
 
   def update
     if @job_post.update(job_post_params)
-      redirect_to admin_job_posts_path, notice: 'Job has been updated.'
+      flash[:success] = 'Job has been updated'
+      redirect_to admin_job_posts_path
     else
       error_message = @job_post.errors.full_messages.to_sentence
       flash[:error] = "#{error_message}"
@@ -43,7 +45,8 @@ class Admin::JobPostsController < ApplicationController
     @job_post = JobPost.find(params[:id])
     
     if @job_post.destroy
-      redirect_to admin_job_posts_path, notice: 'Job has been deleted'
+      flash[:error] = 'Job has been deleted'
+      redirect_to admin_job_posts_path
     else
       redirect_to admin_job_posts_path, alert: 'Failed to delete the job'
     end
