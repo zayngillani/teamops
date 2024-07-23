@@ -24,7 +24,7 @@ class Admin::JobApplicationsController < ApplicationController
       flash[:alert] = "Failed to update job application."
     end
   
-    redirect_to admin_job_applications_path
+    redirect_to admin_job_applications_path(job_post_id: @job_application.job_post.id)
   end
 
   private

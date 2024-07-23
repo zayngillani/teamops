@@ -7,9 +7,9 @@
         <th>Actions</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody id="job-posts-table-body">
       <% @job_posts.each do |job_post| %>
-        <tr class="dashboard-table-lines">
+        <tr class="dashboard-table-lines" data-job-post-id="<%= job_post.id %>">
           <td class="table-first-column"><%= job_post&.title %></td>
           <td class="table-second-column">
             <span><%= job_post&.job_status %></span>
@@ -19,54 +19,54 @@
               <%= image_tag("more.png", width: "20", height: "20", alt: "Edit User", class: "dropdown-toggle") %>
               <div class="dropdown-menu">
                 <%= link_to 'Details', admin_job_post_path(job_post) %>
-                <button id="modal-btn" class="delete-btn-color">Delete</button>
+                <button class="modal-btn delete-btn-color" data-job-post-id="<%= job_post.id %>">Delete</button>
               </div>
             </div>
           </td>
-
-          <div id="myModal" class="modal">
-            <div class="modal-checkout jobs-modal-box">
-              <span class="close-modal" onclick="document.getElementById('myModal').style.display='none'">&times;</span>
-              <img src="<%= asset_path('delete-job-icon1.svg') %>" alt="Delete Job Icon" class="delete-job-icon">
-              <img src="<%= asset_path('delete-job-icon.svg') %>" alt="Delete Job Icon" class="delete-job-icon-style">
-              <br>
-              <h2 class="delete-job-warning"> Delete Job? </h2>
-              <p class= "delete-job-warning-msg"> Are you sure you want to delete this job? </p>
-
-              <div class= "applicants-button-container">
-                <div class= "delete-job-confirmation-btn">
-                  <%= button_to 'Yes, Delete', admin_job_post_path(job_post), method: :delete, class: "delete-job-confirmation-btn-text" %>
-                </div>
-                <div class="delete-job-cancel-btn">
-                  <button id="cancelBtn" class="delete-job-cancel-btn-text" onclick="document.getElementById('myModal').style.display='none'"> Cancel </button>
-                </div>
-              </div>
-            </div>
-          </div>
         </tr>
       <% end %>
     </tbody>
   </table>
 </div>
 
+<% @job_posts.each do |job_post| %>
+  <div id="modal-<%= job_post.id %>" class="modal">
+    <div class="modal-checkout jobs-modal-box">
+      <span class="close-modal" data-job-post-id="<%= job_post.id %>">&times;</span>
+      <img src="<%= asset_path('delete-job-icon1.svg') %>" alt="Delete Job Icon" class="delete-job-icon">
+      <img src="<%= asset_path('delete-job-icon.svg') %>" alt="Delete Job Icon" class="delete-job-icon-style">
+      <br>
+      <h2 class="delete-job-warning"> Delete Job? </h2>
+      <p class="delete-job-warning-msg"> Are you sure you want to delete this job? </p>
+
+      <%= form_with url: admin_job_post_path(job_post), method: :delete, local: true, html: { id: "delete-job-form-#{job_post.id}" } do |form| %>
+        <div class="applicants-button-container">
+          <div class="delete-job-confirmation-btn">
+            <%= form.submit 'Yes, Delete', class: "delete-job-confirmation-btn-text" %>
+          </div>
+          <div class="delete-job-cancel-btn">
+            <button type="button" class="delete-job-cancel-btn-text" data-job-post-id="<%= job_post.id %>"> Cancel </button>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  </div>
+<% end %>
+
 <script>
   document.addEventListener('turbo:load', function() {
-    var dropdownToggles = document.querySelectorAll('.dropdown-toggle');
-    var dropdownMenus = document.querySelectorAll('.dropdown-menu');
-
-    dropdownToggles.forEach(function(toggle) {
+    // Dropdown menu handling
+    document.querySelectorAll('.dropdown-toggle').forEach(function(toggle) {
       toggle.addEventListener('mouseenter', function() {
-        var menu = this.nextElementSibling;
-        menu.style.display = 'block';
+        this.nextElementSibling.style.display = 'block';
       });
 
       toggle.addEventListener('mouseleave', function() {
-        var menu = this.nextElementSibling;
-        menu.style.display = 'none';
+        this.nextElementSibling.style.display = 'none';
       });
     });
 
-    dropdownMenus.forEach(function(menu) {
+    document.querySelectorAll('.dropdown-menu').forEach(function(menu) {
       menu.addEventListener('mouseenter', function() {
         this.style.display = 'block';
       });
@@ -75,19 +75,30 @@
         this.style.display = 'none';
       });
     });
+
+    // Event delegation for modal buttons
+    document.getElementById('job-posts-table-body').addEventListener('click', function(event) {
+      if (event.target.classList.contains('modal-btn')) {
+        var jobPostId = event.target.getAttribute('data-job-post-id');
+        var modal = document.getElementById('modal-' + jobPostId);
+        modal.style.display = 'block';
+      }
+    });
+
+    // Event delegation for closing modals
+    document.querySelectorAll('.close-modal, .delete-job-cancel-btn-text').forEach(function(button) {
+      button.addEventListener('click', function(event) {
+        var jobPostId = event.target.getAttribute('data-job-post-id');
+        var modal = document.getElementById('modal-' + jobPostId);
+        modal.style.display = 'none';
+      });
+    });
+
+    // Close modal when clicking outside of it
+    window.onclick = function(event) {
+      if (event.target.classList.contains('modal')) {
+        event.target.style.display = 'none';
+      }
+    };
   });
-
-  var modal = document.getElementById("myModal");
-  var btn = document.getElementById("modal-btn");
-
-  btn.onclick = function() {
-    modal.style.display = "block";
-  }
-
-  window.onclick = function(event) {
-    if (event.target == modal) {
-      modal.style.display = "none";
-    }
-  }
-  
 </script>

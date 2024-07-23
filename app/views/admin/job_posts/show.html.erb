@@ -7,10 +7,9 @@
           <img src="<%= asset_path('edit-icon.svg') %>" alt="Lock Icon" class="edit-icon-style">
         <% end %>
       </div>
-
       <%= link_to admin_job_applications_path(job_post_id: @job_post.id), class: "applicants-list-btn" do %>
         <div class="applicants-list-btn-text">
-          <span><%= @job_post.job_applications.count %></span> Applicants
+          <span><%= @job_post.job_applications.available.count %></span> Applicants
         </div>
       <% end %>
     </div>
