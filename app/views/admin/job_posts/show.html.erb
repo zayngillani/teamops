@@ -1,21 +1,21 @@
 <div class="main-content" style="margin-left: 260px;">
   <div class="dashboard-table-container">
-  <div class="dashboard-heading-position">
-    <div class="dashboard-heading">
-      <span class="job-title"><%= @job_post.title %></span>
-      <%= link_to edit_admin_job_post_path(@job_post) do %>
-        <img src="<%= asset_path('edit-icon.svg') %>" alt="Edit Icon" class="edit-icon-style">
+    <div class="dashboard-heading-position">
+      <div class="dashboard-heading">
+        <%= @job_post.title %>
+        <%= link_to edit_admin_job_post_path(@job_post) do %>
+          <img src="<%= asset_path('edit-icon.svg') %>" alt="Lock Icon" class="edit-icon-style">
+        <% end %>
+      </div>
+      <%= link_to admin_job_applications_path(job_post_id: @job_post.id), class: "applicants-list-btn" do %>
+        <div class="applicants-list-btn-text">
+          <span><%= @job_post.job_applications.available.count %></span> Applicants
+        </div>
       <% end %>
     </div>
-    <%= link_to admin_job_applications_path(job_post_id: @job_post.id), class: "applicants-list-btn" do %>
-      <div class="applicants-list-btn-text">
-        <span><%= @job_post.job_applications.available.count %></span> Applicants
-      </div>
-    <% end %>
-  </div>
-  
+
     <div class="job-description-box">
-      <h3> Job Details </h3><br>
+      <h3> Job Deatils </h3><br>
       <div class="job-description-details">
         <p class="job-description-box-text"><%= @job_post.details %></p>
       </div>

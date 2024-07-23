@@ -16,7 +16,9 @@
           <td class="table-first-column"><%= application&.email %></td>
           <td class="table-first-column"><%= application&.current_experience %></td>
           <td class="applicants-table-second-column">
-            <span><%= application.interview_status %></span>
+            <span class="<%= application.interview_status == "scheduled" ? 'status-scheduled' : 'status-pending' %>">
+              <%= application.interview_status %>
+            </span>
           </td>
           <td class="action-cell">
             <div class="dropdown">
@@ -35,6 +37,13 @@
 
 
 <script>
+  // Function to close all dropdown menus
+  function closeAllDropdowns() {
+    document.querySelectorAll('.dropdown-menu').forEach(function(menu) {
+      menu.style.display = 'none';
+    });
+  }
+
   document.addEventListener('turbo:load', function() {
     var dropdownToggles = document.querySelectorAll('.dropdown-toggle');
     var dropdownMenus = document.querySelectorAll('.dropdown-menu');
@@ -61,4 +70,10 @@
       });
     });
   });
+
+  // Close all dropdowns when navigating
+  document.addEventListener('turbo:visit', function() {
+    closeAllDropdowns();
+  });
+  
 </script>
