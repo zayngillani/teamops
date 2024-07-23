@@ -21,3 +21,17 @@
     </div>
   </div>
 </div>
+
+
+<script>
+
+document.addEventListener('turbo:load', function() {
+  document.querySelectorAll('.job-post-btn-text').forEach(function(button) {
+    button.addEventListener('click', function() {
+      this.disabled = true;
+      this.form.submit();
+    });
+  });
+});
+
+</script>
