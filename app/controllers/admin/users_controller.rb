@@ -216,12 +216,7 @@ class Admin::UsersController < ApplicationController
       @start_date = Date.new(@year, @month, 1)
       @end_date = @start_date.end_of_month
       @total_hours = {}
-      @leaves = {}
-      current_month_start = @start_date.beginning_of_month
-      current_month_end = @end_date.end_of_month
-      @public_holidays = PublicHoliday.where("start_date <= ? AND end_date >= ?", current_month_end, current_month_start)
-      public_holidays = {}
-      leaves = {}
+      @public_holidays = PublicHoliday.where("start_date <= ? AND end_date >= ?", @end_date, @start_date)
       @users.each do |user|
         @user_sessions = user.attendances.where(check_in_time: @start_date.beginning_of_day..@end_date.end_of_day).order(created_at: :asc)
         total_hrs = 0
@@ -275,7 +270,6 @@ class Admin::UsersController < ApplicationController
             end
           end
           @users.each do |user|
-            current_user_leaves = Leave.where("start_date <= ? AND end_date >= ? AND status = ? AND user_id = ?", @end_date, @start_date, 1, user.id).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }
             wb.add_worksheet(name: "#{user.name}_#{user.id}") do |sheet|
               styles = wb.styles
               header_style = wb.styles.add_style(b: true)
@@ -283,13 +277,15 @@ class Admin::UsersController < ApplicationController
               session_style = wb.styles.add_style(alignment: { horizontal: :center })
               sheet.add_row ["Date", "Check In", "Check Out", "Regular Hours", "Overtime", "Leaves", "Total Hours"], style: header_style
               total_hours_sum = 0
+              public_holidays = {}
               @public_holidays.each do |holiday|
                 (holiday.start_date..holiday.end_date).each do |date|
                   public_holidays[date] = holiday.title
                 end
               end
-              @user_leaves = Leave.where("start_date <= ? AND end_date >= ? AND status = ? AND user_id = ?", @end_date, @start_date, 1, user.id)
-              @user_leaves.each do |leave|
+              leaves = {}
+              user_leaves = Leave.where("start_date <= ? AND end_date >= ? AND status = ? AND user_id = ?", @end_date, @start_date, 1, user.id)
+              user_leaves.each do |leave|
                 (leave.start_date..leave.end_date).each do |date|
                   leaves[date] = leave.reason
                 end
@@ -318,7 +314,7 @@ class Admin::UsersController < ApplicationController
                   regular_hours = total_hours > 28800 ? 28800 : total_hours
                   overtime_hours = total_hours > 28800 ? total_hours - 28800 : 0
                   formatted_reg_hours = format_total_time(regular_hours)
-                  formatted_total_hours = format_total_time(total_hours)
+                  formatted_total_hours = format_time(total_hours)
                   formatted_overtime_hours = format_total_time(overtime_hours)
                   sheet.add_row [
                     date.strftime("%A %b #{date.day.ordinalize}"),
@@ -339,9 +335,9 @@ class Admin::UsersController < ApplicationController
                   ], style: [nil, nil, nil, nil, session_style, nil, nil]
                 end
               end
-              time_format = format_total_time(total_hours_sum)
-              sheet.add_row ["Total:", "", "", "", "", current_user_leaves, time_format, ""]
-              reg_hours = @total_working_hours - current_user_leaves * 8 if user.leaves.present?
+              time_format = format_time(total_hours_sum)
+              sheet.add_row ["Total:", "", "", "", "", user_leaves.sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }, time_format], style: [nil, nil, nil, nil, nil, nil, header_style]
+              reg_hours = @total_working_hours - user_leaves.sum { |leave| (leave.end_date - leave.start_date).to_i + 1 } * 8 if user_leaves.present?
               reg_hours ||= @total_working_hours
               working_hours = @total_hours[user.id] / 3600
               overtime_hours = working_hours > reg_hours ? working_hours - reg_hours : 0
@@ -357,7 +353,6 @@ class Admin::UsersController < ApplicationController
         end
       end
     end
-    
     
 
     def monthly_report
@@ -487,6 +482,11 @@ class Admin::UsersController < ApplicationController
       hours = total_seconds / 3600
       minutes = (total_seconds % 3600) / 60
       "%02d.%02d" % [hours, minutes]
+    end
+    def format_time(total_seconds)
+      hours = total_seconds / 3600
+      minutes = (total_seconds % 3600) / 60
+      "#{hours} hours #{minutes} minutes"
     end
    end
    
