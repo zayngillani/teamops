@@ -18,7 +18,8 @@
             <label><%= check_box_tag 'worked_hours[]', 'worked_hours', true, class: 'columnCheckbox' %>  Worked Hours</label><br>
             <label><%= check_box_tag 'over_time[]', 'over_time', true, class: 'columnCheckbox' %>  Over Time</label><br>
             <label><%= check_box_tag 'under_time[]', 'under_time', true, class: 'columnCheckbox' %>  Under Time</label><br>
-            <label><%= check_box_tag 'leaves[]', 'leaves', true, class: 'columnCheckbox' %>  Leaves</label>
+            <label><%= check_box_tag 'leaves[]', 'leaves', true, class: 'columnCheckbox' %>  Leaves</label><br>
+            <label><%= check_box_tag 'absentees[]', 'absentees', true, class: 'columnCheckbox' %>  Absentees</label>
             <%= submit_tag 'Download Excel', class: "excel-btn", onclick: "downloadExcel()" %>
           <% end %>
         <p style="text-align: center; margin-top: 10px;"></p>
@@ -102,7 +103,6 @@ function generatePDF() {
 }
 
 function downloadExcel() {
-  debugger
   const selectedMonth = document.getElementById('month').value;
   const selectedYear = document.getElementById('year').value;
   const selectedColumns = [];
