@@ -7,7 +7,7 @@ class JobApplication < ApplicationRecord
   # Associations
   belongs_to :job_post
   # Enums
-  enum interview_status: [:pending, :sheduled]
+  enum interview_status: [:pending, :scheduled]
   # Scopes
   scope :available, -> { where(is_rejected: false).where(is_selected: false) }
   scope :rejected, -> { where(is_rejected: true) }

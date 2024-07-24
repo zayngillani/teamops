@@ -19,9 +19,9 @@ class Admin::JobApplicationsController < ApplicationController
     @job_application = JobApplication.find (params[:id])
 
     if @job_application.update(is_rejected: true)
-      flash[:notice] = "Job application rejected successfully."
+      flash[:alert] = "Candidate Rejected"
     else
-      flash[:alert] = "Failed to update job application."
+      flash[:error] = "Failed to Rejected the candidate."
     end
   
     redirect_to admin_job_applications_path(job_post_id: @job_application.job_post.id)

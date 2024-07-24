@@ -1,5 +1,5 @@
-<div class="main-content" style="margin-left: 260px;">
-  <div class="dashboard-table-container">
+<div class="main-content">
+  <div class="dashboard-form-container">
     <div class="job-form">
       <%= form_with(model: @job_post, url: admin_job_post_path(@job_post), method: :patch, local: true) do |form| %>
         <div class="job-title-field">
@@ -15,10 +15,9 @@
         </div>
 
         <div class="job-post-btn">
-          <%= form.submit 'Update', class: 'job-post-btn-text' %>
+          <%= form.button 'Update', type: 'submit', class: 'job-post-btn-text' %>
         </div>
       <% end %>
     </div>
   </div>
 </div>
-
