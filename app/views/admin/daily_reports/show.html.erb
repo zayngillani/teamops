@@ -28,9 +28,9 @@
      <% else %>
       <tr><td colspan="1" style="text-align: center;">No Daily Reports Present</td></tr>
      <% end %>
+  </table>
      <div class="pagination-container">
       <%= will_paginate @sessions, renderer: PaginationHelper::DailyReportsRenderer, remote: true %>  
      </div>
     </tbody>
-  </table>
 </div>
