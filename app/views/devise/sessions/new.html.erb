@@ -124,7 +124,7 @@
       <br><br>
       <div class="login-form">
         <% if notice %>
-          <div class="alert alert-success" id="banner"><%= notice %></div>
+          <div class="alert alert-success" id="banner-devise"><%= notice %></div>
         <% end %>
         <%= form_for(resource, as: resource_name, url: session_path(resource_name)) do |f| %>
           <div class="form-group">

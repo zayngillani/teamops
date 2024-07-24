@@ -26,7 +26,7 @@ class Admin::UsersController < ApplicationController
           @user.password = params[:user][:password]
           @user.password_confirmation = params[:user][:password_confirmation]
           if @user.save
-            flash[:success] = "User created successfully"
+            flash[:success] = "Employee added successfully"
             redirect_to root_path
           else
             render 'new'
@@ -90,7 +90,7 @@ class Admin::UsersController < ApplicationController
           format.pdf { render pdf: @user.name, layout: false }
         end
       else
-        flash[:error] = "Attendance Not Present"
+        flash[:error] = "Attendance not Present"
         redirect_to admin_report_path and return
       end
     end
@@ -100,10 +100,10 @@ class Admin::UsersController < ApplicationController
       @user = User.find_by(id: params[:id])
       if @user
         @user.update(deleted: true)
-        flash[:success] = "User deleted successfully"
+        flash[:success] = "Employee has been deleted"
         redirect_to root_path
       else
-        flash[:error] = "User Already Deleted"
+        flash[:error] = "Employee already Deleted"
         redirect_to root_path
       end
     end
@@ -114,14 +114,14 @@ class Admin::UsersController < ApplicationController
         if @user.status == "active"
           @user.update(status: 1)
           disable_attendance(@user)
-          flash[:success] = "User disabled successfully"
+          flash[:success] = "Employee has been disabled"
           redirect_to admin_users_path
         elsif @user.status == "pending"
           @user.update(status: 0)
-          flash[:success] = "User undisabled successfully"
+          flash[:success] = "Employee has been disabled"
           redirect_to admin_users_path
         else
-          flash[:error] = "User Already Disabled"
+          flash[:error] = "Employee already Disabled"
           redirect_to admin_users_path
         end
       else

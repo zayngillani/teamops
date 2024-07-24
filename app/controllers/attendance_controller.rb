@@ -49,7 +49,7 @@ class AttendanceController < ApplicationController
        end
    
        @session = current_user.attendances.create!(check_in_time: Time.now.utc)
-       flash[:success] = "Checked IN successfully"
+       flash[:success] = "Checked in successfully"
        SlackService.new(current_user, "Checked In", @session.check_in_time).send_message
        redirect_to attendance_index_path
      end
@@ -83,13 +83,13 @@ class AttendanceController < ApplicationController
             last_break = @session.breaks.last
             if last_break.nil? || (last_break.break_in_time.present? && last_break.break_out_time.present?)
               @session.breaks.create!(break_in_time: Time.now.utc)
-              flash[:success] = "Break IN successfully"
+              flash[:alert] = "On a break"
               SlackService.new(current_user, "Break In", Time.now.utc).send_message
             elsif last_break.break_in_time.present? && last_break.break_out_time.nil?
               last_break.update!(break_out_time: Time.now.utc)
               total_break_time = calculate_total_break_time(@session)
               @session.update!(total_break: total_break_time)
-              flash[:success] = "Break Out successfully"
+              flash[:alert] = "Back from break"
               SlackService.new(current_user, "Break Out", Time.now.utc).send_message
             else
               flash[:error] = "Unable to mark break"
