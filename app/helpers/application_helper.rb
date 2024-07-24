@@ -22,5 +22,20 @@ module ApplicationHelper
           text
         end
      end
+
+     def get_action_header_text
+      if request.path == new_admin_job_post_path
+        "Create Job"
+      elsif request.path == admin_job_applications_path
+        "Applicants"
+      elsif request.path.include?(admin_job_application_path(''))
+        "Applicant's Details"
+      elsif request.path.include?('/admin/job_posts') && request.path.include?('/edit')
+        "Edit Job"
+      else
+        ""
+      end
+    end
+        
         
 end
