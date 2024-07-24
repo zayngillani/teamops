@@ -1,5 +1,5 @@
-<div class="main-content" style="margin-left: 260px;">
-  <div class="dashboard-table-container">
+<div class="main-content">
+  <div class="dashboard-form-container">
     <div class="job-form">
       <%= form_with(model: @job_post, url: admin_job_posts_path, method: :post, local: true) do |form| %>
         <div class="job-title-field">
@@ -22,9 +22,7 @@
   </div>
 </div>
 
-
 <script>
-
 document.addEventListener('turbo:load', function() {
   document.querySelectorAll('.job-post-btn-text').forEach(function(button) {
     button.addEventListener('click', function() {
@@ -33,5 +31,4 @@ document.addEventListener('turbo:load', function() {
     });
   });
 });
-
 </script>

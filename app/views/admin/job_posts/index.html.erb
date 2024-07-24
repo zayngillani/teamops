@@ -1,4 +1,4 @@
-<div class="main-content" style="margin-left: 260px;">
+<div style="margin-left: 260px;">
   <table class="dashboard-table-container">
     <thead>
       <tr class="dashboard-table-lines">
@@ -10,7 +10,7 @@
     <tbody id="job-posts-table-body">
       <% @job_posts.each do |job_post| %>
         <tr class="dashboard-table-lines" data-job-post-id="<%= job_post.id %>">
-          <td class="table-title-column"><%= job_post&.title %></td>
+          <td class="table-title-column"><%= truncate_with_ellipsis(job_post.title, 50) %></td>
           <td class="table-status-column">
             <span><%= job_post&.job_status %></span>
           </td>
@@ -30,7 +30,7 @@
 </div>
 
 <% @job_posts.each do |job_post| %>
-  <div id="modal-<%= job_post.id %>" class="modal">
+  <div id="modal-<%= job_post.id %>" class="jobs-modal">
     <div class="modal-checkout jobs-modal-box">
       <span class="close-modal" data-job-post-id="<%= job_post.id %>">&times;</span>
       <img src="<%= asset_path('delete-job-icon1.svg') %>" alt="Delete Job Icon" class="delete-job-icon">
