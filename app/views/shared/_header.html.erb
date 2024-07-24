@@ -3,19 +3,6 @@
   <%= yield(:user_name) %>
   <%= yield(:link_button) %>
 
-  
-    <div class="action-header-position">
-      <div class="action-header-text">
-        <%= get_action_header_text %>
-      </div>
-      <div class="create-job-btn">
-        <% if current_page?(admin_job_posts_path) %>
-          <%= button_to "+ Create job", new_admin_job_post_path, method: :get, class: "create-job-btn-text" %>
-        <% end %>
-      </div>
-    </div>
-  
-
   <div class="profile">
     <span class="initial"><%= current_user.name.split.first[0] + current_user.name.split.last[0] %></span>
     <div class="dropdown-content">
