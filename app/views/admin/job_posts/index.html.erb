@@ -1,3 +1,13 @@
+<% content_for :link_button do %>
+  <div class="action-header-position">
+    <div class="action-header-text">
+    </div>
+    <div class="create-job-btn">
+      <%= button_to "+ Create job", new_admin_job_post_path, method: :get, class: "create-job-btn-text" %>
+    </div>
+  </div>
+<% end %>
+
 <div style="margin-left: 260px;">
   <table class="dashboard-table-container">
     <thead>
