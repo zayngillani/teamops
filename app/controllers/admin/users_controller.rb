@@ -227,6 +227,7 @@ class Admin::UsersController < ApplicationController
         regular_hours_per_day = 8
         date_range = (@start_date..@end_date).to_a
         working_days = calculate_working_days(@start_date, @end_date)
+        @total_days = working_days
         @public_holidays.each do |holiday|
           working_days -= (holiday.start_date..holiday.end_date).count
         end
@@ -251,17 +252,13 @@ class Admin::UsersController < ApplicationController
               working_hours = @total_hours[user.id] / 3600
               overtime = @regular_hours < working_hours ? (working_hours - @regular_hours) : 0
               undertime = @regular_hours > working_hours ? (@regular_hours - working_hours) : 0
-              absentees = 0
               adjusted_end_date = (@month == Date.today.month && @year == Date.today.year) ? Date.today : @end_date
-              (@start_date..adjusted_end_date).each do |date|
-                next if date.saturday? || date.sunday?
-                attendance = user.attendances.find_by(check_in_time: date.beginning_of_day..date.end_of_day)
-                is_public_holiday = @public_holidays.exists?(start_date: date..date)
-                is_leave = Leave.exists?(start_date: date..date, user_id: user.id)
-                if !attendance && !is_public_holiday && !is_leave
-                  absentees += 1
-                end
-              end
+              total_days_range = (@start_date..adjusted_end_date).to_a
+              @total_days = total_days_range.reject { |date| date.saturday? || date.sunday? }.count
+              @attendance_data = user.attendances.where(check_in_time: @start_date.beginning_of_day..@end_date.end_of_day)
+              @attendance_days = @attendance_data.count
+              @public_holidays_count = @public_holidays.count
+              absentee_days = [@total_days - (@attendance_days + current_user_leaves + @public_holidays_count), 0].max
               data_row = [user.name]
               columns_to_include.each do |column|
                 case column
@@ -276,7 +273,7 @@ class Admin::UsersController < ApplicationController
                 when 'leaves'
                   data_row << current_user_leaves
                 when 'absentees'
-                  data_row << absentees
+                  data_row << absentee_days
                 end
               end
               sheet.add_row data_row
@@ -394,6 +391,7 @@ class Admin::UsersController < ApplicationController
         regular_hours_per_day = 8
         date_range = (@start_date..@end_date).to_a
         working_days = calculate_working_days(@start_date, @end_date)
+        @total_days = working_days
         @public_holidays.each do |holiday|
           working_days -= (holiday.start_date..holiday.end_date).count
         end
