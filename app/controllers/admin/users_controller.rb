@@ -319,7 +319,7 @@ class Admin::UsersController < ApplicationController
                   sheet.add_row [
                     date.strftime("%A %b #{date.day.ordinalize}"),
                     "","","",
-                    leaves[date],
+                    "On Leave",
                     "","",
                   ], style: [nil, nil, nil, nil, entry_style, nil, nil]
                 elsif attendance
@@ -333,10 +333,10 @@ class Admin::UsersController < ApplicationController
                     date.strftime("%A %b #{date.day.ordinalize}"),
                     attendance.check_in_time.present? ? attendance.check_in_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A",
                     attendance.check_out_time.present? ? attendance.check_out_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A",
-                    formatted_reg_hours,
-                    formatted_overtime_hours,
+                    attendance.total_hours.present? ? formatted_reg_hours : "N/A",
+                    attendance.total_hours.present? ? formatted_overtime_hours : "N/A",
                     "",
-                    formatted_total_hours,
+                    attendance.total_hours.present? ? formatted_total_hours : "N/A",
                   ]
                   total_hours_sum += total_hours
                 else
@@ -348,8 +348,8 @@ class Admin::UsersController < ApplicationController
                   ], style: [nil, nil, nil, nil, session_style, nil, nil]
                 end
               end
-              time_format = format_time(total_hours_sum)
-              sheet.add_row ["Total:", "", "", "", "", user_leaves.sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }, time_format], style: [nil, nil, nil, nil, nil, nil, header_style]
+              time_format = format_time(@total_hours[user.id])
+              sheet.add_row ["Total:", "", "", "", "", user_leaves.sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }, time_format], style: [header_style, nil, nil, nil, nil, nil, header_style]
               reg_hours = @total_working_hours - user_leaves.sum { |leave| (leave.end_date - leave.start_date).to_i + 1 } * 8 if user_leaves.present?
               reg_hours ||= @total_working_hours
               working_hours = @total_hours[user.id] / 3600
