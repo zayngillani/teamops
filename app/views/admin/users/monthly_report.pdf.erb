@@ -22,38 +22,34 @@
   }
 
   .timesheet-container {
-  width: 100%;
-  margin: 5px 0;
-}
+    width: 100%;
+    margin: 5px 0;
+  }
 
-.timesheet-details {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  flex-wrap: nowrap; /* Prevent wrapping */
-  width: 100%;
-}
+  .timesheet-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    width: 100%;
+  }
 
-.left-section, .right-section {
-  display: flex;
-  flex-direction: column;
-}
+  .left-section, .right-section {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
 
-.left-section p, .right-section p {
-  margin: 5px 0;
-}
+  .left-section p, .right-section p {
+    margin: 5px 0;
+  }
 
-.left-section {
-  flex: 1;
-  text-align: left;
-  white-space: nowrap; /* Prevent text wrapping */
-}
+  .left-section {
+    text-align: left;
+  }
 
-.right-section {
-  flex: 1;
-  text-align: right;
-  white-space: nowrap; /* Prevent text wrapping */
-}
+  .right-section {
+    text-align: right;
+  }
 
   .absent-day {
     color: red;
@@ -127,19 +123,20 @@
 <div class="page-break"></div>
 <% @users.each do |user| %>
   <% @current_user_leaves = Leave.where("start_date <= ? AND end_date >= ? AND status = ? AND user_id = ?", @end_date, @start_date, 1, user.id).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 } %>
-<div class="timesheet-container">
-  <h1 class="attendance-heading">Timesheet</h1>
-  <div class="timesheet-details">
-    <div class="left-section">
-      <p>Employee: <strong><%= user.name %></strong></p>
-      <p>Supervisor: <strong><%= user.supervisor.present? ? user.supervisor : "Fahad" %></strong></p>
-    </div>
-    <div class="right-section">
-      <p>Month: <strong><%= Date::MONTHNAMES[@month] %></strong></p>
-      <p>Regular Hours: 8</p>
+  <div class="timesheet-container">
+    <h1 class="attendance-heading">Timesheet</h1>
+    <div class="timesheet-details">
+      <div class="left-section">
+        <p>Employee: <strong><%= user.name %></strong></p>
+        <p>Supervisor: <strong><%= user.supervisor.present? ? user.supervisor : "Fahad" %></strong></p>
+      </div>
+      <div class="right-section">
+        <p>Month: <strong><%= Date::MONTHNAMES[@month] %></strong></p>
+        <p>Regular Hours: 8</p>
+      </div>
     </div>
   </div>
-</div>
+
 
   <br><br>
   <table class="attendance-table user-attendance">
