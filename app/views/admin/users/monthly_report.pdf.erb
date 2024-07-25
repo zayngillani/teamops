@@ -20,36 +20,40 @@
     color: white;
     padding: 10px;
   }
+
   .timesheet-container {
-    width: 100%;
-    margin: 5px 0;
-  }
+  width: 100%;
+  margin: 5px 0;
+}
 
+.timesheet-details {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: nowrap; /* Prevent wrapping */
+  width: 100%;
+}
 
-  .timesheet-details {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-  }
+.left-section, .right-section {
+  display: flex;
+  flex-direction: column;
+}
 
-  .left-section, .right-section {
-    display: flex;
-    flex-direction: column;
-  }
+.left-section p, .right-section p {
+  margin: 5px 0;
+}
 
-  .left-section p, .right-section p {
-    margin: 5px 0;
-  }
+.left-section {
+  flex: 1;
+  text-align: left;
+  white-space: nowrap; /* Prevent text wrapping */
+}
 
-  .left-section {
-    flex: 1;
-    text-align: left;
-  }
-
-  .right-section {
-    flex: 1;
-    text-align: right;
-  }
+.right-section {
+  flex: 1;
+  text-align: right;
+  white-space: nowrap; /* Prevent text wrapping */
+}
 
   .absent-day {
     color: red;
@@ -136,6 +140,7 @@
     </div>
   </div>
 </div>
+
   <br><br>
   <table class="attendance-table user-attendance">
     <thead>
