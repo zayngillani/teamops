@@ -18,6 +18,7 @@ Rails.application.routes.draw do
     resources :job_applications, only: [:index, :show] do 
       member do 
         get :reject_applicant
+        get :download_resume
       end
     end
     resources :job_posts

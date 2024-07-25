@@ -84,7 +84,11 @@ module Api
       
           # Extract the original filename from the file object
           original_filename = file.original_filename
-          remote_filename = original_filename
+          extension = File.extname(original_filename)
+          basename = File.basename(original_filename, extension)
+      
+          # Create a unique filename with job application ID
+          remote_filename = "#{basename}-#{@job_application.id}#{extension}"
       
           # Upload the file to the resume directory
           ftp.putbinaryfile(file.path, remote_filename)
@@ -98,6 +102,7 @@ module Api
           raise "FTP upload failed: #{e.message}"
         end
       end
+      
       
     end
   end
