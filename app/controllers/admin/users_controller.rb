@@ -169,6 +169,8 @@ class Admin::UsersController < ApplicationController
       @users = User.active.where(role: "user", deleted: false).order(created_at: :desc)
       @start_date = Date.new(@year, @month, 1)
       @end_date = @start_date.end_of_month
+      @public_holidays = PublicHoliday.where("start_date <= ? AND end_date >= ?", @end_date, @start_date)
+      @total_days = calculate_working_days(@start_date, @end_date)
     end
 
     def leave_report
@@ -179,6 +181,7 @@ class Admin::UsersController < ApplicationController
       @end_date = @start_date.end_of_month
       @public_holidays = PublicHoliday.where("start_date <= ? AND end_date >= ?", @start_date.end_of_month, @end_date.beginning_of_month)
       @user_leaves = {}
+      @total_days = calculate_working_days(@start_date, @end_date)
       @users.each do |user|
         date_range = (@start_date..@end_date).reject { |date| date.saturday? || date.sunday? }
         if @public_holidays.present?
