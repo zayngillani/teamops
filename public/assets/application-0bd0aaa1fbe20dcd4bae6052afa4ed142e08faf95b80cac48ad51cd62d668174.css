@@ -1366,12 +1366,5 @@ label {
 }
 
 .archived span {
-  background-color:#ffe8d6;
-  color: #F1463B;
-  padding: 6px 19px;
-}
-
-.archived a {
-  text-decoration: none;
-  color: #536779;
+  color:#ffe8d6;
 }

@@ -1361,17 +1361,9 @@ label {
    margin-top: 30px;
 }
 
-.archived thead th {
+.archived-table-container thead th {
   padding: 12px 40px;
-}
-
-.archived span {
-  background-color:#ffe8d6;
-  color: #F1463B;
-  padding: 6px 19px;
-}
-
-.archived a {
-  text-decoration: none;
-  color: #536779;
+  text-align: center;
+  font-weight: bold;
+  color: black;
 }
