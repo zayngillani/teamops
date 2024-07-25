@@ -273,12 +273,15 @@ GEM
       actionpack (>= 5.2)
       railties (>= 5.2)
     rexml (3.2.6)
+    ruby_http_client (3.5.5)
     rubyzip (2.3.2)
     selenium-webdriver (4.18.1)
       base64 (~> 0.2)
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 3.0)
       websocket (~> 1.0)
+    sendgrid-ruby (6.7.0)
+      ruby_http_client (~> 3.4)
     slack-ruby-client (2.3.0)
       faraday (>= 2.0)
       faraday-mashify
@@ -353,6 +356,7 @@ DEPENDENCIES
   ransack
   redis (~> 4.0)
   selenium-webdriver
+  sendgrid-ruby
   slack-ruby-client
   sprockets-rails
   stimulus-rails
