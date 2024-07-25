@@ -20,6 +20,36 @@
     color: white;
     padding: 10px;
   }
+  .timesheet-container {
+    width: 100%;
+    margin: 5px 0;
+  }
+
+
+  .timesheet-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+  }
+
+  .left-section, .right-section {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .left-section p, .right-section p {
+    margin: 5px 0;
+  }
+
+  .left-section {
+    flex: 1;
+    text-align: left;
+  }
+
+  .right-section {
+    flex: 1;
+    text-align: right;
+  }
 
   .absent-day {
     color: red;
@@ -93,16 +123,19 @@
 <div class="page-break"></div>
 <% @users.each do |user| %>
   <% @current_user_leaves = Leave.where("start_date <= ? AND end_date >= ? AND status = ? AND user_id = ?", @end_date, @start_date, 1, user.id).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 } %>
+<div class="timesheet-container">
   <h1 class="attendance-heading">Timesheet</h1>
-  <p style="float: left; margin: 5px;">Employee: <strong><%= user.name %></strong></p>
-  <p style="float: right; margin: 5px;">Month: <strong><%= Date::MONTHNAMES[@month] %></strong></p>
-  <br><br>
-  <p style="float: left; margin: 5px;">Supervisor:</p>
-  <span style="float: left; margin: 5px;"><strong><%= user.supervisor.present? ? user.supervisor : "Fahad" %></strong></span>
-  <span style="float: right; margin: 5px;"></span>
-  <div style="display: flex; justify-content: space-between; align-items: center; margin: 5px;">
-    <p style="float: right; margin: 0; margin-right: 10px;">Regular Hours: 8</p>
+  <div class="timesheet-details">
+    <div class="left-section">
+      <p>Employee: <strong><%= user.name %></strong></p>
+      <p>Supervisor: <strong><%= user.supervisor.present? ? user.supervisor : "Fahad" %></strong></p>
+    </div>
+    <div class="right-section">
+      <p>Month: <strong><%= Date::MONTHNAMES[@month] %></strong></p>
+      <p>Regular Hours: 8</p>
+    </div>
   </div>
+</div>
   <br><br>
   <table class="attendance-table user-attendance">
     <thead>
