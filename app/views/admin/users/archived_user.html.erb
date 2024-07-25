@@ -1,0 +1,40 @@
+<div style="margin-left: 260px; overflow-x: auto;">
+  <table class="dashboard-table-container archived">
+    <thead>
+      <tr class="dashboard-table-lines">
+        <th>Name</th>
+        <th>Email</th>
+        <th>Joining Date</th>
+        <th>Status</th>
+        <th>Attendance</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="job-posts-table-body">
+      <% @users.each do |user| %>
+        <tr class="dashboard-table-lines" data-job-post-id="<%= user.id %>">
+          <td class="table-title-column"><%= user.name %></td>
+          <td class="table-title-column"><%= user.email %></td>
+          <td class="table-title-column"><%= user.join_date.present? ? user.join_date.strftime("#{user.join_date.day} %b, %Y") : "N/A" %></td>
+          <td class="table-status-column archived">
+            <span>archived</span>
+          </td>
+          <td class="table-title-column archived"><%= link_to 'View', admin_daily_report_path(user.id) %></td>
+          <td class="table-actions-column">
+          <div class="dropdown-action">
+            <%= image_tag("more.png", width: "20", height: "20", alt: "Edit User") %>
+              <div class="dropdown-content-action">
+               <div class="actions-container">
+                 <%= button_to "Unarchive", admin_user_path(user.id), method: :delete, style: "font-size: 10px; background-color: white; color: #536779;" %>
+               </div>
+              </div>
+          </div>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+     <div class="pagination-container">
+          <%= will_paginate @users, renderer: PaginationHelper::DailyReportsRenderer, remote: true %>  
+     </div>
+</div>

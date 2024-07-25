@@ -98,14 +98,16 @@ class Admin::UsersController < ApplicationController
 
     def destroy
       @user = User.find_by(id: params[:id])
-      if @user
+      if @user.deleted == false
         @user.update(deleted: true)
         flash[:success] = "Employee has been deleted"
-        redirect_to root_path
+      elsif @user.deleted == true
+        @user.update(deleted: false)
+        flash[:success] = "Employee Unarchived Successfully"
       else
         flash[:error] = "Employee already Deleted"
-        redirect_to root_path
       end
+      redirect_to root_path
     end
 
     def disable_user
@@ -160,6 +162,10 @@ class Admin::UsersController < ApplicationController
         flash[:error] = "Attendance Not Present"
         redirect_to root_path
       end
+    end
+
+    def archived_user
+      @users = User.where(role: "user", deleted: 1).order(created_at: :desc).paginate(page: params[:page], per_page: 10)
     end
 
     def user_leave
