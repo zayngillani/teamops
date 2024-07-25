@@ -460,7 +460,7 @@ class Admin::UsersController < ApplicationController
     private
    
     def user_params
-      params.require(:user).permit(:email, :name, :slack_member_id, :supervisor)
+      params.require(:user).permit(:email, :name, :slack_member_id, :supervisor, :join_date)
     end
 
     def disable_attendance(user)
