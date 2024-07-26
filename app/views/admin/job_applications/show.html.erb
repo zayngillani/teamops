@@ -15,7 +15,11 @@
 
       <% if @job_application.pending? %>
         <div class="download-resume-btn shedule-interview-btn">
-          <%= link_to "Shedule interview", new_admin_interview_path(job_application_id: @job_application.id), class: "shedule-interview-btn-text" %>
+          <%= link_to "Shedule Interview", new_admin_interview_path(job_application_id: @job_application.id), class: "shedule-interview-btn-text" %>
+        </div>
+      <% else %>
+        <div class="download-resume-btn shedule-interview-btn">
+          <%= link_to "Get Shareable Link", generate_public_link_admin_interview_path(@job_application.interviews.first) ,class: "shedule-interview-btn-text" %>
         </div>
       <% end %>
     </div>

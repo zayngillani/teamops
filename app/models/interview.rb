@@ -1,4 +1,5 @@
 class Interview < ApplicationRecord
+  has_many :public_links, dependent: :destroy
   belongs_to :job_application
 
   enum status: { active: 0, inactive: 1 }
@@ -12,7 +13,7 @@ class Interview < ApplicationRecord
 
   def interview_date_cannot_be_weekend
     if interview_date.present? && (interview_date.saturday? || interview_date.sunday?)
-      errors.add(:interview_date, "cannot be a Saturday or Sunday")
+      errors.add(:interview_date, "The schedule must be on a weekday")
     end
   end
 
@@ -33,7 +34,7 @@ class Interview < ApplicationRecord
   private
 
   def send_interview_email
-    # JobApplicationMailer.interview_scheduled(self).deliver_now
+    JobApplicationMailer.interview_scheduled(self).deliver_now
   end
 
   def update_job_application_status

@@ -24,6 +24,22 @@ class Admin::InterviewsController < ApplicationController
     end
   end
 
+  def generate_public_link
+    @interview = Interview.find(params[:id])
+  
+    existing_link = @interview.public_links.where("expires_at > ?", Time.zone.now).first
+  
+    if existing_link
+      @public_link_url = public_link_url(existing_link.token)
+      flash[:notice] = "An active shareable link already exists for this interview scheduling"
+    else
+      @public_link = @interview.public_links.create!(expires_at: 24.hours.from_now)
+      @public_link_url = public_link_url(@public_link.token)
+      flash[:success] = "New shareable link has been generated"
+    end
+  end
+  
+
   private
 
   def interview_params
