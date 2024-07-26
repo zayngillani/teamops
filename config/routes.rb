@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get 'public_links/show'
+  resources :public_links, only: [:show], param: :token
   devise_for :users
   root  "home#index"
   get '/invalid_ip', to: 'devise#invalid_ip'
@@ -14,14 +16,21 @@ Rails.application.routes.draw do
         get 'report', to:  'daily_reports#report'
       end
     end
+
     resources :job_applications, only: [:index]
-    resources :interviews, only: [:new, :create]
+    resources :interviews, only: [:new, :create] do
+      member do
+        get :generate_public_link
+      end
+    end
+
     resources :job_applications, only: [:index, :show] do 
       member do 
         get :reject_applicant
         get :download_resume
       end
     end
+
     resources :job_posts
     resources :contact_details, only: [:index]
     #Users
@@ -38,7 +47,6 @@ Rails.application.routes.draw do
     get '/archived_user', :to => "users#archived_user", as: 'archived_user'
 
     #Daily Reports
-
   end
   
   resources :attendance, only: [:index]
