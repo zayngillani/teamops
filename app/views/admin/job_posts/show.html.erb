@@ -22,12 +22,16 @@
 
       <h3> Requirements & Qualifications </h3><br>
       <div class="job-description-box-text">
-        <% requirements = @job_post.requirements_and_qualification.split("\n") %>
-        <ul>
-          <% requirements.each do |requirement| %>
-            <li><%= requirement %></li>
-          <% end %>
-        </ul>
+        <% if @job_post.requirements_and_qualification.present? %>
+          <% requirements = @job_post.requirements_and_qualification.split("\n") %>
+          <ul>
+            <% requirements.each do |requirement| %>
+              <li><%= requirement %></li>
+            <% end %>
+          </ul>
+        <% else %>
+          <p>No requirements and qualifications listed.</p>
+        <% end %>
       </div>
     </div>
   </div>
