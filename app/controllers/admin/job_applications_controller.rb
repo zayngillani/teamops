@@ -18,7 +18,7 @@ class Admin::JobApplicationsController < ApplicationController
   def reject_applicant
     @job_application = JobApplication.find (params[:id])
 
-    if @job_application.update(is_rejected: true)
+    if @job_application.update(interview_status: 3)
       flash[:alert] = "Candidate Rejected"
     else
       flash[:error] = "Failed to Rejected the candidate."
