@@ -19,7 +19,7 @@
           <td class="table-status-column archived">
             <span>archived</span>
           </td>
-          <td class="table-title-column archived"><%= link_to 'View', admin_daily_report_path(user.id) %></td>
+          <td class="table-title-column archived"><%= link_to 'View', admin_user_detail_path(id: user.id, month: Date.current.month, year: Date.current.year) %></td>
           <td class="table-actions-column">
           <div class="dropdown-action">
             <%= image_tag("more.png", width: "20", height: "20", alt: "Edit User") %>

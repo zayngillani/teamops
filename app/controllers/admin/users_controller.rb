@@ -276,13 +276,24 @@ class Admin::UsersController < ApplicationController
               working_hours = @total_hours[user.id] / 3600
               overtime = @regular_hours < working_hours ? (working_hours - @regular_hours) : 0
               undertime = @regular_hours > working_hours ? (@regular_hours - working_hours) : 0
-              adjusted_end_date = (@month == Date.today.month && @year == Date.today.year) ? Date.today : @end_date
-              total_days_range = (@start_date..adjusted_end_date).to_a
+              user_creation_date = user.created_at.to_date
+              first_day_of_month = Date.new(@year, @month, 1)
+              last_day_of_month = (@month == Date.today.month && @year == Date.today.year) ? Date.today : @end_date
+              adjusted_start_date = user_creation_date.month == @month && user_creation_date.year == @year ? user_creation_date : first_day_of_month
+              total_days_range = (adjusted_start_date..last_day_of_month).to_a
               @total_days = total_days_range.reject { |date| date.saturday? || date.sunday? }.count
+              if @public_holidays.present?
+                @public_holidays.each do |holiday|
+                  if holiday.start_date >= user_creation_date
+                    @total_days -= (holiday.start_date..holiday.end_date).count
+                  end
+                end
+              end
+              @current_user_leaves = Leave.where("start_date <= ? AND end_date >= ? AND status = ? AND user_id = ?", @end_date, @start_date, 1, user.id).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }
               @attendance_data = user.attendances.where(check_in_time: @start_date.beginning_of_day..@end_date.end_of_day)
               @attendance_days = @attendance_data.count
               @public_holidays_count = @public_holidays.count
-              absentee_days = [@total_days - (@attendance_days + current_user_leaves + @public_holidays_count), 0].max
+              absentee_days = [@total_days - (@attendance_days + @current_user_leaves), 0].max
               data_row = [user.name]
               columns_to_include.each do |column|
                 case column
