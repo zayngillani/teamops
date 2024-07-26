@@ -13,7 +13,7 @@
           <span>
               <img src="<%= asset_path('download-icon.svg') %>" alt="Download Icon"  class="download-icon-style">
           </span>
-            <%= link_to "Download Resume", download_resume_admin_job_application_path(@job_application), class: "download-resume-btn-text", id: "download-resume-btn", data: { turbolinks: false } %>
+            <%= link_to "See Resume", download_resume_admin_job_application_path(@job_application), class: "download-resume-btn-text", id: "download-resume-btn", target: "_blank" %>
       </div>
 
       <% if @job_application.pending? %>
@@ -72,17 +72,3 @@
     </div>
   </div>
 <div>
-
-
-
-<script>
-  document.addEventListener("DOMContentLoaded", function() {
-    var button = document.getElementById("download-resume-btn");
-    
-    button.addEventListener("click", function() {
-      setTimeout(function() {
-        location.reload();
-      }, 12000);
-    });
-  });
-</script>

@@ -34,8 +34,7 @@ class Admin::JobApplicationsController < ApplicationController
     if resume_link.present?
       begin
         file_path = fetch_resume_from_ftp(resume_link)
-        flash[:success] = 'Resume downloaded successfully.'
-        send_file(file_path, filename: File.basename(file_path), type: 'application/pdf', disposition: 'attachment')
+        send_file(file_path, filename: File.basename(file_path), type: 'application/pdf', disposition: 'inline')
       rescue StandardError => e
         Rails.logger.error "FTP download failed: #{e.message}"
         flash[:error] = "FTP download failed: #{e.message}"
