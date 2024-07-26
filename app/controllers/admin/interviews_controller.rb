@@ -18,7 +18,7 @@ class Admin::InterviewsController < ApplicationController
         flash[:success] = "Interview scheduled successfully."
         redirect_to admin_job_application_path(@interview.job_application)
       else
-        flash[:error] = "Failed to schedule interview."
+        flash[:error] = "#{@interview.errors.full_messages.join(', ')}"
         redirect_to new_admin_interview_path
       end
     end
