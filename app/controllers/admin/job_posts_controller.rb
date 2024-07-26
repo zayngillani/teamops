@@ -42,19 +42,20 @@ class Admin::JobPostsController < ApplicationController
   end
 
   def destroy
-    @job_post = JobPost.find(params[:id])
-    
-    if @job_post.destroy
+    if @job_post.soft_delete
       flash[:error] = 'Job has been deleted'
       redirect_to admin_job_posts_path
     else
-      redirect_to admin_job_posts_path, alert: 'Failed to delete the job'
+      flash[:alert] = 'Failed to delete the job'
+      redirect_to admin_job_posts_path
     end
-  
+
   rescue ActiveRecord::RecordNotFound
-    redirect_to admin_job_posts_path, alert: 'Job not found'
+    flash[:alert] = 'Job not found'
+    redirect_to admin_job_posts_path
   rescue StandardError => e
-    redirect_to admin_job_posts_path, alert: "An error occurred: #{e.message}"
+    flash[:alert] = "An error occurred: #{e.message}"
+    redirect_to admin_job_posts_path
   end
 
   private
