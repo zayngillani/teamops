@@ -1,6 +1,6 @@
 # app/mailers/job_application_mailer.rb
 class JobApplicationMailer < ApplicationMailer
-  default from: 'no-reply@yourcompany.com'
+  default from: 'mailer@techcreatix.com'
 
   def confirmation_email(job_application, job_title)
     @job_application = job_application
