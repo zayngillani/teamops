@@ -6,7 +6,8 @@ class Interview < ApplicationRecord
 
   validates :interview_date, presence: true
   validates :interview_time, presence: true
-  validate :interview_date_cannot_be_weekend, :interview_time_cannot_be_in_past
+  validate :interview_date_cannot_be_weekend,
+  validate :interview_time_cannot_be_in_past
 
   after_create :send_interview_email, :update_job_application_status
 
