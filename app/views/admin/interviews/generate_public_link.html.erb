@@ -5,35 +5,23 @@
     <br>
     <p><strong>Interview Details link:</strong> 
       <a id="link-to-copy" href="<%= @public_link_url %>"><%= @public_link_url %></a>
-      <button id="copy-btn" class="copy-btn" onclick="copyToClipboard()">Copy Link</button>
+      <button id="copy-btn" class="copy-btn-link" onclick="copyToClipboard()">Copy Link</button>
     </p>
   </div>
 </div>
 
 <script>
-    // Function to handle copying to clipboard
-    function copyToClipboard() {
-      var copyText = document.getElementById("link-to-copy").innerText;
-      var copyButton = document.getElementById("copy-btn");
+  function copyToClipboard() {
+    var copyText = document.getElementById("link-to-copy").innerText;
+    var copyButton = document.getElementById("copy-btn");
 
-      navigator.clipboard.writeText(copyText).then(function() {
-        // Update button text and style
-        copyButton.innerText = "Copied";
-        copyButton.classList.add("copied");
-
-        // Store the copied state in localStorage
-        localStorage.setItem("linkCopied", "true");
-      }, function(err) {
-        console.error("Failed to copy link: ", err);
-      });
-    }
-
-    // On page load, check localStorage for copied state
-    document.addEventListener("DOMContentLoaded", function() {
-      var copyButton = document.getElementById("copy-btn");
-      if (localStorage.getItem("linkCopied") === "true") {
-        copyButton.innerText = "Copied";
-        copyButton.classList.add("copied");
-      }
+    navigator.clipboard.writeText(copyText).then(function() {
+      copyButton.innerText = "Copied";
+      setTimeout(function() {
+        copyButton.innerText = "Copy Link";
+      }, 20000); // Reset button text after 2 seconds
+    }, function(err) {
+      console.error("Failed to copy link: ", err);
     });
-  </script>
+  }
+</script>
