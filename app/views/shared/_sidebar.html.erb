@@ -129,7 +129,9 @@
 <body>
     <div class="sidebar">
         <div class="logo">
+          <%= link_to root_path do %>
             <%= image_tag "logo.svg" %>
+          <% end %>
         </div>
         <% if current_user.admin? %>
             <div class="menu">
