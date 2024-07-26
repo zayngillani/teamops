@@ -1,0 +1,23 @@
+<div style="margin-left: 260px;">
+  <div class="schedule-form-container">
+    <div class="schedule-form">
+      <%= form_with model: @interview, url: admin_interviews_path, method: :post, class: "schedule-form-position" , local: true do |form| %>
+        <!-- Hidden field for job_application_id -->
+        <%= form.hidden_field :job_application_id, value: @job_application.id %>
+
+        <div class="schedule-form-group">
+          <%= form.label :interview_date, "Interview Date" %>
+          <%= form.date_field :interview_date, class: "schedule-form-control", placeholder: "Select date", min: Date.today.strftime('%Y-%m-%d') %>
+        </div>
+        <div class="schedule-form-group">
+          <%= form.label :interview_time, "Interview Time" %>
+          <%= form.time_field :interview_time, class: "schedule-form-control", aria: { placeholder: "Select interview time" } %>
+        </div>
+
+        <div class="job-post-btn form-group-submit">
+          <%= form.submit "Schedule Interview", class: "job-post-btn-text" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>

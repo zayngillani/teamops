@@ -15,6 +15,7 @@ Rails.application.routes.draw do
       end
     end
     resources :job_applications, only: [:index]
+    resources :interviews, only: [:new, :create]
     resources :job_applications, only: [:index, :show] do 
       member do 
         get :reject_applicant
