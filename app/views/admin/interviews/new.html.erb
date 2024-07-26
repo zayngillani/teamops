@@ -7,17 +7,28 @@
 
         <div class="schedule-form-group">
           <%= form.label :interview_date, "Interview Date" %>
-          <%= form.date_field :interview_date, class: "schedule-form-control", placeholder: "Select date", min: Date.today.strftime('%Y-%m-%d') %>
+          <%= form.date_field :interview_date, class: "schedule-form-control", placeholder: "Select date", min: Date.today.strftime('%Y-%m-%d'), required: true %>
         </div>
         <div class="schedule-form-group">
           <%= form.label :interview_time, "Interview Time" %>
-          <%= form.time_field :interview_time, class: "schedule-form-control", aria: { placeholder: "Select interview time" } %>
+          <%= form.time_field :interview_time, class: "schedule-form-control", aria: { placeholder: "Select interview time" }, required: true %>
         </div>
 
         <div class="job-post-btn form-group-submit">
-          <%= form.submit "Schedule Interview", class: "job-post-btn-text" %>
+          <%= form.submit "Schedule Interview", class: "job-post-btn-text", data: { disable_with: "Scheduling..." } %>
         </div>
       <% end %>
     </div>
   </div>
 </div>
+
+<script>
+  document.addEventListener("turbolinks:load", function() {
+    const form = document.querySelector('.schedule-form-position');
+    const submitButton = form.querySelector('input[type="submit"]');
+
+    form.addEventListener('submit', function() {
+      submitButton.disabled = true;
+    });
+  });
+</script>
