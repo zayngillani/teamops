@@ -30,15 +30,16 @@ module Api
 
       def get_job_post_list
         job_posts = JobPost.active.all
+        if job_posts.present?
       
         # Transform the requirements_and_qualification field for each job post
-        formatted_job_posts = job_posts&.map do |job_post|
-          formatted_requirements = job_post.requirements_and_qualification.split("\n")
-          job_post.as_json.merge(requirements_and_qualification: formatted_requirements)
+          formatted_job_posts = job_posts.map do |job_post|
+            formatted_requirements = job_post.requirements_and_qualification.split("\n")
+            job_post.as_json.merge(requirements_and_qualification: formatted_requirements)
+          end
+          render json: formatted_job_posts
         end
-      
-        render json: formatted_job_posts
-      end      
+      end
 
       def show_job_post
         job_post = JobPost.find(params[:id])
