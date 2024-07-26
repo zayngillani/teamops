@@ -14,6 +14,21 @@ class Admin::UsersController < ApplicationController
         flash[:error] = "Passwords don't match. Please check and re-type your confirm password."
         redirect_to new_admin_user_path and return
       end
+      join_date = params[:user][:join_date].to_date
+      current_month = join_date.month
+      current_year = join_date.year
+      joining_date = Date.parse(params[:user][:join_date])
+      holidays = PublicHoliday.where("EXTRACT(MONTH FROM start_date) = ? AND EXTRACT(YEAR FROM start_date) = ? OR EXTRACT(MONTH FROM end_date) = ? AND EXTRACT(YEAR FROM end_date) = ?",
+                                     current_month, current_year, current_month, current_year)
+      holiday_present = holidays.any? { |holiday| (holiday.start_date..holiday.end_date).cover?(join_date) }
+      if holiday_present
+        redirect_to root_path, flash: { error: "Joining date must be a weekday and not a holiday. Please choose another date." }
+        return
+      end
+      if joining_date.saturday? || joining_date.sunday?
+        redirect_to root_path, flash: { error: "Joining date must be a weekday and not a holiday. Please choose another date." }
+        return
+      end
       if params[:user][:email] =~ /\A[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]+\z/
         @existing_user = User.find_by(email: params[:user][:email])
         if @existing_user.present?
