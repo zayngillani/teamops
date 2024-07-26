@@ -34,10 +34,12 @@ module Api
       
         # Transform the requirements_and_qualification field for each job post
           formatted_job_posts = job_posts.map do |job_post|
-            formatted_requirements = job_post.requirements_and_qualification.split("\n")
-            job_post.as_json.merge(requirements_and_qualification: formatted_requirements)
-          end
-          render json: formatted_job_posts
+            if job_post.present?
+              formatted_requirements = job_post.requirements_and_qualification.split("\n")
+              job_post.as_json.merge(requirements_and_qualification: formatted_requirements)
+              end
+              render json: formatted_job_posts
+            end
         end
       end
 
