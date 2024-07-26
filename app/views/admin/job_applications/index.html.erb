@@ -24,7 +24,7 @@
           <td class="table-first-column"><%= application&.email %></td>
           <td class="table-first-column"><%= application&.current_experience %></td>
           <td class="applicants-table-second-column">
-            <span class="<%= application.interview_status == "scheduled" ? 'status-scheduled' : 'status-pending' %>">
+            <span class="<%= application.scheduled? ? 'status-scheduled' : 'status-pending' %>">
               <%= application.interview_status %>
             </span>
           </td>

@@ -6,11 +6,11 @@ class JobApplication < ApplicationRecord
   validates :contact_number, format: { with: /\A\d{10,15}\z/, message: "must be between 10 and 15 digits" }
   # Associations
   belongs_to :job_post
+  has_many :interviews, dependent: :destroy
   # Enums
-  enum interview_status: [:pending, :scheduled]
+  enum interview_status: { pending: 0, scheduled: 1, hired: 2, rejected: 3 }
+
   # Scopes
-  scope :available, -> { where(is_rejected: false).where(is_selected: false) }
-  scope :rejected, -> { where(is_rejected: true) }
-  scope :selected, -> { where(is_selected: true) }
+  scope :available, -> { where(interview_status: [:pending, :scheduled]) }
 end
 

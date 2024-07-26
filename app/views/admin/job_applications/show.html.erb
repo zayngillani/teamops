@@ -10,11 +10,14 @@
   <div class="dashboard-table-container">
     <div class="interview-btns-container">
       <div class="download-resume-btn">
-        <span><img src="<%= asset_path('download-icon.svg') %>" alt="Download Icon" class="download-icon-style"></span><%= link_to "Download Resume", download_resume_admin_job_application_path(@job_application), class: "download-resume-btn-text" %>
+        <%= link_to "View Resume", download_resume_admin_job_application_path(@job_application), class: "download-resume-btn-text", id: "download-resume-btn", target: "_blank" %>
       </div>
-      <div class="download-resume-btn shedule-interview-btn">
-        <%= link_to "Shedule interview", '#', class: "shedule-interview-btn-text" %>
-      </div>
+
+      <% if @job_application.pending? %>
+        <div class="download-resume-btn shedule-interview-btn">
+          <%= link_to "Shedule interview", new_admin_interview_path(job_application_id: @job_application.id), class: "shedule-interview-btn-text" %>
+        </div>
+      <% end %>
     </div>
 
     <div class="applicants-container">

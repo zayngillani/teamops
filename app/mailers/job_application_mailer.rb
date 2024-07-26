@@ -20,4 +20,15 @@ class JobApplicationMailer < ApplicationMailer
       subject: "Job Application Notification - #{@job_application.name}"
     )
   end
+
+  def interview_scheduled(interview)
+    @interview = interview
+    @job_application = @interview.job_application
+    @job_post = @job_application.job_post
+    @company_name = 'Techcreatix'
+    @interview_date = @interview.interview_date.strftime("%A %B %d, %Y")
+    @interview_time = @interview.interview_time.strftime("%I:%M %p")
+
+    mail to: @job_application.email, subject: 'Interview Scheduled'
+  end
 end
