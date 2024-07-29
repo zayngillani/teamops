@@ -22,7 +22,7 @@
         <tr class="dashboard-table-lines" data-job-post-id="<%= job_post.id %>">
           <td class="table-title-column"><%= truncate_with_ellipsis(job_post.title, 50) %></td>
           <td class="table-status-column">
-            <span><%= job_post&.job_status %></span>
+            <span><%= job_post&.job_status.capitalize %></span>
           </td>
           <td class="table-actions-column">
             <div class="dropdown">
@@ -51,9 +51,7 @@
 
       <%= form_with url: admin_job_post_path(job_post), method: :delete, local: true, html: { id: "delete-job-form-#{job_post.id}" } do |form| %>
         <div class="applicants-button-container">
-          <div class="delete-job-confirmation-btn">
-            <%= form.submit 'Yes, Delete', class: "delete-job-confirmation-btn-text" %>
-          </div>
+            <%= form.submit 'Yes, Delete', class: "delete-job-confirmation-btn" %>
           <div class="delete-job-cancel-btn">
             <button type="button" class="delete-job-cancel-btn-text" data-job-post-id="<%= job_post.id %>"> Cancel </button>
           </div>
