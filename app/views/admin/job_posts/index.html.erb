@@ -52,9 +52,7 @@
       <%= form_with url: admin_job_post_path(job_post), method: :delete, local: true, html: { id: "delete-job-form-#{job_post.id}" } do |form| %>
         <div class="applicants-button-container">
             <%= form.submit 'Yes, Delete', class: "delete-job-confirmation-btn" %>
-          <div class="delete-job-cancel-btn">
-            <button type="button" class="delete-job-cancel-btn-text" data-job-post-id="<%= job_post.id %>"> Cancel </button>
-          </div>
+            <button type="button" class="delete-job-cancel-btn" data-job-post-id="<%= job_post.id %>"> Cancel </button>
         </div>
       <% end %>
     </div>
@@ -102,7 +100,7 @@
     });
 
     // Event delegation for closing modals
-    document.querySelectorAll('.close-modal, .delete-job-cancel-btn-text').forEach(function(button) {
+    document.querySelectorAll('.close-modal, .delete-job-cancel-btn').forEach(function(button) {
       button.addEventListener('click', function(event) {
         var jobPostId = event.target.getAttribute('data-job-post-id');
         var modal = document.getElementById('modal-' + jobPostId);
