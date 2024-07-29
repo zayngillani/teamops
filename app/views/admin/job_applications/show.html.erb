@@ -9,19 +9,18 @@
 <div style="margin-left: 260px;">
   <div class="dashboard-table-container">
     <div class="interview-btns-container">
-      <div class="download-resume-btn">
-        <%= link_to "View Resume", download_resume_admin_job_application_path(@job_application), class: "download-resume-btn-text", id: "download-resume-btn", target: "_blank" %>
-      </div>
-
-      <% if @job_application.pending? %>
-        <div class="download-resume-btn shedule-interview-btn">
-          <%= link_to "Shedule Interview", new_admin_interview_path(job_application_id: @job_application.id), class: "shedule-interview-btn-text" %>
-        </div>
-      <% else %>
-        <div class="download-resume-btn shedule-interview-btn">
-          <%= link_to "Get Shareable Link", generate_public_link_admin_interview_path(@job_application.interviews.first) ,class: "shedule-interview-btn-text" %>
-        </div>
+     <%= link_to download_resume_admin_job_application_path(@job_application), class: "download-resume-btn", id: "download-resume-btn", target: "_blank" do %>
+      <div class="download-resume-btn-text">View Resume</div>
+     <% end %>
+     <% if @job_application.pending? %>
+      <%= link_to new_admin_interview_path(job_application_id: @job_application.id), class: "download-resume-btn shedule-interview-btn", id: "shedule-interview-btn" do %>
+        <div class="shedule-interview-btn-text">Schedule Interview</div>
       <% end %>
+     <% else %>
+      <div class="download-resume-btn shedule-interview-btn">
+        <%= link_to "Get Shareable Link", generate_public_link_admin_interview_path(@job_application.interviews.first) ,class: "shedule-interview-btn-text" %>
+      </div>
+     <% end %>
     </div>
 
     <div class="applicants-container">
