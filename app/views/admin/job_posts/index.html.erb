@@ -14,6 +14,7 @@
       <tr class="dashboard-table-lines">
         <th>Title</th>
         <th>Status</th>
+        <th>Applicants</th>
         <th>Actions</th>
       </tr>
     </thead>
@@ -23,6 +24,11 @@
           <td class="table-title-column"><%= truncate_with_ellipsis(job_post.title, 50) %></td>
           <td class="table-status-column">
             <span><%= job_post&.job_status.capitalize %></span>
+          </td>
+          <td class="table-status-column">
+            <%= link_to admin_job_applications_path(job_post_id: job_post.id), style: "text-decoration: none;" do %>
+              <%= job_post.job_applications.available.count %>
+            <% end %>
           </td>
           <td class="table-actions-column">
             <div class="dropdown">
