@@ -49,6 +49,24 @@ class HomeController < ApplicationController
           end
      end
 
+     def view_resume
+          @job_application = JobApplication.find(params[:format])
+          resume_link = @job_application.resume_link
+          if resume_link.present?
+            begin
+              file_path = fetch_resume_from_ftp(resume_link)
+              send_file(file_path, filename: File.basename(file_path), type: 'application/pdf', disposition: 'inline')
+            rescue StandardError => e
+              Rails.logger.error "FTP download failed: #{e.message}"
+              flash[:error] = "FTP download failed: #{e.message}"
+              redirect_to admin_job_application_path(@job_application)
+            end
+          else
+            flash[:error] = 'Resume not found.'
+            redirect_to admin_job_application_path(@job_application)
+          end
+     end
+
      private
      
      def user_params
