@@ -72,4 +72,24 @@ class HomeController < ApplicationController
      def user_params
           params.require(:user).permit(:password, :password_confirmation)
      end
+
+     def fetch_resume_from_ftp(resume_link)
+          ftp = Net::FTP.new
+          ftp.connect(ENV['FTP_HOST'], ENV['FTP_PORT'].to_i)
+          ftp.login(ENV['FTP_USERNAME'], ENV['FTP_PASSWORD'])
+          ftp.passive = true
+      
+          local_file_path = Rails.root.join('tmp', File.basename(resume_link))
+      
+          File.open(local_file_path, 'wb') do |file|
+            ftp.getbinaryfile(resume_link, file.path)
+          end
+      
+          ftp.close
+      
+          local_file_path
+        rescue StandardError => e
+          Rails.logger.error "FTP download failed: #{e.message}"
+          raise "FTP download failed: #{e.message}"
+        end
 end
