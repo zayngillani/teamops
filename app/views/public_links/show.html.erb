@@ -9,4 +9,6 @@
   <p><strong>Applicant Experience:</strong> <%= @job_application.current_experience %></p>
   <p><strong>Interview Date:</strong> <%= @interview.interview_date.strftime('%A, %B %d, %Y') %></p>
   <p><strong>Interview Time:</strong> <%= @interview.interview_time.strftime('%I:%M %p') %></p>
+  <%= link_to 'View Resume', view_resume_path(@job_application.id), class: "download-resume-btn", id: "download-resume-btn", target: "_blank" %>
+
 <% end %>
