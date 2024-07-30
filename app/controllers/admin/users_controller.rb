@@ -14,19 +14,7 @@ class Admin::UsersController < ApplicationController
         flash[:error] = "Passwords don't match. Please check and re-type your confirm password."
         redirect_to new_admin_user_path and return
       end
-      join_date = params[:user][:join_date].to_date
-      current_month = join_date.month
-      current_year = join_date.year
-      joining_date = Date.parse(params[:user][:join_date])
-      holidays = PublicHoliday.where("EXTRACT(MONTH FROM start_date) = ? AND EXTRACT(YEAR FROM start_date) = ? OR EXTRACT(MONTH FROM end_date) = ? AND EXTRACT(YEAR FROM end_date) = ?",
-                                     current_month, current_year, current_month, current_year)
-      holiday_present = holidays.any? { |holiday| (holiday.start_date..holiday.end_date).cover?(join_date) }
-      if holiday_present
-        redirect_to root_path, flash: { error: "Joining date must be a weekday and not a holiday. Please choose another date." }
-        return
-      end
-      if joining_date.saturday? || joining_date.sunday?
-        redirect_to root_path, flash: { error: "Joining date must be a weekday and not a holiday. Please choose another date." }
+      if validate_join_date(params[:user][:join_date])
         return
       end
       if params[:user][:email] =~ /\A[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]+\z/
@@ -42,7 +30,7 @@ class Admin::UsersController < ApplicationController
           @user.password_confirmation = params[:user][:password_confirmation]
           if @user.save
             flash[:success] = "Employee added successfully"
-            redirect_to root_path
+            redirect_to root_path and return
           else
             render 'new'
           end
@@ -60,12 +48,15 @@ class Admin::UsersController < ApplicationController
     def update
       @user = User.find_by(id: params[:id])
       if @user.present?
+        if validate_join_date(params[:user][:join_date])
+          return
+        end
         @user.update(user_params)
           if params[:user][:password].present? && params[:user][:password] == params[:user][:password_confirmation]
             @user.update!(password: params[:user][:password], password_confirmation: params[:user][:password_confirmation])
           end
         flash[:success] = "User updated successfully"
-        redirect_to root_path
+        redirect_to root_path and return
       else
         flash[:error] = "User not found"
       end
@@ -529,10 +520,29 @@ class Admin::UsersController < ApplicationController
       minutes = (total_seconds % 3600) / 60
       "%02d.%02d" % [hours, minutes]
     end
+
     def format_time(total_seconds)
       hours = total_seconds / 3600
       minutes = (total_seconds % 3600) / 60
       "#{hours} hours #{minutes} minutes"
+    end
+
+    def validate_join_date(join_date_str)
+      join_date = join_date_str.to_date
+      current_month = join_date.month
+      current_year = join_date.year
+      joining_date = Date.parse(join_date_str)
+      holidays = PublicHoliday.where(
+        "(EXTRACT(MONTH FROM start_date) = ? AND EXTRACT(YEAR FROM start_date) = ?) OR 
+        (EXTRACT(MONTH FROM end_date) = ? AND EXTRACT(YEAR FROM end_date) = ?)",
+        current_month, current_year, current_month, current_year
+      )
+      holiday_present = holidays.any? { |holiday| (holiday.start_date..holiday.end_date).cover?(join_date) }
+      if holiday_present || joining_date.saturday? || joining_date.sunday?
+        redirect_to new_admin_user_path, flash: { error: "Joining date must be a weekday and not a holiday. Please choose another date." }
+        return true
+      end
+      false
     end
    end
    
