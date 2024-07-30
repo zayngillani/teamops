@@ -20,6 +20,7 @@
       </tr>
     </thead>
     <tbody>
+    <% if @job_applications.present? %>
       <% @job_applications.each do |application| %>
         <tr class="dashboard-table-lines">
           <td class="table-first-column"><%= application&.name %></td>
@@ -43,8 +44,14 @@
           </td>
         </tr>
       <% end %>
+    <% else %>
+      <tr><td colspan="7" style="text-align: center;">No data present</td></tr>
+    <% end %>
     </tbody>
   </table>
+  <div class="pagination-container">
+    <%= will_paginate @job_applications, renderer: PaginationHelper::DailyReportsRenderer, remote: true %>  
+  </div>
 </div>
 
 

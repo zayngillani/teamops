@@ -4,7 +4,7 @@ class Admin::JobPostsController < ApplicationController
   before_action :set_job_post, only: [:show, :edit, :update, :destroy]
 
   def index
-    @job_posts = JobPost.all
+    @job_posts = JobPost.all.paginate(page: params[:page], per_page: 10)
   end
 
   def new
