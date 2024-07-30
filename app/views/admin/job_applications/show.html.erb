@@ -17,9 +17,9 @@
         <div class="shedule-interview-btn-text">Schedule Interview</div>
       <% end %>
      <% else %>
-      <div class="download-resume-btn shedule-interview-btn">
-        <%= link_to "Get Shareable Link", generate_public_link_admin_interview_path(@job_application.interviews.first) ,class: "shedule-interview-btn-text" %>
-      </div>
+     <%= link_to generate_public_link_admin_interview_path(@job_application.interviews.first), class: "download-resume-btn shedule-interview-btn", id: "shedule-interview-btn" do %>
+        <div class="shedule-interview-btn-text">Get Shareable Link</div>
+      <% end %>
      <% end %>
     </div>
 
