@@ -19,6 +19,7 @@
       </tr>
     </thead>
     <tbody id="job-posts-table-body">
+    <% if @job_posts.present? %>
       <% @job_posts.each do |job_post| %>
         <tr class="dashboard-table-lines" data-job-post-id="<%= job_post.id %>">
           <td class="table-title-column"><%= truncate_with_ellipsis(job_post.title, 50) %></td>
@@ -41,8 +42,14 @@
           </td>
         </tr>
       <% end %>
+    <% else %>
+      <tr><td colspan="4" style="text-align: center;">No data present</td></tr>
+    <% end %>
     </tbody>
   </table>
+  <div class="pagination-container">
+    <%= will_paginate @job_posts, renderer: PaginationHelper::DailyReportsRenderer, remote: true %>  
+  </div>
 </div>
 
 <% @job_posts.each do |job_post| %>
