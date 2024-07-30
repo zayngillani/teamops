@@ -8,12 +8,18 @@ class Admin::InterviewsController < ApplicationController
 
   def create
     @job_application = JobApplication.find(params[:interview][:job_application_id])
+    interview_scheduled = parse_datetime(params[:interview][:interview_date], params[:interview][:interview_time])
     if @job_application.interviews.count >= 1
       flash[:alert] = "Interview has been already sheduled for this candidate"
       redirect_to admin_job_application_path(@job_application)
+    elsif public_holiday_on_date?(interview_scheduled.to_date)
+      flash[:alert] = "Interviews cannot be scheduled on public holidays."
+      redirect_to admin_job_application_path(@job_application)
+    elsif interview_in_past?(interview_scheduled)
+      flash[:alert] = "Cannot schedule interviews in the past. Please choose a future time."
+      redirect_to admin_job_application_path(@job_application)
     else
       @interview = Interview.new(interview_params)
-      
       if @interview.save
         flash[:success] = "Interview scheduled successfully."
         redirect_to admin_job_application_path(@interview.job_application)
@@ -39,6 +45,19 @@ class Admin::InterviewsController < ApplicationController
   
 
   private
+
+  def parse_datetime(date_str, time_str)
+    time_zone = ActiveSupport::TimeZone['Asia/Karachi']
+    time_zone.parse("#{date_str} #{time_str}")
+  end
+
+  def public_holiday_on_date?(date)
+    PublicHoliday.on_date(date).present?
+  end
+
+  def interview_in_past?(interview_datetime)
+    interview_datetime < Time.now.in_time_zone('Asia/Karachi')
+  end
 
   def interview_params
     params.require(:interview).permit(:interview_date, :interview_time, :job_application_id)
