@@ -107,12 +107,10 @@
    }
 
    .report-close-modal{
-      font-size: 30px;
-      font-weight: bold;
-      color: #aaa;
-      float: right;
-      margin-top: -11px;
-    }
+    float: right;
+    margin-top: -10px;
+    cursor: pointer;
+   }
 
    .request-button {
     background-color: #F89320;
