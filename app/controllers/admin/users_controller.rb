@@ -1,4 +1,5 @@
 class Admin::UsersController < ApplicationController
+  before_action :validate_email_format, only: [:create, :update]
 
      def index
       session = User.where(role: "user", deleted: false).order(created_at: :desc)
@@ -15,9 +16,9 @@ class Admin::UsersController < ApplicationController
         redirect_to new_admin_user_path and return
       end
       if validate_join_date(params[:user][:join_date])
+        redirect_to new_admin_user_path, flash: { error: "Joining date must be a weekday and not a holiday. Please choose another date." }
         return
       end
-      if params[:user][:email] =~ /\A[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]+\z/
         @existing_user = User.find_by(email: params[:user][:email])
         if @existing_user.present?
           flash[:error] = "Email Already Exists"
@@ -35,10 +36,6 @@ class Admin::UsersController < ApplicationController
             render 'new'
           end
         end
-      else
-        flash[:error] = "Invalid Email Format"
-        redirect_to root_path
-      end
     end
 
     def edit
@@ -49,6 +46,7 @@ class Admin::UsersController < ApplicationController
       @user = User.find_by(id: params[:id])
       if @user.present?
         if validate_join_date(params[:user][:join_date])
+          redirect_to edit_admin_user_path, flash: { error: "Joining date must be a weekday and not a holiday. Please choose another date." }
           return
         end
         @user.update(user_params)
@@ -528,6 +526,13 @@ class Admin::UsersController < ApplicationController
       "#{hours} hours #{minutes} minutes"
     end
 
+    def validate_email_format
+      unless params[:user][:email] =~ /\A[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]+\z/
+        flash[:error] = "Invalid Email Format"
+        redirect_to root_path
+      end
+    end
+
     def validate_join_date(join_date_str)
       join_date = join_date_str.to_date
       current_month = join_date.month
@@ -540,7 +545,6 @@ class Admin::UsersController < ApplicationController
       )
       holiday_present = holidays.any? { |holiday| (holiday.start_date..holiday.end_date).cover?(join_date) }
       if holiday_present || joining_date.saturday? || joining_date.sunday?
-        redirect_to new_admin_user_path, flash: { error: "Joining date must be a weekday and not a holiday. Please choose another date." }
         return true
       end
       false
