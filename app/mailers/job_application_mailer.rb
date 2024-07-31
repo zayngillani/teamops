@@ -5,6 +5,12 @@ class JobApplicationMailer < ApplicationMailer
   def confirmation_email(job_application, job_title)
     @job_application = job_application
     @job_title = job_title
+    attachments.inline['email_logo.svg'] = File.read(Rails.root.join('app/assets/images/email_logo.svg'))
+    attachments.inline['thank_you.svg'] = File.read(Rails.root.join('app/assets/images/thank_you.svg'))
+    attachments.inline['linkedin.svg'] = File.read(Rails.root.join('app/assets/images/linkedin.svg'))
+    attachments.inline['twitter.svg'] = File.read(Rails.root.join('app/assets/images/twitter.svg'))
+    attachments.inline['facebook.svg'] = File.read(Rails.root.join('app/assets/images/facebook.svg'))
+    attachments.inline['instagram.svg'] = File.read(Rails.root.join('app/assets/images/instagram.svg'))
     mail(
       to: @job_application.email,
       subject: 'Confirmation of Job Application'
