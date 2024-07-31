@@ -406,6 +406,7 @@ class Admin::UsersController < ApplicationController
       @leaves = {}
       current_month_start = @start_date.beginning_of_month
       current_month_end = @end_date.end_of_month
+      @selected_columns = params[:selected_columns].split(',') || []
       @public_holidays = PublicHoliday.where("start_date <= ? AND end_date >= ?", current_month_end, current_month_start)
       @users.each do |user|
         @user_sessions = user.attendances.where(check_in_time: @start_date.beginning_of_day..@end_date.end_of_day).order(created_at: :asc)

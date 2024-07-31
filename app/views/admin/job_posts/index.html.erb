@@ -27,7 +27,7 @@
             <span><%= job_post&.job_status.capitalize %></span>
           </td>
           <td class="table-status-column">
-            <%= link_to admin_job_applications_path(job_post_id: job_post.id), style: "text-decoration: none;" do %>
+            <%= link_to admin_job_applications_path(job_post_id: job_post.id), style: "text-decoration: none; color: #F89320" do %>
               <%= job_post.job_applications.available.count %>
             <% end %>
           </td>
