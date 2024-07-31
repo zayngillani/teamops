@@ -1,8 +1,90 @@
-<p>Dear HR,</p>
-<p>
-  This email is to notify you that we've received a job application from <%= @job_application.name %> for the <%= @job_title %> position. Please inform me if there are any additional requirements or actions needed from my side regarding this application.
-</p>
-<p>
-  Best regards,<br>
-  Techcreatix
-</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Template</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        .email-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            border: 1px solid #e0e0e0;
+            background-color: #ffffff;
+        }
+        .header {
+            text-align: center;
+            padding: 20px;
+        }
+        .header img {
+            max-width: 150px;
+        }
+        .banner {
+            width: 100%;
+            display: block;
+        }
+        .content {
+            padding: 20px;
+        }
+        .content h1 {
+            color: #ff6600;
+        }
+        .content p {
+            color: #333333;
+        }
+        .footer {
+            text-align: center;
+            padding: 20px;
+            background-color: #f7f7f7;
+            color: #888888;
+        }
+        .footer a {
+            color: #ff6600;
+            text-decoration: none;
+        }
+        .footer .social-icons img {
+            width: 24px;
+            margin: 0 5px;
+        }
+        @media (max-width: 600px) {
+            .content {
+                padding: 10px;
+            }
+            .footer {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+            <%= image_tag 'email_logo.svg', alt: 'TechCreatix' %>
+        </div>
+        <img src="<%= asset_path('thankyou.svg') %>" alt="Thank You" class="banner">
+        <div class="content">
+            <p>Dear Zayn,</p>
+            <p>Thank you for applying for the [Job Title] position with [Company Name]. We really appreciate the time and effort you put into your application. We have received your application and are currently reviewing it. We will be in touch soon to provide you with an update on the status of your application.</p>
+            <p>Best Regards,<br>
+            Mahnoor Masood<br>
+            (HR Manager)<br>
+            Techcreatix<br>
+            mahnoor@techcreatix.com</p>
+        </div>
+        <div class="footer">
+            <div class="social-icons">
+                <a href="#"><img src="<%= image_url('linkedin.svg') %>" alt="LinkedIn"></a>
+                <a href="#"><img src="<%= asset_path('twitter.svg') %>" alt="Twitter"></a>
+                <a href="#"><img src="<%= asset_path('facebook.svg') %>" alt="Facebook"></a>
+                <a href="#"><img src="<%= asset_path('instagram.svg') %>" alt="Instagram"></a>
+            </div>
+            <p>Address: Ali Trade Center, 4th Floor, MM Alam Road, Block B1, Gulberg III, Lahore</p>
+        </div>
+    </div>
+</body>
+</html>

@@ -14,7 +14,7 @@ class JobApplicationMailer < ApplicationMailer
   def notification_email(job_application, job_title)
     @job_application = job_application
     @job_title = job_title
-    @hr_email = 'mahnoor.techcreatix@gmail.com'
+    @hr_email = 'zayngillani017@gmail.com'
     mail(
       to: @hr_email,
       subject: "Job Application Notification - #{@job_application.name}"
