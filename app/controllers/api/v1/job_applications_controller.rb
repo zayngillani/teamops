@@ -13,9 +13,9 @@ module Api
           if @job_application.save
             @job_post = JobPost.find(params[:job_application][:job_post_id])
             # Call the Slack notification service
-            # JobApplicationSlackService.new(@job_application, @job_post.title).notify_submission
+            JobApplicationSlackService.new(@job_application, @job_post.title).notify_submission
             # Upload resume to FTP
-            # upload_to_ftp(params[:resume])
+            upload_to_ftp(params[:resume])
             # Send notification emails
             send_notification_emails(@job_post.title)
 

@@ -36,10 +36,10 @@
         </div>
         <div class="footer">
             <div class="social-icons">
-                <%= image_tag attachments['linkedin.svg'].url, alt: 'LinkedIn' %>
-                <%= image_tag attachments['twitter.svg'].url, alt: 'Twitter' %>
-                <%= image_tag attachments['facebook.svg'].url, alt: 'Facebook' %>
-                <%= image_tag attachments['instagram.svg'].url, alt: 'Instagram' %>
+                <%= link_to image_tag(attachments['linkedin.svg'].url, alt: 'LinkedIn'), 'https://www.linkedin.com' %>
+                <%= link_to image_tag(attachments['twitter.svg'].url, alt: 'Twitter'), 'https://x.com/i/flow/login?redirect_after_login=%2Ftechcreatix' %>
+                <%= link_to image_tag(attachments['facebook.svg'].url, alt: 'Facebook'), 'https://www.facebook.com/techcreatix' %>
+                <%= link_to image_tag(attachments['instagram.svg'].url, alt: 'Instagram'), 'https://www.instagram.com' %>
             </div>
             <p>Address: Ali Trade Center, 4th Floor, MM Alam Road, Block B1, Gulberg III, Lahore</p>
         </div>

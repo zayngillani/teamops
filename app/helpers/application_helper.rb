@@ -15,10 +15,6 @@ module ApplicationHelper
     end
   end
 
-   def image_url(source)
-    "#{root_url[0..-2]}#{ActionController::Base.helpers.asset_path(source)}"
-  end
-
   def truncate_with_ellipsis(text, length = 50)
     if text.length > length
       "#{text[0...length]}..."
