@@ -22,9 +22,9 @@
 <body>
     <div class="email-container">
         <div class="header">
-          <%= image_tag attachments['email_logo.svg'].url, alt: 'TechCreatix' %>
+          <%= image_tag attachments['email_logo.png'].url, alt: 'TechCreatix' %>
         </div>
-        <%= image_tag attachments['thank_you.svg'].url, alt: 'Thank You', class: 'banner' %>
+        <%= image_tag attachments['thank_you.png'].url, alt: 'Thank You', class: 'banner' %>
         <div class="content">
             <p><strong>Dear <%= @job_application.name %>,</strong></p>
             <p>Thank you for applying for the <strong><%= @job_title %></strong> position with <strong>Techcreatix</strong>. We really appreciate the time and effort you put into your application. We have received your application and are currently reviewing it. We will be in touch soon to provide you with an update on the status of your application.</p>
@@ -36,10 +36,10 @@
         </div>
         <div class="footer">
             <div class="social-icons">
-                <%= link_to image_tag(attachments['linkedin.svg'].url, alt: 'LinkedIn'), 'https://www.linkedin.com' %>
-                <%= link_to image_tag(attachments['twitter.svg'].url, alt: 'Twitter'), 'https://x.com/i/flow/login?redirect_after_login=%2Ftechcreatix' %>
-                <%= link_to image_tag(attachments['facebook.svg'].url, alt: 'Facebook'), 'https://www.facebook.com/techcreatix' %>
-                <%= link_to image_tag(attachments['instagram.svg'].url, alt: 'Instagram'), 'https://www.instagram.com' %>
+                <%= link_to image_tag(attachments['linkedin.png'].url, alt: 'LinkedIn'), 'https://www.linkedin.com' %>
+                <%= link_to image_tag(attachments['twitter.png'].url, alt: 'Twitter'), 'https://x.com/i/flow/login?redirect_after_login=%2Ftechcreatix' %>
+                <%= link_to image_tag(attachments['facebook.png'].url, alt: 'Facebook'), 'https://www.facebook.com/techcreatix' %>
+                <%= link_to image_tag(attachments['instagram.png'].url, alt: 'Instagram'), 'https://www.instagram.com' %>
             </div>
             <p>Address: Ali Trade Center, 4th Floor, MM Alam Road, Block B1, Gulberg III, Lahore</p>
         </div>
