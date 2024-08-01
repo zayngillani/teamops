@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Template</title>
+    <style>
+        body { margin: 0; padding: 0; font-family: Arial, sans-serif; }
+        .email-container { width: 100%; max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; background-color: #ffffff; }
+        .header { text-align: center; padding: 20px; }
+        .header img { max-width: 150px; float: left; margin-left: 27px; margin-bottom: 27px;}
+        .banner { width: 85%; display: block; margin-left: 46px;}
+        .content { padding: 47px; margin-top: -21px; }
+        .content h1 { color: #ff6600; }
+        .content p { color: #333333; }
+        .footer { text-align: center; padding: 20px; background-color: #f7f7f7; color: #888888; }
+        .footer a { color: #ff6600; text-decoration: none; }
+        .footer .social-icons img { width: 24px; margin: 0 5px; }
+        @media (max-width: 600px) { .content { padding: 10px; } .footer { padding: 10px; } }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+          <%= image_tag attachments['email_logo.png'].url, alt: 'TechCreatix' %>
+        </div>
+        <%= image_tag attachments['rejection.png'].url, alt: 'Reject', class: 'banner' %>
+        <div class="content">
+            <p><strong>Dear <%= @job_application.name %>,</strong></p>
+            <p>Thank you for applying for the <strong><%= @job_post.title %></strong> position at <strong>Techcreatix</strong>.We appreciate the time and effort you invested in your application.</p>
+            <p>After careful consideration, we have determined that your qualifications and 
+               experience do not fully align with our current needs for this role. Unfortunately, 
+               we will not be moving forward with your application at this time. We encourage 
+               you to apply for future openings that match your skills and interests. We 
+               appreciate your interest in [Company Name] and wish you the best of luck in 
+               your job search.</p>
+            <p>Thank you again for considering a career with us.</p>
+            <p><strong>Best Regards,</strong><br><br>
+            Mahnoor Masood<br>
+            (HR Manager)<br>
+            Techcreatix<br>
+            mahnoor@techcreatix.com</p>
+        </div>
+        <div class="footer">
+            <div class="social-icons">
+                <%= link_to image_tag(attachments['linkedin.png'].url, alt: 'LinkedIn'), 'https://www.linkedin.com' %>
+                <%= link_to image_tag(attachments['twitter.png'].url, alt: 'Twitter'), 'https://x.com/i/flow/login?redirect_after_login=%2Ftechcreatix' %>
+                <%= link_to image_tag(attachments['facebook.png'].url, alt: 'Facebook'), 'https://www.facebook.com/techcreatix' %>
+                <%= link_to image_tag(attachments['instagram.png'].url, alt: 'Instagram'), 'https://www.instagram.com' %>
+            </div>
+            <p>Address: Ali Trade Center, 4th Floor, MM Alam Road, Block B1, Gulberg III, Lahore</p>
+        </div>
+    </div>
+</body>
+</html>

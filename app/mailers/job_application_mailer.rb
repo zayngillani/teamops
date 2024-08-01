@@ -42,4 +42,19 @@ class JobApplicationMailer < ApplicationMailer
     attachments.inline['instagram.png'] = File.read(Rails.root.join('app/assets/images/instagram.png'))
     mail to: @job_application.email, subject: 'Interview Scheduled'
   end
+
+  def rejection_email(job_application, job_post)
+      @job_application = job_application
+      @job_post = job_post
+      attachments.inline['email_logo.png'] = File.read(Rails.root.join('app/assets/images/email_logo.png'))
+      attachments.inline['rejection.png'] = File.read(Rails.root.join('app/assets/images/rejection.png'))
+      attachments.inline['linkedin.png'] = File.read(Rails.root.join('app/assets/images/linkedin.png'))
+      attachments.inline['twitter.png'] = File.read(Rails.root.join('app/assets/images/twitter.png'))
+      attachments.inline['facebook.png'] = File.read(Rails.root.join('app/assets/images/facebook.png'))
+      attachments.inline['instagram.png'] = File.read(Rails.root.join('app/assets/images/instagram.png'))
+      mail(
+        to: @job_application.email,
+        subject: "Update on Your #{@job_post.title} Application"
+      )
+  end
 end
