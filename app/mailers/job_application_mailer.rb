@@ -34,7 +34,12 @@ class JobApplicationMailer < ApplicationMailer
     @company_name = 'Techcreatix'
     @interview_date = @interview.interview_date.strftime("%A %B %d, %Y")
     @interview_time = @interview.interview_time.strftime("%I:%M %p")
-
+    attachments.inline['email_logo.png'] = File.read(Rails.root.join('app/assets/images/email_logo.png'))
+    attachments.inline['schedule_email.svg'] = File.read(Rails.root.join('app/assets/images/schedule_email.svg'))
+    attachments.inline['linkedin.svg'] = File.read(Rails.root.join('app/assets/images/linkedin.svg'))
+    attachments.inline['twitter.svg'] = File.read(Rails.root.join('app/assets/images/twitter.svg'))
+    attachments.inline['facebook.svg'] = File.read(Rails.root.join('app/assets/images/facebook.svg'))
+    attachments.inline['instagram.svg'] = File.read(Rails.root.join('app/assets/images/instagram.svg'))
     mail to: @job_application.email, subject: 'Interview Scheduled'
   end
 end
