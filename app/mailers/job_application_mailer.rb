@@ -5,12 +5,12 @@ class JobApplicationMailer < ApplicationMailer
   def confirmation_email(job_application, job_title)
     @job_application = job_application
     @job_title = job_title
-    attachments.inline['email_logo.svg'] = File.read(Rails.root.join('app/assets/images/email_logo.svg'))
-    attachments.inline['thank_you.svg'] = File.read(Rails.root.join('app/assets/images/thank_you.svg'))
-    attachments.inline['linkedin.svg'] = File.read(Rails.root.join('app/assets/images/linkedin.svg'))
-    attachments.inline['twitter.svg'] = File.read(Rails.root.join('app/assets/images/twitter.svg'))
-    attachments.inline['facebook.svg'] = File.read(Rails.root.join('app/assets/images/facebook.svg'))
-    attachments.inline['instagram.svg'] = File.read(Rails.root.join('app/assets/images/instagram.svg'))
+    attachments.inline['email_logo.png'] = File.read(Rails.root.join('app/assets/images/email_logo.png'))
+    attachments.inline['thank_you.png'] = File.read(Rails.root.join('app/assets/images/thank_you.png'))
+    attachments.inline['linkedin.png'] = File.read(Rails.root.join('app/assets/images/linkedin.png'))
+    attachments.inline['twitter.png'] = File.read(Rails.root.join('app/assets/images/twitter.png'))
+    attachments.inline['facebook.png'] = File.read(Rails.root.join('app/assets/images/facebook.png'))
+    attachments.inline['instagram.png'] = File.read(Rails.root.join('app/assets/images/instagram.png'))
     mail(
       to: @job_application.email,
       subject: 'Confirmation of Job Application'
@@ -35,11 +35,11 @@ class JobApplicationMailer < ApplicationMailer
     @interview_date = @interview.interview_date.strftime("%A %B %d, %Y")
     @interview_time = @interview.interview_time.strftime("%I:%M %p")
     attachments.inline['email_logo.png'] = File.read(Rails.root.join('app/assets/images/email_logo.png'))
-    attachments.inline['schedule_email.svg'] = File.read(Rails.root.join('app/assets/images/schedule_email.svg'))
-    attachments.inline['linkedin.svg'] = File.read(Rails.root.join('app/assets/images/linkedin.svg'))
-    attachments.inline['twitter.svg'] = File.read(Rails.root.join('app/assets/images/twitter.svg'))
-    attachments.inline['facebook.svg'] = File.read(Rails.root.join('app/assets/images/facebook.svg'))
-    attachments.inline['instagram.svg'] = File.read(Rails.root.join('app/assets/images/instagram.svg'))
+    attachments.inline['schedule_email.png'] = File.read(Rails.root.join('app/assets/images/schedule_email.png'))
+    attachments.inline['linkedin.png'] = File.read(Rails.root.join('app/assets/images/linkedin.png'))
+    attachments.inline['twitter.png'] = File.read(Rails.root.join('app/assets/images/twitter.png'))
+    attachments.inline['facebook.png'] = File.read(Rails.root.join('app/assets/images/facebook.png'))
+    attachments.inline['instagram.png'] = File.read(Rails.root.join('app/assets/images/instagram.png'))
     mail to: @job_application.email, subject: 'Interview Scheduled'
   end
 end
