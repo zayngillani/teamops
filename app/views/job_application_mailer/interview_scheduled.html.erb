@@ -1,19 +1,51 @@
-<!-- app/views/job_application_mailer/interview_scheduled.html.erb -->
-
-<p>Dear <%= @job_application.name %>,</p>
-
-<p>Thank you for applying for the <%= @job_post.title %> position at <%= @company_name %>. We have reviewed your application and are impressed with your qualifications and experience. We would like to invite you for an interview at Techcreatix.</p>
-
-<p>Your interview has been scheduled on <%= @interview_date %> at <%= @interview_time %> as discussed over the phone call.</p>
-
-<p>We look forward to speaking with you soon.</p>
-
-<p>Location:<br>
-<p> Address: 4th Floor, Office#104, Ali Trade centre, MM Alam Rd, Block B1 Block B 1 Gulberg, Lahore, Punjab 54810 </p>
-<a href="https://g.co/kgs/VUUXmKQ">https://g.co/kgs/VUUXmKQ</a></p>
-
-<p>Best Regards,<br>
-Mahnoor Masood<br>
-(HR Manager)<br>
-Techcreatix<br>
-mahnoor@techcreatix.com</p>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Email Template</title>
+    <style>
+        body { margin: 0; padding: 0; font-family: Arial, sans-serif; }
+        .email-container { width: 100%; max-width: 600px; margin: 0 auto; border: 1px solid #e0e0e0; background-color: #ffffff; }
+        .header { text-align: center; padding: 20px; }
+        .header img { max-width: 150px; float: left; margin-left: 27px; margin-bottom: 27px;}
+        .banner { width: 85%; display: block; margin-left: 46px;}
+        .content { padding: 47px; margin-top: -21px; }
+        .content h1 { color: #ff6600; }
+        .content p { color: #333333; }
+        .footer { text-align: center; padding: 20px; background-color: #f7f7f7; color: #888888; }
+        .footer a { color: #ff6600; text-decoration: none; }
+        .footer .social-icons img { width: 24px; margin: 0 5px; }
+        @media (max-width: 600px) { .content { padding: 10px; } .footer { padding: 10px; } }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <div class="header">
+          <%= image_tag attachments['email_logo.png'].url, alt: 'TechCreatix' %>
+        </div>
+        <%= image_tag attachments['schedule_email.svg'].url, alt: 'Thank You', class: 'banner' %>
+        <div class="content">
+            <p><strong>Dear <%= @job_application.name %>,</strong></p>
+            <p>Thank you for applying for the <strong><%= @job_post.title %></strong> position at <strong>Techcreatix</strong>. We have reviewed your application and are impressed with your qualifications and experience. We would like to invite you for an interview at Techcreatix.</p>
+            <p>Your interview has been scheduled on <strong><%= @interview_date %> at <%= @interview_time %></strong> as discussed over the phone call.</p>
+            <p>We look forward to speaking with you soon.</p>
+               <p><strong>Location:</strong><a href="https://g.page/techcreatix?share">https://g.page/techcreatix?share</a></p>
+            <p><strong>Best Regards,</strong><br><br>
+            Mahnoor Masood<br>
+            (HR Manager)<br>
+            Techcreatix<br>
+            mahnoor@techcreatix.com</p>
+        </div>
+        <div class="footer">
+            <div class="social-icons">
+                <%= link_to image_tag(attachments['linkedin.svg'].url, alt: 'LinkedIn'), 'https://www.linkedin.com' %>
+                <%= link_to image_tag(attachments['twitter.svg'].url, alt: 'Twitter'), 'https://x.com/i/flow/login?redirect_after_login=%2Ftechcreatix' %>
+                <%= link_to image_tag(attachments['facebook.svg'].url, alt: 'Facebook'), 'https://www.facebook.com/techcreatix' %>
+                <%= link_to image_tag(attachments['instagram.svg'].url, alt: 'Instagram'), 'https://www.instagram.com' %>
+            </div>
+            <p>Address: Ali Trade Center, 4th Floor, MM Alam Road, Block B1, Gulberg III, Lahore</p>
+        </div>
+    </div>
+</body>
+</html>
