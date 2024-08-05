@@ -29,36 +29,46 @@ module Api
       end
 
       def get_job_post_list
-        job_posts = JobPost.active.all
-      
-        if job_posts.present?
-          # Transform the requirements_and_qualification field for each job post
-          formatted_job_posts = job_posts.map do |job_post|
-            if job_post.requirements_and_qualification.present?
-              formatted_requirements = job_post.requirements_and_qualification.split("\n")
-              job_post.as_json.merge(requirements_and_qualification: formatted_requirements)
-            else
-              job_post.as_json
+        cache_key = 'job_post_list'
+        
+        formatted_job_posts = Rails.cache.fetch(cache_key) do
+          job_posts = JobPost.active.all
+        
+          if job_posts.present?
+            # Transform the requirements_and_qualification field for each job post
+            job_posts.map do |job_post|
+              if job_post.requirements_and_qualification.present?
+                formatted_requirements = job_post.requirements_and_qualification.split("\n")
+                job_post.as_json.merge(requirements_and_qualification: formatted_requirements)
+              else
+                job_post.as_json
+              end
             end
+          else
+            []
           end
-          render json: formatted_job_posts
-        else
-          render json: [], status: :ok
         end
-      end
       
+        render json: formatted_job_posts, status: :ok
+      end      
 
       def show_job_post
-        job_post = JobPost.find(params[:id])
+        cache_key = "job_post_#{params[:id]}"
       
-        # Transform the requirements_and_qualification field
-        formatted_requirements = job_post.requirements_and_qualification.split("\n")
-      
-        render json: job_post.as_json.merge(requirements_and_qualification: formatted_requirements)
+        job_post = Rails.cache.fetch(cache_key) do
+          JobPost.find(params[:id])
+        end
+        
+        if job_post.present?
+          # Transform the requirements_and_qualification field
+          formatted_requirements = job_post.requirements_and_qualification.split("\n")
+          render json: job_post.as_json.merge(requirements_and_qualification: formatted_requirements)
+        else
+          render json: { error: 'Job post not found' }, status: :not_found
+        end
       rescue ActiveRecord::RecordNotFound
         render json: { error: 'Job post not found' }, status: :not_found
-      end
-      
+      end      
 
       private
 
