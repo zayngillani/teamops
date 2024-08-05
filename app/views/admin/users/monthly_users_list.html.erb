@@ -165,45 +165,41 @@ function downloadExcel() {
 
   const excelDownloadUrl = `/admin/monthly_excel/${selectedMonth}/${selectedYear}.xlsx?selected_columns=${selectedColumns.join(',')}&selected_users=${selectedUsers.join(',')}`;
 
-  // Create a hidden iframe to handle the download
-  const iframe = document.createElement('iframe');
-  iframe.style.display = 'none';
-  iframe.src = excelDownloadUrl;
+  const link = document.createElement('a');
+  link.setAttribute('href', excelDownloadUrl);
+  link.setAttribute('target', '_blank');
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
 
-  // Append the iframe to the body to initiate the download
-  document.body.appendChild(iframe);
-
-  // Listen for the load event to reload the page after the download
-  iframe.onload = function() {
-    // Remove the iframe after the download
-    document.body.removeChild(iframe);
-
-    // Reload the page
+  setTimeout(() => {
     location.reload();
-  };
+  }, 2000);
 }
 
-document.getElementById('modal-btn-pdf').onclick = function() {
-  document.getElementById('myModalPdf').style.display = 'block';
-};
+document.addEventListener('DOMContentLoaded', function() {
+  var modalPdf = document.getElementById("myModalPdf");
+  var btnPdf = document.getElementById("modal-btn-pdf");
 
-document.getElementById('modal-btn').onclick = function() {
-  document.getElementById('myModal').style.display = 'block';
-};
+  btnPdf.onclick = function() {
+    modalPdf.style.display = "block";
+  }
 
-document.querySelectorAll('.report-close-modal').forEach(function(closeButton) {
-  closeButton.onclick = function() {
-    document.getElementById('myModal').style.display = 'none';
-    document.getElementById('myModalPdf').style.display = 'none';
-  };
+  var modal = document.getElementById("myModal");
+  var btn = document.getElementById("modal-btn");
+
+  btn.onclick = function() {
+    modal.style.display = "block";
+  }
+
+  window.onclick = function(event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+    if (event.target == modalPdf) {
+      modalPdf.style.display = "none";
+    }
+  }
 });
-
-window.onclick = function(event) {
-  if (event.target == document.getElementById('myModal')) {
-    document.getElementById('myModal').style.display = 'none';
-  }
-  if (event.target == document.getElementById('myModalPdf')) {
-    document.getElementById('myModalPdf').style.display = 'none';
-  }
-};
 </script>
+
