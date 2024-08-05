@@ -15,6 +15,7 @@ class Admin::JobPostsController < ApplicationController
     @job_post = JobPost.new(job_post_params)
 
     if @job_post.save
+      Rails.cache.delete("job_post_list")
       flash[:success] = 'Job has been Published'
       redirect_to admin_job_posts_path
     else
@@ -32,6 +33,7 @@ class Admin::JobPostsController < ApplicationController
 
   def update
     if @job_post.update(job_post_params)
+      Rails.cache.delete("job_post_list")
       Rails.cache.delete("job_post_#{@job_post.id}")
       flash[:success] = 'Job has been updated'
       redirect_to admin_job_posts_path
@@ -44,6 +46,7 @@ class Admin::JobPostsController < ApplicationController
 
   def destroy
     if @job_post.soft_delete
+      Rails.cache.delete("job_post_list")
       Rails.cache.delete("job_post_#{@job_post.id}")
       flash[:error] = 'Job has been deleted'
       redirect_to admin_job_posts_path
