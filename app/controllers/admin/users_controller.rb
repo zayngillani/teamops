@@ -391,21 +391,25 @@ class Admin::UsersController < ApplicationController
 
     def monthly_report
       if params[:selected_users].present?
-        user_ids = params[:selected_users].map(&:to_i)
+        user_ids = params[:selected_users].split(',').map(&:to_i)
         @users = User.where(id: user_ids)
       else
         @users = User.active.where(role: "user", deleted: false).order(created_at: :desc)
       end
+
       @month = params[:month].to_i
       @year = params[:year].to_i
       @start_date = Date.new(@year, @month, 1)
       @end_date = @start_date.end_of_month
+
       @total_hours = {}
       @leaves = {}
       current_month_start = @start_date.beginning_of_month
       current_month_end = @end_date.end_of_month
       @selected_columns = params[:selected_columns].split(',') || []
+
       @public_holidays = PublicHoliday.where("start_date <= ? AND end_date >= ?", current_month_end, current_month_start)
+
       @users.each do |user|
         @user_sessions = user.attendances.where(check_in_time: @start_date.beginning_of_day..@end_date.end_of_day).order(created_at: :asc)
         total_hrs = 0
@@ -413,28 +417,36 @@ class Admin::UsersController < ApplicationController
           total_hrs += attendance.total_hours.to_i unless attendance.total_hours.nil?
         end
         @total_hours[user.id] = total_hrs
+
         regular_hours_per_day = 8
         date_range = (@start_date..@end_date).to_a
         working_days = calculate_working_days(@start_date, @end_date)
         @total_days = working_days
+
         @public_holidays.each do |holiday|
           working_days -= (holiday.start_date..holiday.end_date).count
         end
+
         @current_leaves = Leave.where("start_date <= ? AND end_date >= ? AND status = ? AND user_id = ?", @end_date, @start_date, 1, user.id).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }
         @total_working_hours = working_days * regular_hours_per_day
+
         present_dates = @user_sessions.pluck(:check_in_time).map(&:to_date)
         created_date = user.created_at.to_date
+
         d_leaves = user.leaves.pluck(:start_date, :end_date)
         total_leave_days = d_leaves.sum { |start_date, end_date| (end_date.to_date - start_date.to_date).to_i + 1 }
         work_days = date_range.reject { |date| date.saturday? || date.sunday? }
         @leave_dates = d_leaves.flat_map { |start_date, end_date| (start_date.to_date..end_date.to_date).to_a }.uniq
         work_days -= @leave_dates
         working_days -= @leave_dates.count
+
         leaves_count = work_days.count do |date|
           !present_dates.include?(date) && date >= created_date && date <= Date.today
         end
+
         absences_count = work_days.count { |date| !present_dates.include?(date) && date >= created_date && date <= Date.today }
         holidays = work_days.count - working_days
+
         if absences_count == 0
           @leaves[user.id] = 0
         elsif leaves_count < holidays
@@ -443,10 +455,15 @@ class Admin::UsersController < ApplicationController
           @leaves[user.id] = absences_count - @public_holidays.count
         end
       end
+
       if @user_sessions.present?
         respond_to do |format|
           format.html
-          format.pdf { render pdf: "MonthlyReport_#{Date::MONTHNAMES[@month]}#{@year}", layout: false } # Specify view and disable layout
+          format.pdf do
+            render pdf: "MonthlyReport_#{Date::MONTHNAMES[@month]}#{@year}",
+                   layout: false, # Specify view and disable layout
+                   locals: { selected_columns: @selected_columns }
+          end
         end
       else
         flash[:error] = "Attendance Not Present"

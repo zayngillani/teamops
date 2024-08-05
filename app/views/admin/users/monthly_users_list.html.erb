@@ -6,25 +6,25 @@
     <% end %>
     <p class="form-control select-hours">Expected Hours:<strong> <%= @total_working_hours %></strong></p>
     <button type="button" id="modal-btn-pdf" class="modal-btn btn-style float-right">Download PDF</button>
-      <div id="myModalPdf" class="modal">
-        <div class="modal-export">
-          <div class="modal-header">
-            <span class="report-close-modal" onclick="document.getElementById('myModalPdf').style.display='none'">&times;</span>
-          </div>
-          <h4>Select Columns to Export to PDF</h4><br>
-          <%= form_tag admin_monthly_report_path(params[:month], params[:year]), method: :get do %>
-            <label><%= check_box_tag 'regular_hours[]', 'regular_hours', true, class: 'PdfCheckbox' %> Regular Hours</label><br>
-            <label><%= check_box_tag 'worked_hours[]', 'worked_hours', true, class: 'PdfCheckbox' %> Worked Hours</label><br>
-            <label><%= check_box_tag 'over_time[]', 'over_time', true, class: 'PdfCheckbox' %> Over Time</label><br>
-            <label><%= check_box_tag 'under_time[]', 'under_time', true, class: 'PdfCheckbox' %> Under Time</label><br>
-            <label><%= check_box_tag 'leaves[]', 'leaves', true, class: 'PdfCheckbox' %> Leaves</label><br>
-            <label><%= check_box_tag 'absentees[]', 'absentees', true, class: 'PdfCheckbox' %> Absentees</label>
-            <%= submit_tag 'Download PDF', class: "excel-btn", onclick: "generatePDF(event)" %>
-          <% end %>
-          <p style="text-align: center; margin-top: 10px;"></p>
-          <div class="modal-footer"></div>
+    <div id="myModalPdf" class="modal">
+      <div class="modal-export">
+        <div class="modal-header">
+          <span class="report-close-modal" onclick="document.getElementById('myModalPdf').style.display='none'">&times;</span>
         </div>
+        <h4>Select Columns to Export to PDF</h4><br>
+        <%= form_tag admin_monthly_report_path(params[:month], params[:year]), method: :get do %>
+          <label><%= check_box_tag 'regular_hours[]', 'regular_hours', true, class: 'PdfCheckbox' %> Regular Hours</label><br>
+          <label><%= check_box_tag 'worked_hours[]', 'worked_hours', true, class: 'PdfCheckbox' %> Worked Hours</label><br>
+          <label><%= check_box_tag 'over_time[]', 'over_time', true, class: 'PdfCheckbox' %> Over Time</label><br>
+          <label><%= check_box_tag 'under_time[]', 'under_time', true, class: 'PdfCheckbox' %> Under Time</label><br>
+          <label><%= check_box_tag 'leaves[]', 'leaves', true, class: 'PdfCheckbox' %> Leaves</label><br>
+          <label><%= check_box_tag 'absentees[]', 'absentees', true, class: 'PdfCheckbox' %> Absentees</label>
+          <%= submit_tag 'Download PDF', class: "excel-btn", onclick: "generatePDF(event)" %>
+        <% end %>
+        <p style="text-align: center; margin-top: 10px;"></p>
+        <div class="modal-footer"></div>
       </div>
+    </div>
     <button type="button" id="modal-btn" class="modal-btn btn-style">Download Excel</button>
     <div id="myModal" class="modal">
       <div class="modal-export">
@@ -32,15 +32,15 @@
           <span class="report-close-modal" onclick="document.getElementById('myModal').style.display='none'">&times;</span>
         </div>
         <h4>Select Columns to Export</h4><br>
-          <%= form_tag admin_users_monthly_excel_path(params[:month], params[:year]), method: :get, id: "exportForm" do %>
-            <label><%= check_box_tag 'regular_hours[]', 'regular_hours', true, class: 'columnCheckbox' %>  Regular Hours</label><br>
-            <label><%= check_box_tag 'worked_hours[]', 'worked_hours', true, class: 'columnCheckbox' %>  Worked Hours</label><br>
-            <label><%= check_box_tag 'over_time[]', 'over_time', true, class: 'columnCheckbox' %>  Over Time</label><br>
-            <label><%= check_box_tag 'under_time[]', 'under_time', true, class: 'columnCheckbox' %>  Under Time</label><br>
-            <label><%= check_box_tag 'leaves[]', 'leaves', true, class: 'columnCheckbox' %>  Leaves</label><br>
-            <label><%= check_box_tag 'absentees[]', 'absentees', true, class: 'columnCheckbox' %>  Absentees</label>
-            <%= submit_tag 'Download Excel', class: "excel-btn", onclick: "downloadExcel()" %>
-          <% end %>
+        <%= form_tag admin_users_monthly_excel_path(params[:month], params[:year]), method: :get, id: "exportForm" do %>
+          <label><%= check_box_tag 'regular_hours[]', 'regular_hours', true, class: 'columnCheckbox' %> Regular Hours</label><br>
+          <label><%= check_box_tag 'worked_hours[]', 'worked_hours', true, class: 'columnCheckbox' %> Worked Hours</label><br>
+          <label><%= check_box_tag 'over_time[]', 'over_time', true, class: 'columnCheckbox' %> Over Time</label><br>
+          <label><%= check_box_tag 'under_time[]', 'under_time', true, class: 'columnCheckbox' %> Under Time</label><br>
+          <label><%= check_box_tag 'leaves[]', 'leaves', true, class: 'columnCheckbox' %> Leaves</label><br>
+          <label><%= check_box_tag 'absentees[]', 'absentees', true, class: 'columnCheckbox' %> Absentees</label>
+          <%= submit_tag 'Download Excel', class: "excel-btn", onclick: "downloadExcel()" %>
+        <% end %>
         <p style="text-align: center; margin-top: 10px;"></p>
         <div class="modal-footer"></div>
       </div>
@@ -72,6 +72,7 @@
 document.addEventListener('DOMContentLoaded', function() {
   const monthSelect = document.getElementById('month');
   const yearSelect = document.getElementById('year');
+  
   function updateDownloadLink() {
     const selectedMonth = monthSelect.value;
     const selectedYear = yearSelect.value;
@@ -84,6 +85,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.getElementById('download-excel-link').setAttribute('href', excelDownloadUrl);
   }
+  
   monthSelect.addEventListener('change', updateDownloadLink);
   yearSelect.addEventListener('change', updateDownloadLink);
   updateDownloadLink();
@@ -94,11 +96,17 @@ function generatePDF(event) {
   
   var month = document.getElementById('month').value;
   var year = document.getElementById('year').value;
+  
   const columnCheckboxes = document.querySelectorAll('.PdfCheckbox:checked');
-   if (columnCheckboxes.length === 0) {
+  if (columnCheckboxes.length === 0) {
     alert('Please select at least one column.');
     return; // Exit function if no column checkbox is checked
   }
+  
+  const selectedUsers = [];
+  document.querySelectorAll('.userCheckbox:checked').forEach(function(checkbox) {
+    selectedUsers.push(checkbox.value);
+  });
 
   var form = document.createElement('form');
   form.setAttribute('method', 'get');
@@ -126,6 +134,13 @@ function generatePDF(event) {
   selectedColumnsField.setAttribute('name', 'selected_columns');
   selectedColumnsField.setAttribute('value', selectedColumns.join(','));
   form.appendChild(selectedColumnsField);
+
+  var selectedUsersField = document.createElement('input');
+  selectedUsersField.setAttribute('type', 'hidden');
+  selectedUsersField.setAttribute('name', 'selected_users');
+  selectedUsersField.setAttribute('value', selectedUsers.join(','));
+  form.appendChild(selectedUsersField);
+  
   document.body.appendChild(form);
   form.submit();
 }
@@ -150,42 +165,30 @@ function downloadExcel() {
 
   const excelDownloadUrl = `/admin/monthly_excel/${selectedMonth}/${selectedYear}.xlsx?selected_columns=${selectedColumns.join(',')}&selected_users=${selectedUsers.join(',')}`;
 
-  const link = document.createElement('a');
-  link.setAttribute('href', excelDownloadUrl);
-  link.setAttribute('target', '_blank');
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-
-  setTimeout(() => {
-  location.reload();
-  }, 2000);
+  window.location.href = excelDownloadUrl;
 }
 
-var modalPdf = document.getElementById("myModalPdf");
-var btnPdf = document.getElementById("modal-btn-pdf");
+document.getElementById('modal-btn-pdf').onclick = function() {
+  document.getElementById('myModalPdf').style.display = 'block';
+};
 
-btnPdf.onclick = function() {
-  modalPdf.style.display = "block";
-}
+document.getElementById('modal-btn').onclick = function() {
+  document.getElementById('myModal').style.display = 'block';
+};
+
+document.querySelectorAll('.report-close-modal').forEach(function(closeButton) {
+  closeButton.onclick = function() {
+    document.getElementById('myModal').style.display = 'none';
+    document.getElementById('myModalPdf').style.display = 'none';
+  };
+});
 
 window.onclick = function(event) {
-  if (event.target == modalPdf) {
-    modalPdf.style.display = "none";
+  if (event.target == document.getElementById('myModal')) {
+    document.getElementById('myModal').style.display = 'none';
   }
-}
-
-  var modal = document.getElementById("myModal");
-  var btn = document.getElementById("modal-btn");
-
-  btn.onclick = function() {
-    modal.style.display = "block";
+  if (event.target == document.getElementById('myModalPdf')) {
+    document.getElementById('myModalPdf').style.display = 'none';
   }
-
-  window.onclick = function(event) {
-    if (event.target == modal) {
-      modal.style.display = "none";
-    }
-  }
-
+};
 </script>
