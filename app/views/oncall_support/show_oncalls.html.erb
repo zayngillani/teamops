@@ -1,0 +1,103 @@
+<style>
+.select-status{
+  margin-left: 10px;
+}
+.pos{
+  width: 51%;
+}
+</style>
+<% content_for :link_button do %>
+<%= form_tag show_oncalls_path, method: :get, id: "filterForm", style: "display: flex; margin-left: 20%;" do %>
+  <%= select_tag 'month', options_for_select(Date::MONTHNAMES.compact.each_with_index.map { |month, index| [month, index + 1] }, params[:month].presence || Date.current.month), id: 'month', class: 'form-control select-month' %>
+  <%= select_tag 'year', options_for_select((Date.current.year..Date.current.year + 5).to_a, params[:year].presence || Date.current.year), id: 'year', class: 'form-control select-year' %>
+  <%= select_tag 'request_status', options_for_select([['All Requests', ''], ['Pending', 0], ['Approved', 1], ['Rejected', 2]], params[:request_status]), id: 'request_status', class: 'form-control select-status' %>
+<% end %>
+
+  <div class="action-header-position pos">
+    <div class="action-header-text">
+    </div>
+    <div class="create-job-btn">
+     <button id="modal-btn" class="create-job-btn-text">Request On Call Support</button>
+    </div>
+  </div>
+
+<% end %>
+<%= render 'create_oncall' %>
+
+<div style="margin-left: 260px; overflow-x: auto;">
+  <table class="oncall-table-container">
+    <thead>
+      <tr class="dashboard-table-lines">
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Supervisor</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+    <% if @oncalls.present? %>
+      <% @oncalls.each do |oncall| %>
+        <tr class="dashboard-table-lines" data-job-post-id="">
+          <td class="table-title-column"><%= oncall.start_date.strftime("%B %d, %Y") %></td>
+          <td class="table-title-column"><%= oncall.end_date.strftime("%B %d, %Y") %></td>
+          <td class="table-title-column"><%= oncall.supervisor.present? ? oncall.supervisor : "N/A" %></td>
+          <% if oncall.request_status == 0 %>
+            <td class="oncall-status-column-pending">
+              <span>Pending</span>
+            </td>
+          <% elsif oncall.request_status == 1 %>
+            <td class="oncall-status-column-approved">
+              <span>Approved</span>
+            </td>
+          <% elsif oncall.request_status == 2 %>
+            <td class="oncall-status-column-rejected">
+              <span>Rejected</span>
+            </td>
+          <% end %>
+        </tr>
+      <% end %>
+     <% else %>
+      <tr><td colspan="4" style="text-align: center;">No data present</td></tr>
+     <% end %>
+    </tbody>
+  </table>
+
+</div>
+
+<script>
+var modal = document.getElementById("myModal");
+  var btn = document.getElementById("modal-btn");
+
+  btn.onclick = function() {
+    modal.style.display = "block";
+  }
+
+  window.onclick = function(event) {
+    if (event.target == modal) {
+      modal.style.display = "none";
+    }
+  }
+
+document.addEventListener("turbo:load", function() {
+  // Get references to the form and dropdowns
+  var form = document.getElementById("filterForm");
+  var monthSelect = document.getElementById("month");
+  var yearSelect = document.getElementById("year");
+  var statusSelect = document.getElementById("request_status");
+
+  // Add event listeners to the dropdowns
+  if (form && monthSelect && yearSelect && statusSelect) {
+    monthSelect.addEventListener("change", function() {
+      form.submit(); // Submit the form when month dropdown value changes
+    });
+
+    yearSelect.addEventListener("change", function() {
+      form.submit(); // Submit the form when year dropdown value changes
+    });
+
+    statusSelect.addEventListener("change", function() {
+      form.submit(); // Submit the form when year dropdown value changes
+    });
+  }
+});
+</script>

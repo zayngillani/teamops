@@ -1,0 +1,163 @@
+<style>
+.reportTable {
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+}
+
+.form-fields-inline {
+    display: flex;
+    align-items: center; /* Center-align the labels and fields vertically */
+    gap: 20px; /* Adjust space between fields as needed */
+    padding: 10px; /* Optional: add some padding around the fields */
+    align-items: center;
+    justify-content: center;
+    text-align: left;
+    margin-right: 15%;
+}
+
+.form-fields-inline .field {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-fields-inline .field label {
+    margin-bottom: 5px; /* Space between label and date field */
+}
+
+
+.reason-fields-inline {
+    display: flex;
+    align-items: center; /* Center-align the labels and fields vertically */
+    gap: 20px; /* Adjust space between fields as needed */
+    padding: 10px; /* Optional: add some padding around the fields */
+    text-align: left;
+    margin-left: 20%;
+}
+
+.reason-fields-inline .field {
+    display: flex;
+    flex-direction: column;
+}
+
+.reason-fields-inline .field label {
+    margin-bottom: 5px; /* Space between label and date field */
+}
+#start-date-display {
+    font-size: 16px; /* Adjust font size as needed */
+    padding: 5px; /* Optional: add padding for better alignment */
+    border: 1px solid #ccc; /* Optional: to visualize the span */
+    width: 260%;
+    border-radius: 5px;
+    height: 40px;
+    }
+
+    #super-display {
+    font-size: 16px; /* Adjust font size as needed */
+    padding: 5px; /* Optional: add padding for better alignment */
+    border: 1px solid #ccc; /* Optional: to visualize the span */
+    width: 101vh;
+    border-radius: 5px;
+    height: 40px;
+    margin-left: 30%;
+    }
+
+    #reason-display {
+    font-size: 16px; /* Adjust font size as needed */
+    padding: 5px; /* Optional: add padding for better alignment */
+    border: 1px solid #ccc; /* Optional: to visualize the span */
+    width: 101vh;
+    border-radius: 5px;
+    height: 30vh;
+    }
+
+.margin{
+     margin-right: 22%;
+}
+.super-field{
+    width: 62%;
+    padding: 11px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+    margin-bottom: 15px;
+    margin-left: 4%;
+    }
+
+    .super-label{
+     display: block;
+     text-align: left;
+     margin-left: 21%;
+
+    }
+    .right{
+     right: 13em;
+    }
+
+    .reject-btn {
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     width: 200px;
+     height: 40px;
+     top: 33px;
+     left: 693px;
+     gap: 12px;
+     border-radius: 8px;
+     border: 1px;
+     background: #F0F3F4;
+     border: 1px solid #F0F3F4;
+     text-decoration: none;
+     }
+
+.reject-btn-text {
+  font-family: Poppins;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 18.97px;
+  letter-spacing: -0.02em;
+  text-align: left;
+  color: #7A8699;
+}
+</style>
+<div class="reportTable">
+    <h3>On-call Support Request</h3><br>
+    <div class="form-fields-inline">
+        <div class="field margin">
+            <label>Start Date</label>
+            <span id="start-date-display"><%= @oncall.start_date.strftime("%d %B, %Y") %></span>
+        </div>
+        <div class="field">
+            <label>End Date</label>
+            <span id="start-date-display"><%= @oncall.end_date.strftime("%d %B, %Y") %></span>
+        </div>
+    </div>
+     <div class="reason-fields-inline">
+        <div class="field margin">
+          <label>Reason</label>
+            <span id="reason-display"><%= @oncall.reason %></span>
+        </div>
+     </div>
+     <%= form_with model: @oncall, url: admin_oncall_support_path, method: :put, remote: true, id: "checkout_form" do |f| %>
+     <%= f.label :supervisor, class: "super-label" %>
+        <% if @oncall.request_status == 1 || @oncall.request_status == 2 && @oncall.supervisor.present? %>
+            <div class="form-fields-inline">
+        <div class="field margin">
+            <span id="super-display"><%= @oncall.supervisor.present? ? @oncall.supervisor : "N/A" %></span>
+        </div>
+        </div>
+        <% else %>
+            <%= f.text_field :supervisor, class: "super-field", required: true %>
+        <% end %>
+     <div class="interview-btns-container right">
+          <%= link_to admin_oncall_support_reject_request_path(@oncall.id), method: :delete, class: "reject-btn" do %>
+               <div class="reject-btn-text">Reject</div>
+          <% end %>
+          <%= button_tag(type: 'submit', class: "download-resume-btn shedule-interview-btn") do %>
+               <div class="shedule-interview-btn-text">Approve</div>
+          <% end %>
+     </div>
+     <% end %>
+    <br><br>
+</div>

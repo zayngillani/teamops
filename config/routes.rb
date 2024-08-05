@@ -11,6 +11,10 @@ Rails.application.routes.draw do
   
   namespace :admin do
     resources :users, only: [:new, :create, :index, :edit, :update, :destroy]
+    resources :oncall_support, only: [:index, :show, :create, :update] do
+      get 'reject_request', to:  'oncall_support#reject_request'
+
+    end
     resources :daily_reports, only: [:index, :show] do
       collection do
         get :search
@@ -58,6 +62,9 @@ Rails.application.routes.draw do
   put '/update_report', :to => "attendance#update_report", as: 'update_report'
   get '/show_report', :to => "attendance#show_report", as: 'show_report'
   get '/user_report', :to => "attendance#user_report", as: 'user_report'
+  post '/create_oncall', :to => "oncall_support#create_oncall", as: 'create_oncall'
+  get '/show_oncalls', :to => "oncall_support#show_oncalls", as: 'show_oncalls'
+
 
   resources :leaves, only: [:new, :create, :index, :edit, :update, :destroy, :show]
   get '/approve', :to => "leaves#approve", as: 'approve'
