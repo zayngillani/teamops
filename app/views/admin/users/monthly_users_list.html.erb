@@ -165,7 +165,22 @@ function downloadExcel() {
 
   const excelDownloadUrl = `/admin/monthly_excel/${selectedMonth}/${selectedYear}.xlsx?selected_columns=${selectedColumns.join(',')}&selected_users=${selectedUsers.join(',')}`;
 
-  window.location.href = excelDownloadUrl;
+  // Create a hidden iframe to handle the download
+  const iframe = document.createElement('iframe');
+  iframe.style.display = 'none';
+  iframe.src = excelDownloadUrl;
+
+  // Append the iframe to the body to initiate the download
+  document.body.appendChild(iframe);
+
+  // Listen for the load event to reload the page after the download
+  iframe.onload = function() {
+    // Remove the iframe after the download
+    document.body.removeChild(iframe);
+
+    // Reload the page
+    location.reload();
+  };
 }
 
 document.getElementById('modal-btn-pdf').onclick = function() {
