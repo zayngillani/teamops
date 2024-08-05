@@ -68,28 +68,29 @@
      <% end %>
     </tbody>
   </table>
+  <div class="pagination-container">
+  <%= will_paginate @oncalls, renderer: PaginationHelper::DailyReportsRenderer, remote: true %>
+  </div>
 </div>
 <script>
 
 document.addEventListener("turbo:load", function() {
-  // Get references to the form and dropdowns
   var form = document.getElementById("filterForm");
   var monthSelect = document.getElementById("month");
   var yearSelect = document.getElementById("year");
   var statusSelect = document.getElementById("request_status");
 
-  // Add event listeners to the dropdowns
   if (form && monthSelect && yearSelect && statusSelect) {
     monthSelect.addEventListener("change", function() {
-      form.submit(); // Submit the form when month dropdown value changes
+      form.submit();
     });
 
     yearSelect.addEventListener("change", function() {
-      form.submit(); // Submit the form when year dropdown value changes
+      form.submit();
     });
 
     statusSelect.addEventListener("change", function() {
-      form.submit(); // Submit the form when request status dropdown value changes
+      form.submit();
     });
   }
 });

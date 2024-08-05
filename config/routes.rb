@@ -11,10 +11,7 @@ Rails.application.routes.draw do
   
   namespace :admin do
     resources :users, only: [:new, :create, :index, :edit, :update, :destroy]
-    resources :oncall_support, only: [:index, :show, :create, :update] do
-      get 'reject_request', to:  'oncall_support#reject_request'
-
-    end
+    resources :oncall_support, only: [:index, :show, :create, :update]
     resources :daily_reports, only: [:index, :show] do
       collection do
         get :search

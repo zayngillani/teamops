@@ -61,7 +61,9 @@
      <% end %>
     </tbody>
   </table>
-
+  <div class="pagination-container">
+    <%= will_paginate @oncalls, renderer: PaginationHelper::DailyReportsRenderer, remote: true %>
+  </div>
 </div>
 
 <script>

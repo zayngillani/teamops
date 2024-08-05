@@ -109,17 +109,20 @@
      background: #F0F3F4;
      border: 1px solid #F0F3F4;
      text-decoration: none;
-     }
 
-.reject-btn-text {
-  font-family: Poppins;
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 18.97px;
-  letter-spacing: -0.02em;
-  text-align: left;
-  color: #7A8699;
-}
+     }
+     .hover{
+     cursor: pointer;
+    }
+    .reject-btn-text {
+    font-family: Poppins;
+    font-size: 14px;
+    font-weight: 500;
+    line-height: 18.97px;
+    letter-spacing: -0.02em;
+    text-align: left;
+    color: #7A8699;
+    }
 </style>
 <div class="reportTable">
     <h3>On-call Support Request</h3><br>
@@ -140,24 +143,38 @@
         </div>
      </div>
      <%= form_with model: @oncall, url: admin_oncall_support_path, method: :put, remote: true, id: "checkout_form" do |f| %>
+     <%= f.hidden_field :action_type, id: 'action_type' %>
      <%= f.label :supervisor, class: "super-label" %>
         <% if @oncall.request_status == 1 || @oncall.request_status == 2 && @oncall.supervisor.present? %>
             <div class="form-fields-inline">
-        <div class="field margin">
-            <span id="super-display"><%= @oncall.supervisor.present? ? @oncall.supervisor : "N/A" %></span>
-        </div>
-        </div>
+                <div class="field margin">
+                    <span id="super-display"><%= @oncall.supervisor.present? ? @oncall.supervisor : "N/A" %></span>
+                </div>
+            </div>
         <% else %>
-            <%= f.text_field :supervisor, class: "super-field", required: true %>
+            <%= f.text_field :supervisor, class: "super-field", required: true, pattern: "\S+.*", title: "Supervisor name cannot be empty or contain only spaces" %>
         <% end %>
      <div class="interview-btns-container right">
-          <%= link_to admin_oncall_support_reject_request_path(@oncall.id), method: :delete, class: "reject-btn" do %>
+          <%= button_tag(type: 'button', class: "reject-btn hover", onclick: "submitForm('reject')") do %>
                <div class="reject-btn-text">Reject</div>
           <% end %>
-          <%= button_tag(type: 'submit', class: "download-resume-btn shedule-interview-btn") do %>
+          <%= button_tag(type: 'button', class: "download-resume-btn shedule-interview-btn hover", onclick: "submitForm('approve')") do %>
                <div class="shedule-interview-btn-text">Approve</div>
           <% end %>
      </div>
      <% end %>
     <br><br>
 </div>
+
+<script>
+function submitForm(actionType) {
+    var supervisorField = document.querySelector('.super-field');
+    var supervisorValue = supervisorField.value.trim();
+    if (supervisorValue === "") {
+        alert("Supervisor name cannot be empty or contain only spaces.");
+        return;
+    }
+    document.getElementById('action_type').value = actionType;
+    document.getElementById('checkout_form').submit();
+}
+</script>

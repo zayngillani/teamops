@@ -8,7 +8,10 @@ class Admin::OncallSupportController < ApplicationController
           current_month_end = @end_date.end_of_month
           request_status = params[:request_status].present? ? params[:request_status].to_i : nil
           @oncalls = Oncall.where("start_date <= ? AND end_date >= ?", current_month_end, current_month_start)
-          @oncalls = @oncalls.where(request_status: request_status) if request_status
+          if request_status
+               @oncalls = @oncalls.where(request_status: request_status)
+             end
+          @oncalls = @oncalls.order(created_at: :desc).paginate(page: params[:page], per_page: 10)
      end
 
      def show
@@ -17,34 +20,28 @@ class Admin::OncallSupportController < ApplicationController
 
      def update
           @oncall = Oncall.find_by(id: params[:id])
-          if params[:oncall].present?
-               supervisor = params[:oncall][:supervisor]
+          if params[:oncall][:action_type] == "approve"
+               if params[:oncall].present?
+                    supervisor = params[:oncall][:supervisor]
+               else
+                    supervisor = nil
+               end
+               if supervisor.present? && @oncall.request_status == 0
+                    @oncall.update!(supervisor: supervisor, request_status: 1 )
+                    message = "Request Approved"
+               else
+                    message = "Request not found"
+               end
           else
-               supervisor = nil
+               if @oncall.present? && @oncall.request_status == 0
+                    @oncall.update!(request_status: 2, supervisor: params[:oncall][:supervisor].present? ? params[:oncall][:supervisor] : nil)
+                    message = "Request Rejected"
+               else @oncall.request_status == 2
+                    message = "Request not found"
+               end
           end
-          if supervisor.present? && @oncall.request_status == 0
-               @oncall.update!(supervisor: supervisor, request_status: 1 )
-               message = "Request Approved"
-          elsif @oncall.request_status == 1
-               message = "Request Already Approved"
-          else @oncall.request_status == 2
-               message = "Request Already Rejected"
-          end
-          flash[:success] = message
-          redirect_to admin_oncall_support_index_path(month: Date.current.month, year: Date.current.year)
+               flash[:success] = message
+               redirect_to admin_oncall_support_index_path(month: Date.current.month, year: Date.current.year)
      end
 
-     def reject_request
-          @oncall = Oncall.find_by(id: params[:oncall_support_id])
-          if @oncall.present? && @oncall.request_status == 0
-               @oncall.update!(request_status: 2)
-               message = "Request Rejected"
-          elsif @oncall.request_status == 1
-               message = "Request Already Approved"
-          else @oncall.request_status == 2
-               message = "Request Already Rejected"
-          end
-          flash[:success] = message
-          redirect_to admin_oncall_support_index_path(month: Date.current.month, year: Date.current.year)
-     end
 end

@@ -1,4 +1,4 @@
-<div id="myModal" class="modal">
+<div id="myModal" class="modal" style="display: none;">
   <div class="modal-oncall">
     <%= form_with url: create_oncall_path, method: :post, remote: true, id: "checkout_form" do |f| %>
       <div class="modal-header">
@@ -7,8 +7,8 @@
       <h4>Request On-Call Support</h4><br><br>
       <div class="field">
         <%= f.label :start_date %>
-        <%= f.date_field :start_date, min: Date.tomorrow, required: true %>
-      </div> 
+        <%= f.date_field :start_date, required: true %>
+      </div>
       <br>
       <div class="field">
         <%= f.label :end_date %>
@@ -21,8 +21,25 @@
       </div>
       <br><br>
       <div class="modal-footer">
-        <%= f.submit "Submit Request", class: "check-out-btn", onclick: "this.disabled = true; this.value = 'Processing...'; this.form.submit();" %>
+        <%= f.submit "Submit Request", class: "check-out-btn" %>
       </div>
     <% end %>
   </div>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  const form = document.getElementById("checkout_form");
+  form.addEventListener("submit", function(event) {
+    const startDateField = form.querySelector("[name='oncall[start_date]']");
+    const endDateField = form.querySelector("[name='oncall[end_date]']");
+    const reasonField = form.querySelector(".oncall_textarea");
+
+    if (!startDateField.value || !endDateField.value || !reasonField.value.trim()) {
+      event.preventDefault();
+      alert("All fields are required.");
+      return false;
+    }
+  });
+});
+</script>
