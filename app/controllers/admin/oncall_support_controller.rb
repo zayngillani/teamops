@@ -35,12 +35,16 @@ class Admin::OncallSupportController < ApplicationController
           else
                if @oncall.present? && @oncall.request_status == 0
                     @oncall.update!(request_status: 2, supervisor: params[:oncall][:supervisor].present? ? params[:oncall][:supervisor] : nil)
-                    message = "Request Rejected"
+                    error = "Request Rejected"
                else @oncall.request_status == 2
                     message = "Request not found"
                end
           end
-               flash[:success] = message
+               if message
+                    flash[:success] = message
+               else
+                    flash[:error] = error
+               end
                redirect_to admin_oncall_support_index_path(month: Date.current.month, year: Date.current.year)
      end
 

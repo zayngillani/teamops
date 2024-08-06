@@ -48,7 +48,7 @@
     font-size: 16px; /* Adjust font size as needed */
     padding: 5px; /* Optional: add padding for better alignment */
     border: 1px solid #ccc; /* Optional: to visualize the span */
-    width: 260%;
+    width: 225%;
     border-radius: 5px;
     height: 40px;
     }
@@ -152,29 +152,42 @@
                 </div>
             </div>
         <% else %>
-            <%= f.text_field :supervisor, class: "super-field", required: true, pattern: "\S+.*", title: "Supervisor name cannot be empty or contain only spaces" %>
+            <%= f.text_field :supervisor, class: "super-field", required: true, pattern: "\S+.*", title: "Supervisor name cannot be empty or contain only spaces",  maxlength: 22 %>
         <% end %>
      <div class="interview-btns-container right">
-          <%= button_tag(type: 'button', class: "reject-btn hover", onclick: "submitForm('reject')") do %>
-               <div class="reject-btn-text">Reject</div>
-          <% end %>
-          <%= button_tag(type: 'button', class: "download-resume-btn shedule-interview-btn hover", onclick: "submitForm('approve')") do %>
-               <div class="shedule-interview-btn-text">Approve</div>
-          <% end %>
+        <%= button_tag(type: 'button', class: "reject-btn hover", onclick: "submitForm('reject', this)") do %>
+        <div class="reject-btn-text">Reject</div>
+        <% end %>
+
+        <%= button_tag(type: 'button', class: "download-resume-btn shedule-interview-btn hover", onclick: "submitForm('approve', this)") do %>
+        <div class="shedule-interview-btn-text">Approve</div>
+        <% end %>
      </div>
      <% end %>
     <br><br>
 </div>
 
 <script>
-function submitForm(actionType) {
+function submitForm(actionType, button) {
     var supervisorField = document.querySelector('.super-field');
     var supervisorValue = supervisorField.value.trim();
     if (supervisorValue === "") {
         alert("Supervisor name cannot be empty or contain only spaces.");
         return;
     }
+
+    // Disable the clicked button
+    button.disabled = true;
+
+    // Update the text of the clicked button to show processing
+    const text = button.querySelector('div');
+    if (text) {
+        text.textContent = "Processing...";
+    }
+
+    // Set action type and submit the form
     document.getElementById('action_type').value = actionType;
     document.getElementById('checkout_form').submit();
 }
+
 </script>
