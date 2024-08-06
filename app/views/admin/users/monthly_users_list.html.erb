@@ -52,7 +52,7 @@
         <tr>
           <th>Name</th>
           <th>Total Hours</th>
-          <th>Select</th>
+          <th>Select All <input type="checkbox" id="select-all-users" /></th>
         </tr>
       </thead>
       <tbody>
@@ -200,6 +200,12 @@ window.onclick = function(event) {
     document.getElementById('myModalPdf').style.display = 'none';
   }
 };
+
+document.getElementById('select-all-users').addEventListener('change', function() {
+  const checkboxes = document.querySelectorAll('.userCheckbox');
+  const isChecked = this.checked;
+  checkboxes.forEach(function(checkbox) {
+    checkbox.checked = isChecked;
+  });
+});
 </script>
-
-

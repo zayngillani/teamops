@@ -220,9 +220,9 @@ class Admin::UsersController < ApplicationController
     def monthly_excel
       if params[:selected_users].present?
         user_ids = params[:selected_users].split(',')
-        @users = User.where(id: user_ids)
+        @users = User.where(id: user_ids).order(name: :asc)
       else
-        @users = User.active.where(role: "user", deleted: false).order(created_at: :desc)
+        @users = User.active.where(role: "user", deleted: false).order(name: :asc)
       end
       @month = params[:month].to_i
       @year = params[:year].to_i
@@ -378,12 +378,7 @@ class Admin::UsersController < ApplicationController
               undertime = reg_hours > working_hours ? reg_hours - working_hours : 0
             end
           end
-          if @user_sessions.present?
             send_data xlsx_package.to_stream.read, filename: "monthly_report_#{Date::MONTHNAMES[@month]}_#{@year}.xlsx", type: "application/xlsx", disposition: "attachment"
-          else
-            flash[:error] = "Attendance Not Present"
-            redirect_to admin_monthly_users_list_path(month: Date.today.month, year: Date.today.year)
-          end
         end
       end
     end
@@ -392,9 +387,9 @@ class Admin::UsersController < ApplicationController
     def monthly_report
       if params[:selected_users].present?
         user_ids = params[:selected_users].split(',').map(&:to_i)
-        @users = User.where(id: user_ids)
+        @users = User.where(id: user_ids).order(name: :asc)
       else
-        @users = User.active.where(role: "user", deleted: false).order(created_at: :desc)
+        @users = User.active.where(role: "user", deleted: false).order(name: :asc)
       end
 
       @month = params[:month].to_i
@@ -456,7 +451,6 @@ class Admin::UsersController < ApplicationController
         end
       end
 
-      if @user_sessions.present?
         respond_to do |format|
           format.html
           format.pdf do
@@ -465,14 +459,10 @@ class Admin::UsersController < ApplicationController
                    locals: { selected_columns: @selected_columns }
           end
         end
-      else
-        flash[:error] = "Attendance Not Present"
-        redirect_to admin_monthly_users_list_path(month: Date.today.month, year: Date.today.year)
-      end
     end
     
     def monthly_users_list
-      @users = User.active.where(role: "user", deleted: false).order(created_at: :desc)
+      @users = User.active.where(role: "user", deleted: false).order(name: :asc)
       @month = params[:month].to_i
       @year = params[:year].to_i
       @start_date = Date.new(@year, @month, 1)
