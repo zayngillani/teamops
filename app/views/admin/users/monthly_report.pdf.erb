@@ -148,6 +148,8 @@
 
   <br><br>
 <% total_on_call_hours = Hash.new(0) %>
+<% total_regular_hours = 0 %>
+<% total_overtime_hours = 0 %>
   <table class="attendance-table user-attendance">
     <thead>
       <tr>
@@ -198,6 +200,7 @@
               <% else %>
                 <% regular_hours = total_hours %>
               <% end %>
+              <% total_regular_hours += regular_hours %>
               <%= "#{regular_hours / 3600} hours #{regular_hours % 3600 / 60} minutes" %>
             <% else %>
               N/A
@@ -211,6 +214,7 @@
               <% else %>
                 <% overtime_hours = 0 %>
               <% end %>
+              <% total_overtime_hours += overtime_hours %>
               <%= "#{overtime_hours / 3600} hours #{overtime_hours % 3600 / 60} minutes" %>
             <% else %>
               N/A
@@ -247,6 +251,7 @@
                   <% else %>
                     <% regular_hours = total_hours %>
                   <% end %>
+                  <% total_regular_hours += regular_hours %>
                   <%= "#{regular_hours / 3600} hours #{regular_hours % 3600 / 60} minutes" %>
                 <% else %>
                   N/A
@@ -260,6 +265,7 @@
                   <% else %>
                     <% overtime_hours = 0 %>
                   <% end %>
+                  <% total_overtime_hours += overtime_hours %>
                   <%= "#{overtime_hours / 3600} hours #{overtime_hours % 3600 / 60} minutes" %>
                 <% else %>
                   N/A
@@ -283,8 +289,8 @@
         <td><strong>Total</strong></td>
         <td></td>
         <td></td>
-        <td></td>
-        <td></td>
+        <td><strong><%= "#{total_regular_hours / 3600} hours #{total_regular_hours % 3600 / 60} minutes" %></strong></td>
+        <td><strong><%= "#{total_overtime_hours / 3600} hours #{total_overtime_hours % 3600 / 60} minutes" %></strong></td>
         <td><%= @current_user_leaves %></td>
         <td>
           <% total_on_call_time = total_on_call_hours.values.sum %>
