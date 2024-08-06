@@ -1103,7 +1103,7 @@ form .button input:hover{
 }
 
 .select-month {
-  width: 120px; /* Adjust width specifically for the month select tag */
+  width: 135px; /* Adjust width specifically for the month select tag */
   margin-right: 10px; /* Add some space between month and year select tags */
   height: 40px;
 }
