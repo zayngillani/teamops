@@ -1,0 +1,97 @@
+<style>
+.select-status{
+  margin-right: 10px;
+}
+.pos{
+  width: 51%;
+}
+
+.filter_i{
+  margin-left: 10px;
+}
+</style>
+<% content_for :link_button do %>
+     <%= form_tag admin_oncall_support_index_path, method: :get, id: "filterForm", style: "display: flex; margin-left: 20%;" do %>
+     <%= select_tag 'month', options_for_select(Date::MONTHNAMES.compact.each_with_index.map { |month, index| [month, index + 1] }, params[:month].presence || Date.current.month), id: 'month', class: 'form-control select-month' %>
+     <%= select_tag 'year', options_for_select((Date.current.year..Date.current.year + 5).to_a, params[:year].presence || Date.current.year), id: 'year', class: 'form-control select-year' %>
+     <%= select_tag 'request_status', options_for_select([['All Requests', ''], ['Pending', 0], ['Approved', 1], ['Rejected', 2]], params[:request_status]), id: 'request_status', class: 'form-control select-status filter_i' %>
+     <% end  %>
+
+       <div class="action-header-position pos">
+    <div class="action-header-text">
+    </div>
+    <div class="create-job-btn">
+    </div>
+  </div>
+
+<% end %>
+
+<div style="margin-left: 260px; overflow-x: auto; height: 695px;">
+  <table class="admin-oncall-table-container">
+    <thead>
+      <tr class="dashboard-table-lines">
+        <th>Name</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Supervisor</th>
+        <th>Status</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+    <% if @oncalls.present? %>
+      <% @oncalls.each do |oncall| %>
+      <% user = User.find(oncall.user_id) %>
+        <tr class="dashboard-table-lines">
+          <td class="table-title-column"><%= user.name %></td>
+          <td class="table-title-column"><%= oncall.start_date.strftime("%B %d, %Y") %></td>
+          <td class="table-title-column"><%= oncall.end_date.strftime("%B %d, %Y") %></td>
+          <td class="table-title-column"><%= oncall.supervisor.present? ? oncall.supervisor : "N/A" %></td>
+          <% if oncall.request_status == 0 %>
+            <td class="oncall-status-column-pending">
+              <span>Pending</span>
+            </td>
+          <% elsif oncall.request_status == 1 %>
+            <td class="oncall-status-column-approved">
+              <span>Approved</span>
+            </td>
+          <% elsif oncall.request_status == 2 %>
+            <td class="oncall-status-column-rejected">
+              <span>Rejected</span>
+            </td>
+          <% end %>
+          <td class="table-title-column archived"><%= link_to 'View', admin_oncall_support_path(id: oncall.id) %></td>
+        </tr>
+      <% end %>
+     <% else %>
+      <tr><td colspan="5" style="text-align: center;">No data present</td></tr>
+     <% end %>
+    </tbody>
+  </table>
+  <div class="pagination-container">
+  <%= will_paginate @oncalls, renderer: PaginationHelper::DailyReportsRenderer, remote: true %>
+  </div>
+</div>
+<script>
+
+document.addEventListener("turbo:load", function() {
+  var form = document.getElementById("filterForm");
+  var monthSelect = document.getElementById("month");
+  var yearSelect = document.getElementById("year");
+  var statusSelect = document.getElementById("request_status");
+
+  if (form && monthSelect && yearSelect && statusSelect) {
+    monthSelect.addEventListener("change", function() {
+      form.submit();
+    });
+
+    yearSelect.addEventListener("change", function() {
+      form.submit();
+    });
+
+    statusSelect.addEventListener("change", function() {
+      form.submit();
+    });
+  }
+});
+</script>

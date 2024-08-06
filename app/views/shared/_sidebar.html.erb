@@ -183,6 +183,12 @@
                         Contact Details
                     </div>
                 </a>
+                <a href="<%= admin_oncall_support_index_path(month: Date.current.month, year: Date.current.year)%>">
+                    <div class="menu-item <%= 'active' if current_page?(admin_oncall_support_index_path) %>">
+                        <%= image_tag("oncall.svg", class: "menu-icon") %>
+                        On Call Support
+                    </div>
+                </a>
             </div>
         <% else %>
             <div class="menu">
@@ -208,6 +214,11 @@
                     <div class="menu-item <%= 'active' if current_page?(root_path) %>">
                         <%= image_tag("leave.svg", class: "menu-icon") %>
                         Leaves
+                    </div>
+                </a>
+                <a href="<%= show_oncalls_path(month: Date.current.month, year: Date.current.year)%>">
+                    <div class="menu-item <%= 'active' if current_page?(show_oncalls_path) %>">
+                        <%= image_tag("oncall.svg", class: "menu-icon") %>On Call Support
                     </div>
                 </a>
             </div>
