@@ -137,7 +137,7 @@ class Admin::UsersController < ApplicationController
     end
 
     def report
-      session = User.active.where(role: "user", deleted: false).order(created_at: :desc)
+      session = User.active.where(role: "user", deleted: false).order(name: :asc)
       @session = session.paginate(page: params[:page], per_page: 10)
     end
 
