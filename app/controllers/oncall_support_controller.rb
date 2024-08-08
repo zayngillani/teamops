@@ -32,7 +32,7 @@ class OncallSupportController < ApplicationController
             flash[:success] = 'On Call Support Request Submitted'
             redirect_to show_oncalls_path
           else
-            flash[:error] = "Supervisor name cannot be empty or contain only spaces."
+            flash[:error] = "Reason cannot be empty or contain only spaces."
             redirect_to show_oncalls_path
           end
      end
