@@ -488,16 +488,22 @@ class Admin::UsersController < ApplicationController
         @total_working_hours = working_days * regular_hours_per_day
       end
     end
-
+      
     def update_ip_restriction
-      user = User.find(params[:id])
-      if user.update(can_outside_access: params[:user][:can_outside_access])
+      user = User.find_by(id: params[:id])
+      
+      if user.nil?
+        render json: { success: false, errors: ["User not found"] }, status: :not_found
+        return
+      end
+    
+      if user.update(can_outside_access: params[:can_outside_access])
         render json: { success: true }, status: :ok
       else
         render json: { success: false, errors: user.errors.full_messages }, status: :unprocessable_entity
       end
     end
-
+    
     private
    
     def user_params

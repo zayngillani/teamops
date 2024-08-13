@@ -8,7 +8,6 @@ class Admin::IpManagementsController < ApplicationController
     end
       
     def create
-      binding.pry
       @ip = IpManagement.new
       @ip.user_name = params[:name]
       @ip.ip_address = params[:ip_address]
@@ -23,7 +22,8 @@ class Admin::IpManagementsController < ApplicationController
     def update_status
       @ip = IpManagement.find(params[:id])
       new_status = params[:ip_management][:status]
-      if @ip.update(status: new_status)
+      if @ip 
+        @ip.update(status: new_status)
         render json: { success: true, status: @ip.status }
       end
     end
