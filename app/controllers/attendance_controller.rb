@@ -1,5 +1,5 @@
 class AttendanceController < ApplicationController
-  before_action :restrict_ip, only: [:create_session, :end_session]
+  before_action :restrict_ip, only: [:create_session, :end_session, :break_session]
 
      def index
           first_day_of_month = Date.current.beginning_of_month
