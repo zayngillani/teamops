@@ -48,14 +48,35 @@
     <tr>
       <th>Name</th>
       <th>Leaves</th>
+      <th>Absentees</th>
     </tr>
   </thead>
   <tbody>
 <% @users.each do |user| %>
-  <% @user_leaves_count =  @current_user_leaves = Leave.where("start_date <= ? AND end_date >= ? AND status = ? AND user_id = ?", @end_date, @start_date, 1, user.id).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }%>
+    <%
+      user_creation_date = user.created_at.to_date
+      first_day_of_month = Date.new(@year, @month, 1)
+      last_day_of_month = (@month == Date.today.month && @year == Date.today.year) ? Date.today : @end_date
+      adjusted_start_date = user_creation_date.month == @month && user_creation_date.year == @year ? user_creation_date : first_day_of_month
+      total_days_range = (adjusted_start_date..last_day_of_month).to_a
+      @total_days = total_days_range.reject { |date| date.saturday? || date.sunday? }.count
+      if @public_holidays.present?
+        @public_holidays.each do |holiday|
+          if holiday.start_date >= user_creation_date
+            @total_days -= (holiday.start_date..holiday.end_date).count
+          end
+        end
+      end
+      @current_user_leaves = Leave.where("start_date <= ? AND end_date >= ? AND status = ? AND user_id = ?", @end_date, @start_date, 1, user.id).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }
+      @attendance_data = user.attendances.where(check_in_time: @start_date.beginning_of_day..@end_date.end_of_day)
+      @attendance_days = @attendance_data.count
+      @public_holidays_count = @public_holidays.count
+      @absentee_days = [@total_days - (@attendance_days + @current_user_leaves), 0].max
+    %>
     <tr>
       <td><%= user&.name %></td>
-      <td><%= @user_leaves_count %></td>
+      <td><%= @current_user_leaves %></td>
+      <td><%= @absentee_days %></td>
       </tr>
       <% end%>
     </tbody>

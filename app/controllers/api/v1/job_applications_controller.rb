@@ -29,16 +29,46 @@ module Api
       end
 
       def get_job_post_list
-        job_posts = JobPost.active.all
-        render json: job_posts
-      end
+        cache_key = 'job_post_list'
+        
+        formatted_job_posts = Rails.cache.fetch(cache_key) do
+          job_posts = JobPost.active.all
+        
+          if job_posts.present?
+            # Transform the requirements_and_qualification field for each job post
+            job_posts.map do |job_post|
+              if job_post.requirements_and_qualification.present?
+                formatted_requirements = job_post.requirements_and_qualification.split("\n")
+                job_post.as_json.merge(requirements_and_qualification: formatted_requirements)
+              else
+                job_post.as_json
+              end
+            end
+          else
+            []
+          end
+        end
+      
+        render json: formatted_job_posts, status: :ok
+      end      
 
       def show_job_post
-        job_post = JobPost.find(params[:id])
-        render json: job_post
+        cache_key = "job_post_#{params[:id]}"
+      
+        job_post = Rails.cache.fetch(cache_key) do
+          JobPost.find(params[:id])
+        end
+        
+        if job_post.present?
+          # Transform the requirements_and_qualification field
+          formatted_requirements = job_post.requirements_and_qualification.split("\n")
+          render json: job_post.as_json.merge(requirements_and_qualification: formatted_requirements)
+        else
+          render json: { error: 'Job post not found' }, status: :not_found
+        end
       rescue ActiveRecord::RecordNotFound
         render json: { error: 'Job post not found' }, status: :not_found
-      end
+      end      
 
       private
 
@@ -48,8 +78,8 @@ module Api
 
       def send_notification_emails(job_title)
         # Email configs are pending on prod. 
-        # JobApplicationMailer.confirmation_email(@job_application, job_title).deliver_now
-        # JobApplicationMailer.notification_email(@job_application, job_title).deliver_now
+        JobApplicationMailer.confirmation_email(@job_application, job_title).deliver_now
+        JobApplicationMailer.notification_email(@job_application, job_title).deliver_now
       end
 
       def upload_to_ftp(file)
@@ -72,7 +102,11 @@ module Api
       
           # Extract the original filename from the file object
           original_filename = file.original_filename
-          remote_filename = original_filename
+          extension = File.extname(original_filename)
+          basename = File.basename(original_filename, extension)
+      
+          # Create a unique filename with job application ID
+          remote_filename = "#{basename}-#{@job_application.id}#{extension}"
       
           # Upload the file to the resume directory
           ftp.putbinaryfile(file.path, remote_filename)
@@ -86,6 +120,7 @@ module Api
           raise "FTP upload failed: #{e.message}"
         end
       end
+      
       
     end
   end

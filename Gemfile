@@ -49,7 +49,7 @@ gem 'will_paginate'
 
 gem 'net-ftp'
 
-gem 'rack-cors'
+gem 'sendgrid-ruby'
 
 # Use Kredis to get higher-level data types in Redis [https://github.com/rails/kredis]
 # gem "kredis"
@@ -96,3 +96,5 @@ gem 'momentjs-rails'
 
 gem 'caxlsx'
 gem 'caxlsx_rails'
+gem 'ransack'
+gem 'rack-cors'

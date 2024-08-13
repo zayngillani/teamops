@@ -259,6 +259,10 @@ GEM
       thor (~> 1.0)
       zeitwerk (~> 2.5)
     rake (13.1.0)
+    ransack (4.2.0)
+      activerecord (>= 6.1.5)
+      activesupport (>= 6.1.5)
+      i18n
     rdoc (6.6.2)
       psych (>= 4.0.0)
     redis (4.8.1)
@@ -269,12 +273,15 @@ GEM
       actionpack (>= 5.2)
       railties (>= 5.2)
     rexml (3.2.6)
+    ruby_http_client (3.5.5)
     rubyzip (2.3.2)
     selenium-webdriver (4.18.1)
       base64 (~> 0.2)
       rexml (~> 3.2, >= 3.2.5)
       rubyzip (>= 1.2.2, < 3.0)
       websocket (~> 1.0)
+    sendgrid-ruby (6.7.0)
+      ruby_http_client (~> 3.4)
     slack-ruby-client (2.3.0)
       faraday (>= 2.0)
       faraday-mashify
@@ -346,8 +353,10 @@ DEPENDENCIES
   puma (~> 5.0)
   rack-cors
   rails (~> 7.0.8, >= 7.0.8.1)
+  ransack
   redis (~> 4.0)
   selenium-webdriver
+  sendgrid-ruby
   slack-ruby-client
   sprockets-rails
   stimulus-rails

@@ -21,6 +21,34 @@
     padding: 10px;
   }
 
+  .timesheet-container {
+    width: 130%;
+    margin: 5px 0;
+  }
+
+  .timesheet-details {
+    display: flex;
+    width: 990px;
+  }
+
+  .left-section, .right-section {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .left-section p, .right-section p {
+    margin: 5px 0;
+  }
+
+  .left-section {
+    text-align: left;
+  }
+
+  .right-section {
+    text-align: right;
+  }
+
   .absent-day {
     color: red;
     font-weight: bold;
@@ -43,56 +71,85 @@
   <thead>
     <tr>
       <th>Name</th>
-      <th>Regular Hours</th>
-      <th>Worked Hours</th>
-      <th>Over Time</th>
-      <th>Under Time</th>
-      <th>Leaves</th>
-      <th>Absentees</th>
+      <% @selected_columns.each do |column| %>
+        <th><%= column.humanize %></th>
+      <% end %>
     </tr>
   </thead>
   <tbody>
     <% @users.each do |user| %>
-    <tr>
-      <% @current_user_leaves = Leave.where("start_date <= ? AND end_date >= ? AND status = ? AND user_id = ?", @end_date, @start_date, 1, user.id).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 } %>
-      <td><%= user.name %></td>
-      <% if user.leaves.present? %>
-      <% @working_hours = @total_working_hours - @current_user_leaves * 8 %>
-      <% else %>
-      <% @working_hours = @total_working_hours %>
-      <% end %>
-      <td><%= @working_hours %></td>
-      <td><%= "#{@total_hours[user.id] / 3600}" %></td>
-      <% if @working_hours < @total_hours[user.id] / 3600 %>
-        <td><%= (@total_hours[user.id] / 3600) - @working_hours %></td>
-      <% else %>
-        <td><%= 0 %></td>
-      <% end %>
-      <% if @working_hours > @total_hours[user.id] / 3600 %>
-        <td><%= @working_hours - (@total_hours[user.id] / 3600) %></td>
-      <% else %>
-        <td><%= 0 %></td>
-      <% end %>
-      <td><%= @current_user_leaves %></td>
-      <td><%= @leaves[user.id] - @current_user_leaves %></td>
-    </tr>
+      <%
+        user_creation_date = user.created_at.to_date
+        first_day_of_month = Date.new(@year, @month, 1)
+        last_day_of_month = (@month == Date.today.month && @year == Date.today.year) ? Date.today : @end_date
+        adjusted_start_date = user_creation_date.month == @month && user_creation_date.year == @year ? user_creation_date : first_day_of_month
+        total_days_range = (adjusted_start_date..last_day_of_month).to_a
+        @total_days = total_days_range.reject { |date| date.saturday? || date.sunday? }.count
+        if @public_holidays.present?
+          @public_holidays.each do |holiday|
+            if holiday.start_date >= user_creation_date
+              @total_days -= (holiday.start_date..holiday.end_date).count
+            end
+          end
+        end
+        @current_user_leaves = Leave.where("start_date <= ? AND end_date >= ? AND status = ? AND user_id = ?", @end_date, @start_date, 1, user.id).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }
+        @attendance_data = user.attendances.where(check_in_time: @start_date.beginning_of_day..@end_date.end_of_day)
+        @attendance_days = @attendance_data.count
+        @public_holidays_count = @public_holidays.count
+        @absentee_days = [@total_days - (@attendance_days + @current_user_leaves), 0].max
+
+        reg_hours = user.leaves.present? ? (@total_working_hours - @current_user_leaves * 8) : @total_working_hours
+        working_hours = @total_hours[user.id] / 3600
+        overtime = reg_hours < working_hours ? (working_hours - reg_hours) : 0
+        undertime = reg_hours > working_hours ? (reg_hours - working_hours) : 0
+        absentee_days = [@total_days - (@attendance_days + @current_user_leaves), 0].max
+      %>
+      <tr>
+        <td><%= user.name %></td>
+        <% @selected_columns.each do |column| %>
+          <td>
+            <% case column %>
+            <% when 'regular_hours' %>
+              <%= reg_hours %>
+            <% when 'worked_hours' %>
+              <%= working_hours %>
+            <% when 'over_time' %>
+              <%= overtime %>
+            <% when 'under_time' %>
+              <%= undertime %>
+            <% when 'leaves' %>
+              <%= @current_user_leaves %>
+            <% when 'absentees' %>
+              <%= @absentee_days %>
+            <% end %>
+          </td>
+        <% end %>
+      </tr>
     <% end %>
   </tbody>
 </table>
 <div class="page-break"></div>
 <% @users.each do |user| %>
   <% @current_user_leaves = Leave.where("start_date <= ? AND end_date >= ? AND status = ? AND user_id = ?", @end_date, @start_date, 1, user.id).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 } %>
-  <h1 class="attendance-heading">Timesheet</h1>
-  <p style="float: left; margin: 5px;">Employee: <strong><%= user.name %></strong></p>
-  <p style="float: right; margin: 5px;">Month: <strong><%= Date::MONTHNAMES[@month] %></strong></p>
-  <br><br>
-  <p style="float: left; margin: 5px;">Supervisor:</p>
-  <span style="float: left; margin: 5px;"><strong><%= user.supervisor.present? ? user.supervisor : "Fahad" %></strong></span>
-  <span style="float: right; margin: 5px;"></span>
-  <div style="display: flex; justify-content: space-between; align-items: center; margin: 5px;">
-    <p style="float: right; margin: 0; margin-right: 10px;">Regular Hours: 8</p>
+  <div class="timesheet-container">
+    <h1 class="attendance-heading">Timesheet</h1>
+    <div class="timesheet-details">
+      <div class="left-section">
+        <p>Employee: <strong><%= user.name %></strong></p>
+        <p>Supervisor: <strong><%= user.supervisor.present? ? user.supervisor : "Fahad" %></strong></p>
+      </div>
+      <div class="right-section">
+        <p>Month: <strong><%= Date::MONTHNAMES[@month] %></strong></p>
+        <p>Regular Hours: 8</p>
+      </div>
+    </div>
   </div>
+
+
   <br><br>
+<% total_on_call_hours = Hash.new(0) %>
+<% total_regular_hours = 0 %>
+<% total_overtime_hours = 0 %>
   <table class="attendance-table user-attendance">
     <thead>
       <tr>
@@ -102,6 +159,7 @@
         <th>Regular Hours</th>
         <th>Overtime</th>
         <th>Leaves</th>
+        <th>On Call</th>
         <th>Total Hours</th>
       </tr>
     </thead>
@@ -110,6 +168,8 @@
       <% @user_leaves = Leave.where('(start_date <= ? AND end_date >= ?) OR (start_date >= ? AND start_date <= ?)', @end_date, @start_date, @start_date, @end_date).where(status: 1, user_id: user.id) %>
       <% public_holidays = {} %>
       <% leaves = {} %>
+      <% on_calls = {} %>
+      <% @user_on_calls = Oncall.where('(start_date <= ? AND end_date >= ?) OR (start_date >= ? AND start_date <= ?)', @end_date, @start_date, @start_date, @end_date).where(request_status: 1, user_id: user.id) %>
       <% @public_holidays.each do |holiday| %>
         <% (holiday.start_date..holiday.end_date).each do |date| %>
           <% public_holidays[date] = holiday.title %>
@@ -120,29 +180,79 @@
           <% leaves[date] = leave.reason %>
         <% end %>
       <% end %>
+      <% @user_on_calls.each do |on_call| %> 
+        <% (on_call.start_date..on_call.end_date).each do |date| %>
+          <% on_calls[date] = on_call.request_status == 1 %>
+        <% end %>
+      <% end %>
       <% (@start_date..@end_date).each do |date| %>
-        <% next if date.saturday? || date.sunday? %> <!-- Skip weekends -->
-        <% session = @user_sessions.find { |s| s.check_in_time.to_date == date } %>
         <tr>
-          <% if public_holidays.key?(date) %>
-              <td><%= date.strftime("%A %b #{date.day.ordinalize}") %></td>
-              <td style="text-align: center;" colspan="6"><strong><%= public_holidays[date] %></strong></td>
+          <% session = @user_sessions.find { |s| s.check_in_time.to_date == date } %>
+          <td><%= date.strftime("%A %b #{date.day.ordinalize}") %></td>
+          <% if on_calls[date] %>
+            <td><%= session ? session.check_in_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A" %></td>
+            <td><%= session && session.check_out_time ? session.check_out_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A" %></td>
+          <td>
+            <% if session && session.total_hours.present? %>
+              <% total_hours = session.total_hours %>
+              <% if total_hours > 28800 %> 
+                <% regular_hours = 28800 %>
+              <% else %>
+                <% regular_hours = total_hours %>
+              <% end %>
+              <% total_regular_hours += regular_hours %>
+              <%= "#{regular_hours / 3600} hours #{regular_hours % 3600 / 60} minutes" %>
+            <% else %>
+              N/A
+            <% end %>
+          </td>
+          <td>
+            <% if session && session.total_hours.present? %>
+              <% total_hours = session.total_hours %>
+              <% if total_hours > 28800 %>
+                <% overtime_hours = total_hours - 28800 %>
+              <% else %>
+                <% overtime_hours = 0 %>
+              <% end %>
+              <% total_overtime_hours += overtime_hours %>
+              <%= "#{overtime_hours / 3600} hours #{overtime_hours % 3600 / 60} minutes" %>
+            <% else %>
+              N/A
+            <% end %>
+          </td>
+          <td></td>
+          <td>
+            <% if session && session.total_hours.present? %>
+              <% total_on_call_hours[date] += session.total_hours %>
+              <%= "#{session.total_hours / 3600} hours #{session.total_hours % 3600 / 60} minutes" %>
+            <% else %>
+              <strong>On Call</strong>
+            <% end %>
+          </td>
+          <td>
+            <% if session && session.total_hours.present? %>
+              <%= "#{session.total_hours / 3600} hours #{session.total_hours % 3600 / 60} minutes" %>
+            <% else %>
+              N/A
+            <% end %>
+          </td>
+        <% elsif public_holidays.key?(date) %>
+          <td style="text-align: center;" colspan="7"><strong><%= public_holidays[date] %></strong></td>
           <% elsif leaves.key?(date) %>
-              <td><%= date.strftime("%A %b #{date.day.ordinalize}") %></td>
-              <td style="text-align: center;" colspan="6"><strong><%= leaves[date] %></strong></td>
+            <td style="text-align: center;" colspan="7"><strong>On Leave</strong></td>
           <% elsif session %>
-              <td><%= session.created_at.strftime("%A %b #{session.created_at.day.ordinalize}") %></td>
               <td><%= session.check_in_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") %></td>
               <td><%= session.check_out_time.present? ? session.check_out_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A" %></td>
               <td>
                 <% if session.total_hours.present? %>
                   <% total_hours = session.total_hours %>
-                  <% if total_hours > 28800 %> <!-- 28800 seconds = 8 hours -->
+                  <% if total_hours > 28800 %>
                     <% regular_hours = 28800 %>
                   <% else %>
                     <% regular_hours = total_hours %>
                   <% end %>
-                  <%= "#{regular_hours / 3600}.#{regular_hours % 3600 / 60}" %>
+                  <% total_regular_hours += regular_hours %>
+                  <%= "#{regular_hours / 3600} hours #{regular_hours % 3600 / 60} minutes" %>
                 <% else %>
                   N/A
                 <% end %>
@@ -150,16 +260,18 @@
               <td>
                 <% if session.total_hours.present? %>
                   <% total_hours = session.total_hours %>
-                  <% if total_hours > 28800 %> <!-- 28800 seconds = 8 hours -->
+                  <% if total_hours > 28800 %>
                     <% overtime_hours = total_hours - 28800 %>
                   <% else %>
                     <% overtime_hours = 0 %>
                   <% end %>
-                  <%= "#{overtime_hours / 3600}.#{overtime_hours % 3600 / 60}" %>
+                  <% total_overtime_hours += overtime_hours %>
+                  <%= "#{overtime_hours / 3600} hours #{overtime_hours % 3600 / 60} minutes" %>
                 <% else %>
                   N/A
                 <% end %>
               </td>
+              <td></td>
               <td></td>
               <td>
                 <% if session.total_hours.present? %>
@@ -169,8 +281,7 @@
                 <% end %>
               </td>
             <% else %>
-              <td><%= date.strftime("%A %b #{date.day.ordinalize}") %></td>
-              <td style="text-align: center;" colspan="6">No Session</td>
+            <td style="text-align: center;" colspan="7">No Session</td>
             <% end %>
         </tr>
       <% end %>
@@ -178,9 +289,13 @@
         <td><strong>Total</strong></td>
         <td></td>
         <td></td>
-        <td></td>
-        <td></td>
+        <td><strong><%= "#{total_regular_hours / 3600} hours #{total_regular_hours % 3600 / 60} minutes" %></strong></td>
+        <td><strong><%= "#{total_overtime_hours / 3600} hours #{total_overtime_hours % 3600 / 60} minutes" %></strong></td>
         <td><%= @current_user_leaves %></td>
+        <td>
+          <% total_on_call_time = total_on_call_hours.values.sum %>
+          <strong><%= "#{total_on_call_time / 3600} hours #{total_on_call_time % 3600 / 60} minutes" %></strong>
+        </td>
         <td><strong><%= "#{@total_hours[user.id] / 3600 || 0} hours #{@total_hours[user.id] % 3600 / 60 || 0} minutes" %></strong></td>
       </tr>
     </tbody>

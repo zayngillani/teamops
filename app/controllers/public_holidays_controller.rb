@@ -21,7 +21,7 @@ class PublicHolidaysController < ApplicationController
     
     @holiday = PublicHoliday.new(holiday_params)
     if @holiday.save
-      flash[:success] = "Holiday created successfully"
+      flash[:success] = "Holiday Created"
       redirect_to public_holidays_path
     else
       render 'new'

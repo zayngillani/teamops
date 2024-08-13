@@ -10,6 +10,10 @@ class User < ApplicationRecord
   enum role: [:user, :admin]
   enum status: [:active , :pending]
 
+  def self.ransackable_attributes(auth_object = nil)
+    %w[id name email role created_at updated_at]
+  end
+
   def password_expired?
     password_changed_at.nil? || password_changed_at.present? && password_changed_at < Devise.expire_password_after.ago
   end

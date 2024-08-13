@@ -28,7 +28,7 @@ Rails.application.configure do
   # config.assets.css_compressor = :sass
 
   # Do not fallback to assets pipeline if a precompiled asset is missed.
-  config.assets.compile = false
+  config.assets.compile = true
 
   # Enable serving of images, stylesheets, and JavaScripts from an asset server.
   # config.asset_host = "http://assets.example.com"
@@ -40,15 +40,18 @@ Rails.application.configure do
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
 
-  config.action_mailer.default_url_options = { host: ENV["APP_ROOT"] }
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.smtp_settings = {
-    address:              'mail.techcreatix.com',
-    port:                 587,
-    user_name:            ENV["MAIL_USERNAME"],
-    password:             ENV["MAIL_PASSWORD"],
+    address: ENV['SMTP_ADDRESS'],
+    port: ENV['SMTP_PORT'],
+    domain: ENV['HOST'],
+    user_name: ENV['MAIL_USERNAME'],
+    password: ENV['MAIL_PASSWORD'],
+    authentication: :plain,
     enable_starttls_auto: true
   }
+
+  config.action_mailer.default_url_options = { host: ENV['HOST'] }
 
   # Mount Action Cable outside main process or domain.
   # config.action_cable.mount_path = nil

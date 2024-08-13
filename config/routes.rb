@@ -1,16 +1,41 @@
 Rails.application.routes.draw do
+  get 'public_links/show'
+  resources :public_links, only: [:show], param: :token
   devise_for :users
   root  "home#index"
   get '/invalid_ip', to: 'devise#invalid_ip'
   get 'change_password', to: 'home#change_password'
   patch 'update_password', to: 'home#update_password'
+  get 'view_resume', to: 'home#view_resume'
   
   
   namespace :admin do
     resources :users, only: [:new, :create, :index, :edit, :update, :destroy]
+    resources :oncall_support, only: [:index, :show, :create, :update]
+    resources :daily_reports, only: [:index, :show] do
+      collection do
+        get :search
+        get 'report', to:  'daily_reports#report'
+      end
+    end
+
     resources :job_applications, only: [:index]
+    resources :interviews, only: [:new, :create] do
+      member do
+        get :generate_public_link
+      end
+    end
+
+    resources :job_applications, only: [:index, :show] do 
+      member do 
+        get :reject_applicant
+        get :download_resume
+      end
+    end
+
     resources :job_posts
     resources :contact_details, only: [:index]
+    #Users
     get '/generate_pdf', :to => "users#generate_pdf", as: 'generate_pdf'
     get '/user_profile', :to => "users#user_profile", as: 'user_profile'
     put '/disable_user', :to => "users#disable_user", as: 'disable_user'
@@ -20,11 +45,10 @@ Rails.application.routes.draw do
     get '/leave_report', :to => "users#leave_report", as: 'leave_report'
     get '/monthly_report', :to => "users#monthly_report", as: 'monthly_report'
     get '/monthly_users_list', :to => "users#monthly_users_list", as: 'monthly_users_list'
-    get '/monthly_excel/:month/:year', to: 'users#monthly_excel', as: :users_monthly_excel
-    get '/users_daily_reports', :to => "users#users_daily_reports", as: :users_daily_reports
-    get '/show_daily_report', :to => "users#show_daily_report", as: :show_daily_report
-    get '/daily_report', :to => "users#daily_report", as: 'daily_report'
+    get 'monthly_excel/:month/:year', to: 'users#monthly_excel', as: :users_monthly_excel, defaults: { format: :xlsx }
+    get '/archived_user', :to => "users#archived_user", as: 'archived_user'
 
+    #Daily Reports
   end
   
   resources :attendance, only: [:index]
@@ -35,6 +59,9 @@ Rails.application.routes.draw do
   put '/update_report', :to => "attendance#update_report", as: 'update_report'
   get '/show_report', :to => "attendance#show_report", as: 'show_report'
   get '/user_report', :to => "attendance#user_report", as: 'user_report'
+  post '/create_oncall', :to => "oncall_support#create_oncall", as: 'create_oncall'
+  get '/show_oncalls', :to => "oncall_support#show_oncalls", as: 'show_oncalls'
+
 
   resources :leaves, only: [:new, :create, :index, :edit, :update, :destroy, :show]
   get '/approve', :to => "leaves#approve", as: 'approve'

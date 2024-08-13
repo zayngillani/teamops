@@ -9,13 +9,13 @@ class SlackService
      end
      
      def determine_channel
-       if @user.email.ends_with?("@gmail.com")
-         ENV["TEST_CHANNEL"]
+       if @user.email.ends_with?("@techcreatix.com")
+          ENV["SLACK_CHANNEL"]
        elsif @time.is_a?(Time)
-         ENV["SLACK_CHANNEL"]
-     else
+          ENV["TEST_CHANNEL"]
+       else
           ENV["LEAVE_CHANNEL"]
-     end
+       end
      end
    
      def send_message

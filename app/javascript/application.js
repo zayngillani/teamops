@@ -33,8 +33,16 @@ document.addEventListener("turbo:load", function() {
     }
 });
 
-document.addEventListener('turbo:load', function() {
+  document.addEventListener('turbo:load', function() {
     const flashMessage = document.getElementById('banner');
+    flashMessage.classList.add('fading-out');
+    setTimeout(function() {
+      flashMessage.parentNode.removeChild(flashMessage);
+    }, 3000);
+  });
+
+  document.addEventListener('turbo:load', function() {
+    const flashMessage = document.getElementById('banner-devise');
     flashMessage.classList.add('fading-out');
     setTimeout(function() {
       flashMessage.parentNode.removeChild(flashMessage);
@@ -138,5 +146,50 @@ document.addEventListener("turbo:load", function() {
           window.location.href = userPath;
         }
       });
+    });
+  });
+
+  document.addEventListener('turbo:load', function() {
+    const searchInput = document.getElementById('searchInput');
+    const userRows = document.querySelectorAll('#usersTableBody .user-row');
+    const separatorRows = document.querySelectorAll('#usersTableBody .separator-row');
+
+    searchInput.addEventListener('keyup', function() {
+      const filter = searchInput.value.toLowerCase();
+      let hasResults = false;
+
+      userRows.forEach((userRow, index) => {
+        const td = userRow.getElementsByTagName('td')[0];
+        if (td) {
+          const textValue = td.textContent || td.innerText;
+          if (textValue.toLowerCase().indexOf(filter) > -1) {
+            userRow.style.display = '';
+            if (separatorRows[index]) separatorRows[index].style.display = '';
+            hasResults = true;
+          } else {
+            userRow.style.display = 'none';
+            if (separatorRows[index]) separatorRows[index].style.display = 'none';
+          }
+        }
+      });
+
+      const noResultsRow = document.getElementById('noResultsRow');
+      if (hasResults) {
+        if (noResultsRow) noResultsRow.style.display = 'none';
+      } else {
+        if (!noResultsRow) {
+          const tbody = document.getElementById('usersTableBody');
+          const newRow = document.createElement('tr');
+          newRow.id = 'noResultsRow';
+          const newCell = document.createElement('td');
+          newCell.colSpan = 2;
+          newCell.style.textAlign = 'center';
+          newCell.textContent = 'No Users found';
+          newRow.appendChild(newCell);
+          tbody.appendChild(newRow);
+        } else {
+          noResultsRow.style.display = '';
+        }
+      }
     });
   });
