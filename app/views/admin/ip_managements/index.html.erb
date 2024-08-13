@@ -1,0 +1,162 @@
+<% content_for :link_button do %>
+  <div class="action-header-position pos">
+    <div class="action-header-text"></div>
+    <div class="create-job-btn">
+      <button id="modal-btn" class="create-job-btn-text">+ Add IP Address</button>
+    </div>
+  </div>
+<% end %>
+<%= render 'create_ip' %>
+
+<div style="margin-left: 260px; overflow-x: auto; height: 695px;">
+  <table class="admin-oncall-table-container">
+    <thead>
+      <tr class="dashboard-table-lines">
+        <th>Name</th>
+        <th>IP Address</th>
+        <th>Status</th>
+        <th>ON/OFF</th>
+        <th>Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% if @ips.present? %>
+        <% @ips.each do |ip| %>
+        <tr class="dashboard-table-lines">
+          <td class="table-title-column"><%= ip.user_name %></td>
+          <td class="table-title-column"><%= ip.ip_address %></td>
+          <% if ip.status == 'enable'%>
+            <td class="oncall-status-column-approved"><span><%= ip.status %></span></td>
+          <% else %>
+            <td class="ip-status-column"><span><%= ip.status %></span></td>
+          <% end %>
+          <td class="table-title-column">
+            <label class="switch">
+              <input type="checkbox" class="toggle-switch" data-id="<%= ip.id %>" <%= 'checked' if ip.status == 'enable' %>>
+              <span class="slider round"></span>
+            </label>
+          </td>
+          <td>
+            <div class="dropdown-action">
+              <%= image_tag("more.png", width: "20", height: "20", alt: "Edit User") %>
+              <div class="dropdown-content-action">
+                <div class="actions-container">
+                  <button class="modal-btn-edit" data-target="myModalEdit<%= ip.id %>">Edit</button>
+                  <%= render partial: 'edit_ip', locals: { ip: ip } %>
+                  <button class="modal-btn-delete" data-target="myModalDelete<%= ip.id %>">Remove</button>
+                  <div id="myModalDelete<%= ip.id %>" class="modal">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <span class="report-close-modal" onclick="document.getElementById('myModal').style.display='none'">&times;</span>
+                      </div>
+                    <div class="del-icon">
+                    <%= image_tag("delete-ip.svg", width: "40", height: "40", alt: "Edit User") %>
+                    </div><br>
+                      <h3>Remove IP Address</h3>
+                      <p style="text-align: center; margin-top: 10px;">Are you sure you want to remove this IP address.<br> Removing this IP Address will restrict the employee from checking in from this IP in the future.</p>
+                      <hr class="grey-line">
+                      <div id="timerDisplayModal"></div>
+                      <div class="modal-footer">
+                        <%= button_to "Yes, Remove", admin_ip_management_path(ip.id), method: :delete, class: "ip-status-column del-btn" %>
+                        <button class="closeModalBtn close sign-out-button">No</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </td>
+        </tr>
+        <% end %>
+      <% else %>
+        <tr><td colspan="5" style="text-align: center;">No data present</td></tr>
+      <% end %>
+    </tbody>
+  </table>
+    <div class="pagination-container">
+  <%= will_paginate @ips, renderer: PaginationHelper::DailyReportsRenderer, remote: true %>
+  </div>
+</div>
+
+<script>
+
+document.addEventListener("turbo:load", function() {
+  var addIpModal = document.getElementById("myModal");
+  var addIpBtn = document.getElementById("modal-btn");
+
+  if (addIpBtn) {
+    addIpBtn.onclick = function() {
+      addIpModal.style.display = "block";
+    }
+  }
+
+  window.onclick = function(event) {
+    if (event.target === addIpModal) {
+      addIpModal.style.display = "none";
+    }
+  }
+
+  document.querySelectorAll(".modal-btn-edit").forEach(function(editBtn) {
+    editBtn.onclick = function() {
+      var modalId = this.getAttribute("data-target");
+      var editModal = document.getElementById(modalId);
+      if (editModal) {
+        editModal.style.display = "block";
+      }
+    }
+  });
+
+  document.querySelectorAll(".modal-btn-delete").forEach(function(deleteBtn) {
+    deleteBtn.onclick = function() {
+      var modalId = this.getAttribute("data-target");
+      var deleteModal = document.getElementById(modalId);
+      if (deleteModal) {
+        deleteModal.style.display = "block";
+      }
+    }
+  });
+
+  window.onclick = function(event) {
+    document.querySelectorAll(".modal").forEach(function(modal) {
+      if (event.target === modal) {
+        modal.style.display = "none";
+      }
+    });
+  }
+
+  document.querySelectorAll(".closeModalBtn").forEach(function(closeBtn) {
+    closeBtn.onclick = function() {
+      this.closest(".modal").style.display = "none";
+    }
+  });
+
+  document.querySelectorAll(".toggle-switch").forEach(function(switchElement) {
+    switchElement.addEventListener("change", function() {
+      var ipId = this.dataset.id;
+      var newStatus = this.checked ? "enable" : "disable";
+
+      fetch(`/admin/ip_managements/${ipId}/update_status`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-Token": document.querySelector("meta[name='csrf-token']").getAttribute("content")
+        },
+        body: JSON.stringify({ ip_management: { status: newStatus } })
+      }).then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            window.location.reload();
+          } else {
+            throw new Error(data.errors.join(", "));
+          }
+        }).catch(error => {
+          console.error("Error updating status:", error);
+          alert("Error updating status: " + error.message);
+          this.checked = !this.checked;
+        });
+    });
+  });
+});
+
+
+</script>

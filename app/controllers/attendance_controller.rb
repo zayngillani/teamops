@@ -1,4 +1,5 @@
 class AttendanceController < ApplicationController
+  before_action :restrict_ip, only: [:create_session, :end_session]
 
      def index
           first_day_of_month = Date.current.beginning_of_month
@@ -143,4 +144,17 @@ class AttendanceController < ApplicationController
           end
           total_break_time_seconds
      end
+
+     def restrict_ip
+      if current_user&.can_outside_access == false
+        allowed_ips = IpManagement.all.enable.where(deleted_at: nil).pluck(:ip_address)
+        client_ip = request.headers['X-Forwarded-For'] || request.remote_ip
+        client_ip = client_ip.split(',').first.strip
+        unless allowed_ips.include?(client_ip)
+          redirect_to root_path, alert: 'Access denied from this IP address.'
+        end
+      else
+         return
+      end
+    end
 end

@@ -10,7 +10,16 @@ Rails.application.routes.draw do
   
   
   namespace :admin do
-    resources :users, only: [:new, :create, :index, :edit, :update, :destroy]
+    resources :users, only: [:new, :create, :index, :edit, :update, :destroy] do
+      member do
+        patch 'update_ip_restriction'
+      end
+    end
+    resources :ip_managements do
+      member do
+        patch :update_status
+      end
+    end
     resources :oncall_support, only: [:index, :show, :create, :update]
     resources :daily_reports, only: [:index, :show] do
       collection do

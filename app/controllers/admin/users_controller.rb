@@ -460,7 +460,7 @@ class Admin::UsersController < ApplicationController
           end
         end
     end
-    
+
     def monthly_users_list
       @users = User.active.where(role: "user", deleted: false).order(name: :asc)
       @month = params[:month].to_i
@@ -486,6 +486,15 @@ class Admin::UsersController < ApplicationController
         end
         @current_leaves = Leave.where("start_date <= ? AND end_date >= ? AND status = ? AND user_id = ?", @end_date, @start_date, 1, user.id).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }
         @total_working_hours = working_days * regular_hours_per_day
+      end
+    end
+
+    def update_ip_restriction
+      user = User.find(params[:id])
+      if user.update(can_outside_access: params[:user][:can_outside_access])
+        render json: { success: true }, status: :ok
+      else
+        render json: { success: false, errors: user.errors.full_messages }, status: :unprocessable_entity
       end
     end
 
