@@ -145,7 +145,7 @@ class AttendanceController < ApplicationController
       @end_date = @start_date.end_of_month
       current_month_start = @start_date.beginning_of_month
       current_month_end = @end_date.end_of_month
-      Attendance.where("check_in_time <= ? AND check_out_time >= ? AND user_id = ?", current_month_end, current_month_start, current_user.id)
+      Attendance.where("check_in_time <= ? AND check_out_time >= ? AND user_id = ?", current_month_end, current_month_start, current_user.id).order(created_at: :desc)
      end
   
      def calculate_total_hours
