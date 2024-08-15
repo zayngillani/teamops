@@ -143,9 +143,14 @@ class AttendanceController < ApplicationController
       @year = params[:year].present? ? params[:year].to_i : Date.today.year
       @start_date = Date.new(@year, @month, 1)
       @end_date = @start_date.end_of_month
-      current_month_start = @start_date.beginning_of_month
-      current_month_end = @end_date.end_of_month
-      Attendance.where("check_in_time <= ? AND check_out_time >= ? AND user_id = ?", current_month_end, current_month_start, current_user.id).order(created_at: :desc)
+      @attendance_records = Attendance.where(
+        "check_in_time <= ? AND (check_out_time >= ? OR check_out_time IS NULL) AND user_id = ?",
+        @end_date.end_of_day, @start_date.beginning_of_day, current_user.id
+      ).order(created_at: :desc)
+      @today_attendance = @attendance_records.find do |record|
+        record.check_in_time.to_date == Date.today
+      end
+      @attendance_records
      end
   
      def calculate_total_hours
