@@ -3,14 +3,8 @@
   <%= select_tag 'month', options_for_select(Date::MONTHNAMES.compact.each_with_index.map { |month, index| [month, index + 1] }, params[:month].presence || Date.current.month), id: 'month', class: 'form-control select-month' %>
   <%= select_tag 'year', options_for_select((Date.current.year..Date.current.year + 5).to_a, params[:year].presence || Date.current.year), id: 'year', class: 'form-control select-year' %>
 <% end %>
-
   <div class="action-header-position pos">
-    <div class="action-header-text">
-    </div>
-    <div class="create-job-btn">
-    </div>
   </div>
-
 <% end %>
 
 <div class="content" style="margin-left: 220px;">
