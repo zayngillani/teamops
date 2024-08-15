@@ -61,10 +61,7 @@ class Admin::UsersController < ApplicationController
     end
 
     def user_profile
-      @user = User.find_by(id: params[:format]) if params[:format].present?
-      name = @user.name
-      @first_name = name.split.first[0]
-      @last_name = name.split.last[0]
+      @user = current_user if current_user.present?
     end
 
     def generate_pdf
