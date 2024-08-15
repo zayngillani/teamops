@@ -1,17 +1,13 @@
 class AttendanceController < ApplicationController
 
      def index
-          first_day_of_month = Date.current.beginning_of_month
-          last_day_of_month = Date.current.end_of_month
-          @session = current_user.attendances.where(created_at: first_day_of_month.beginning_of_day..last_day_of_month.end_of_day).order(created_at: :desc)
-          @user = current_user
-          if @session.present?
-            total_hrs = 0
-            @session.each do |attendance|
-              total_hrs += attendance.total_hours.to_i unless attendance.total_hours.nil?
-            end
-            @total_hours = total_hrs
-          end
+      @user = current_user
+     end
+
+     def users_attendance
+        @user = current_user
+        @session = fetch_attendance_data
+        calculate_total_hours if @session.present?
      end
 
      def create_session
@@ -142,5 +138,23 @@ class AttendanceController < ApplicationController
                end
           end
           total_break_time_seconds
+     end
+
+     def fetch_attendance_data
+      @month = params[:month].present? ? params[:month].to_i : Date.today.month
+      @year = params[:year].present? ? params[:year].to_i : Date.today.year
+      @start_date = Date.new(@year, @month, 1)
+      @end_date = @start_date.end_of_month
+      current_month_start = @start_date.beginning_of_month
+      current_month_end = @end_date.end_of_month
+      Attendance.where("check_in_time <= ? AND check_out_time >= ? AND user_id = ?", current_month_end, current_month_start, current_user.id)
+     end
+  
+     def calculate_total_hours
+      total_hrs = 0
+      @session.each do |attendance|
+        total_hrs += attendance.total_hours.to_i unless attendance.total_hours.nil?
+      end
+      @total_hours = total_hrs
      end
 end
