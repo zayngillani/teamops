@@ -61,6 +61,8 @@ Rails.application.routes.draw do
   get '/user_report', :to => "attendance#user_report", as: 'user_report'
   post '/create_oncall', :to => "oncall_support#create_oncall", as: 'create_oncall'
   get '/show_oncalls', :to => "oncall_support#show_oncalls", as: 'show_oncalls'
+  get '/users_attendance', :to => "attendance#users_attendance", as: 'users_attendance'
+
 
 
   resources :leaves, only: [:new, :create, :index, :edit, :update, :destroy, :show]

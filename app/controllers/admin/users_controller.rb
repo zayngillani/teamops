@@ -415,7 +415,7 @@ class Admin::UsersController < ApplicationController
 
     def monthly_report
       if params[:selected_users].present?
-        user_ids = params[:selected_users].split(',').map(&:to_i)
+        user_ids = params[:selected_users].split(',')
         @users = User.where(id: user_ids).order(name: :asc)
       else
         @users = User.active.where(role: "user", deleted: false).order(name: :asc)
