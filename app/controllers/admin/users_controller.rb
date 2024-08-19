@@ -61,10 +61,7 @@ class Admin::UsersController < ApplicationController
     end
 
     def user_profile
-      @user = User.find_by(id: params[:format]) if params[:format].present?
-      name = @user.name
-      @first_name = name.split.first[0]
-      @last_name = name.split.last[0]
+      @user = current_user if current_user.present?
     end
 
     def generate_pdf
@@ -309,8 +306,11 @@ class Admin::UsersController < ApplicationController
               header_style = wb.styles.add_style(b: true)
               entry_style = wb.styles.add_style(b: true, alignment: { horizontal: :center })
               session_style = wb.styles.add_style(alignment: { horizontal: :center })
-              sheet.add_row ["Date", "Check In", "Check Out", "Regular Hours", "Overtime", "Leaves", "Total Hours"], style: header_style
+              sheet.add_row ["Date", "Check In", "Check Out", "Regular Hours", "Overtime", "Leaves", "On Call" ,"Total Hours"], style: header_style
               total_hours_sum = 0
+              total_oncall_hours = 0
+              total_regular_hours = 0
+              total_overtime_hours = 0
               public_holidays = {}
               @public_holidays.each do |holiday|
                 (holiday.start_date..holiday.end_date).each do |date|
@@ -324,39 +324,62 @@ class Admin::UsersController < ApplicationController
                   leaves[date] = leave.reason
                 end
               end
+              on_calls = {}
+              user_on_calls = Oncall.where('(start_date <= ? AND end_date >= ?) OR (start_date >= ? AND start_date <= ?)', @end_date, @start_date, @start_date, @end_date).where(request_status: 1, user_id: user.id)
+              user_on_calls.each do |oncall|
+                (oncall.start_date..oncall.end_date).each do |date|
+                  on_calls[date] = oncall.reason
+                end
+              end
               (@start_date..@end_date).each do |date|
                 next if date.saturday? || date.sunday?
                 attendance = user.attendances.find_by(check_in_time: date.beginning_of_day..date.end_of_day)
+                total_hours = attendance.present? ? (attendance.total_hours || 0) : 0
+                if attendance.present?
+                  regular_hours = total_hours > 28800 ? 28800 : total_hours
+                  overtime_hours = total_hours > 28800 ? total_hours - 28800 : 0
+                  formatted_reg_hours = format_time(regular_hours)
+                  formatted_total_hours = format_time(total_hours)
+                  formatted_overtime_hours = format_time(overtime_hours)
+                end
+                total_regular_hours += regular_hours if regular_hours.present?
+                total_overtime_hours += overtime_hours if overtime_hours.present?
                 is_public_holiday = public_holidays.key?(date)
                 is_leave = leaves.key?(date)
-                if is_public_holiday
+                is_oncall = on_calls.key?(date)
+                if is_oncall
                   sheet.add_row [
                     date.strftime("%A %b #{date.day.ordinalize}"),
-                    "","","",
+                    attendance.present? ? attendance.check_in_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A",
+                    attendance.present? ? attendance.check_out_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A",
+                    attendance.present? ? formatted_reg_hours : "N/A",
+                    attendance.present? ? formatted_overtime_hours : "N/A",
+                    "","On Call",
+                    attendance.present? ? formatted_total_hours : "N/A",
+                  ], style: [nil, nil, nil, nil, nil, nil, entry_style, nil]
+                  total_oncall_hours += total_hours if total_hours.present?
+                elsif is_public_holiday
+                  sheet.add_row [
+                    date.strftime("%A %b #{date.day.ordinalize}"),
+                    "","","","",
                     "#{public_holidays[date]}",
                     "","",
-                  ], style: [nil, nil, nil, nil, entry_style, nil, nil]
+                  ], style: [nil, nil, nil, nil, nil, entry_style, nil, nil]
                 elsif is_leave
                   sheet.add_row [
                     date.strftime("%A %b #{date.day.ordinalize}"),
-                    "","","",
+                    "","","","",
                     "On Leave",
                     "","",
                   ], style: [nil, nil, nil, nil, entry_style, nil, nil]
                 elsif attendance
-                  total_hours = attendance.total_hours || 0
-                  regular_hours = total_hours > 28800 ? 28800 : total_hours
-                  overtime_hours = total_hours > 28800 ? total_hours - 28800 : 0
-                  formatted_reg_hours = format_total_time(regular_hours)
-                  formatted_total_hours = format_time(total_hours)
-                  formatted_overtime_hours = format_total_time(overtime_hours)
                   sheet.add_row [
                     date.strftime("%A %b #{date.day.ordinalize}"),
                     attendance.check_in_time.present? ? attendance.check_in_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A",
                     attendance.check_out_time.present? ? attendance.check_out_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A",
                     attendance.total_hours.present? ? formatted_reg_hours : "N/A",
                     attendance.total_hours.present? ? formatted_overtime_hours : "N/A",
-                    "",
+                    "","",
                     attendance.total_hours.present? ? formatted_total_hours : "N/A",
                   ]
                   total_hours_sum += total_hours
@@ -365,12 +388,15 @@ class Admin::UsersController < ApplicationController
                     date.strftime("%A %b #{date.day.ordinalize}"),
                     "","","",
                     "No Session",
-                    "","",""
+                    "","","",""
                   ], style: [nil, nil, nil, nil, session_style, nil, nil]
                 end
               end
               time_format = format_time(@total_hours[user.id])
-              sheet.add_row ["Total:", "", "", "", "", user_leaves.sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }, time_format], style: [header_style, nil, nil, nil, nil, nil, header_style]
+              oncall_hours = format_time(total_oncall_hours)
+              regular = format_time(total_regular_hours)
+              overtime = format_time(total_overtime_hours)
+              sheet.add_row ["Total:", "", "", regular, overtime, user_leaves.sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }, oncall_hours ,time_format], style: header_style
               reg_hours = @total_working_hours - user_leaves.sum { |leave| (leave.end_date - leave.start_date).to_i + 1 } * 8 if user_leaves.present?
               reg_hours ||= @total_working_hours
               working_hours = @total_hours[user.id] / 3600
@@ -386,7 +412,7 @@ class Admin::UsersController < ApplicationController
 
     def monthly_report
       if params[:selected_users].present?
-        user_ids = params[:selected_users].split(',').map(&:to_i)
+        user_ids = params[:selected_users].split(',')
         @users = User.where(id: user_ids).order(name: :asc)
       else
         @users = User.active.where(role: "user", deleted: false).order(name: :asc)

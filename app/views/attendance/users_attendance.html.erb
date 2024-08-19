@@ -1,0 +1,15 @@
+<% content_for :link_button do %>
+     <%= form_tag users_attendance_path, method: :get, id: "filterForm", style: "display: flex; margin-right: 52%;" do %>
+     <%= select_tag 'month', options_for_select(Date::MONTHNAMES.compact.each_with_index.map { |month, index| [month, index + 1] }, params[:month].presence || Date.current.month), id: 'month', class: 'form-control select-month' %>
+     <%= select_tag 'year', options_for_select((Date.current.year..Date.current.year + 5).to_a, params[:year].presence || Date.current.year), id: 'year', class: 'form-control select-year' %>
+     <% end %>
+<% end %>
+
+<div class="content" style="margin-left: 220px;">
+  <div class="userTable">
+    <h2>Attendance Record</h2>
+    <p>Monthly Attendance</p>
+    <%= render 'attendance/user_attendance' %>
+  </div>
+  <br>
+</div>

@@ -13,8 +13,6 @@ class SlackService
           ENV["SLACK_CHANNEL"]
        elsif @time.is_a?(Time)
           ENV["TEST_CHANNEL"]
-       else
-          ENV["LEAVE_CHANNEL"]
        end
      end
    
@@ -22,13 +20,13 @@ class SlackService
           @client.chat_postMessage(
                channel: @channel,
                text: "<@#{@user.slack_member_id}> #{@message} at #{@time.in_time_zone('Asia/Karachi').strftime('%b %d, %I:%M%p %Z')}"
-       )
+          )
      end
      
      def send_leave
           @request_user = User.find_by(id: @time.user_id)
           @client.chat_postMessage(
-               channel: @channel,
+               channel: ENV["LEAVE_CHANNEL"],
                text: "<@#{@request_user.slack_member_id}> #{@message} #{@user.name} from #{@time.start_date.strftime('%d/%B/%Y')} to #{@time.end_date.strftime('%d/%B/%Y')}"
           )
      end

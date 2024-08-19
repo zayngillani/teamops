@@ -204,8 +204,8 @@
                         Dashboard
                     </div>
                 </a>
-                <a href="#">
-                    <div class="menu-item <%= 'active' if current_page?(root_path) %>">
+                <a href="<%= users_attendance_path %>">
+                    <div class="menu-item <%= 'active' if current_page?(users_attendance_path) %>">
                         <%= image_tag("attendance.svg", class: "menu-icon") %>
                         Attendance
                     </div>

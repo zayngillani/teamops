@@ -1,3 +1,11 @@
+<style>
+  body {
+    background-color: #f1f1f1; /* off-white background */
+    margin: 0;
+    padding: 0;
+  }
+  </style>
+  <body>
 <div class="content" style="margin-left: 220px;">
   <div class="card">
     <h3>Welcome</h3>
@@ -51,7 +59,7 @@
           <div class="modal-checkout">
             <%= form_with url: end_session_path, method: :post, remote: true, id: "checkout_form" do |f| %>
               <div class="modal-header">
-                <span class="close-modal" onclick="document.getElementById('myModal').style.display='none'">&times;</span>
+                <span class="close-modal icon-position" onclick="document.getElementById('myModal').style.display='none'">&times;</span>
               </div>
               <h4>Daily Report</h4>
               <p style="text-align: center; margin-top: 10px;">
@@ -66,15 +74,8 @@
       </div>
     <% end %>
   <% end %>
-
-  <div class="userTable">
-    <h2>Attendance Record</h2>
-    <p>Monthly Attendance</p>
-    <%= render 'attendance/user_attendance' %>
-  </div>
-  <br>
 </div>
-
+  </body>
 <script>
     document.addEventListener("turbo:load", function() {
       const buttons = document.querySelectorAll('form button.sign-out-button');
