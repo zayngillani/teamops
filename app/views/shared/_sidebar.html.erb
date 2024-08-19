@@ -147,8 +147,8 @@
                         Daily Reports
                     </div>
                 </a>
-                <a href="<%= leaves_path %>">
-                    <div class="menu-item <%= 'active' if current_page?(leaves_path) %>">
+                <a href="<%= admin_leaves_path %>">
+                    <div class="menu-item <%= 'active' if current_page?(admin_leaves_path) %>">
                         <%= image_tag("leave.svg", class: "menu-icon") %>
                         Leaves
                     </div>
@@ -210,8 +210,8 @@
                         Daily Reports
                     </div>
                 </a>
-                <a href="#">
-                    <div class="menu-item <%= 'active' if current_page?(root_path) %>">
+                <a href="<%= leaves_path %>">
+                    <div class="menu-item <%= 'active' if current_page?(leaves_path) %>">
                         <%= image_tag("leave.svg", class: "menu-icon") %>
                         Leaves
                     </div>

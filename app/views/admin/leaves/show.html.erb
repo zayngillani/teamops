@@ -1,0 +1,76 @@
+<div class="leaveTable">
+    <h2>Leave Details</h2>
+    <div class="leave-form-fields-inline">
+        <div class="field">
+            <span><%= @leave.leave_type.capitalize%></span>
+        </div>
+        <div class="field">
+            <span><%= @leave_days_count %></span>
+        </div>
+    </div>
+    <div class="leave-form-fields-inline">
+        <div class="field">
+            <span><%= @leave.start_date.strftime("%d %B, %Y") %></span>
+        </div>
+        <div class="field">
+            <span><%= @leave.end_date.strftime("%d %B, %Y") %></span>
+        </div>
+    </div>
+    <div class="reason-fields-inline">
+        <div class="field">
+            <span><%= @leave.reason %></span>
+        </div>
+    </div>
+    <%= form_with model: @leave, url: admin_leave_path, method: :put, remote: true, id: "checkout_form" do |f| %>
+        <%= f.hidden_field :action_type, id: 'action_type' %>
+        <% if @leave.status == "approved" || @leave.status == "rejected" && @leave.supervisor.present? %>
+            <div class="leave-form-fields-inline">
+                <div class="field">
+                    <span id="leave-super-display"><%= @leave.supervisor.present? ? @leave.supervisor : "N/A" %></span>
+                </div>
+            </div>
+        <% else %>
+            <%= f.text_field :supervisor, class: "super-field", required: true, pattern: "\S+.*", title: "Supervisor name cannot be empty or contain only spaces", placeholder: "Approved By" ,maxlength: 22 %>
+        <% end %>
+        <div class="leave-btns-container">
+            <% if @leave.status == "approved" %>
+                <%= button_tag(type: 'button', class: "after-approved-btn hover") do %>
+                    <div class="after-approved-btn-text">Approved</div>
+                <% end %>
+            <% else %>
+                <%= button_tag(type: 'button', class: "leave-reject-btn hover", onclick: "submitForm('reject', this)") do %>
+            <% if @leave.status == "rejected" %>
+                <div class="leave-reject-btn-text">Rejected</div>
+            <% else %>
+                    <div class="leave-reject-btn-text">Reject</div>
+            <% end %>
+                <% end %>
+                <% if @leave.status == "pending" %>
+                    <%= button_tag(type: 'button', class: "leave-approved-btn hover", onclick: "submitForm('approve', this)") do %>
+                        <div class="shedule-interview-btn-text">Approve</div>
+                    <% end %>
+                <% end %>
+            <% end %>
+        </div>
+    <% end %>
+</div>
+
+<script>
+function submitForm(actionType, button) {
+    var supervisorField = document.querySelector('.super-field');
+    var supervisorValue = supervisorField.value.trim();
+    if (supervisorValue === "") {
+        alert("Supervisor name cannot be empty or contain only spaces.");
+        return;
+    }
+
+    button.disabled = true;
+    const text = button.querySelector('div');
+    if (text) {
+        text.textContent = "Processing...";
+    }
+
+    document.getElementById('action_type').value = actionType;
+    document.getElementById('checkout_form').submit();
+}
+</script>

@@ -1,15 +1,3 @@
-<style>
-.select-status{
-  margin-right: 10px;
-}
-.pos{
-  width: 51%;
-}
-
-.filter_i{
-  margin-left: 10px;
-}
-</style>
 <% content_for :link_button do %>
      <%= form_tag admin_oncall_support_index_path, method: :get, id: "filterForm", style: "display: flex; margin-left: 20%;" do %>
      <%= select_tag 'month', options_for_select(Date::MONTHNAMES.compact.each_with_index.map { |month, index| [month, index + 1] }, params[:month].presence || Date.current.month), id: 'month', class: 'form-control select-month' %>
