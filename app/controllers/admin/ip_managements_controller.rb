@@ -1,4 +1,6 @@
 class Admin::IpManagementsController < ApplicationController
+  require 'ipaddr'
+
     def index
       @ips = IpManagement.where(deleted_at: nil).order(created_at: :desc).paginate(page: params[:page], per_page: 10)
     end
@@ -11,11 +13,23 @@ class Admin::IpManagementsController < ApplicationController
       @ip = IpManagement.new
       @ip.user_name = params[:name]
       @ip.ip_address = params[:ip_address]
-      if @ip.save!
-        flash[:success] = "IP Address added sucessfully"
+      exist_ip = IpManagement.where(ip_address: params[:ip_address])
+      if exist_ip
+        flash[:error] = "IP Address already added"
         redirect_to admin_ip_managements_path
+        return
+      end
+      if valid_ip?(params[:ip_address])
+        if @ip.save
+          flash[:success] = "IP Address added successfully"
+          redirect_to admin_ip_managements_path
+        else
+          flash[:error] = "Failed to save IP Address"
+          redirect_to admin_ip_managements_path
+        end
       else
-        render :new
+        flash[:error] = "Given IP Address is not valid"
+        redirect_to admin_ip_managements_path
       end
     end
 
@@ -53,6 +67,10 @@ class Admin::IpManagementsController < ApplicationController
 
     def ip_management_params
       params.require(:ip_management).permit(:user_name, :ip_address)
+    end
+
+    def valid_ip?(ip)
+      IPAddr.new(ip) rescue false
     end
 
 end

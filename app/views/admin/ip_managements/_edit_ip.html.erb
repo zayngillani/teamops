@@ -47,8 +47,7 @@
     <div class="modal-header">
       <span class="report-close-modal" onclick="document.getElementById('myModalEdit<%= ip.id %>').style.display='none'">&times;</span>
     </div>
-    <h4 style="margin-left: 1%; margin-top: 1%;">Edit IP Address</h4><br><br>
-    
+      <h3 style="margin-left: 1%; margin-top: 1%; color: black; float: left;">Edit IP Address</h3><br><br><br>
     <%= form_with model: ip, url: admin_ip_management_path(ip), method: :put, remote: true, id: "edit_ip_form_#{ip.id}" do |f| %>
       <div class="input-group">
         <%= f.text_field :user_name, value: ip.user_name, class: "text-field", placeholder: "Name", maxlength: 22, required: true %>

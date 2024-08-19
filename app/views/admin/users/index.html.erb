@@ -1,5 +1,8 @@
 <div class="main-content" style="margin-left: 260px;">
 <%= link_to "Create Employee", new_admin_user_path, class: "sign-out-button", id: "checkInButton", style: "float: right; margin-right: 20px; margin-bottom: 10px; margin-top: 15px;" %>
+<div id="loader" class="loader" style="display: none;">
+  <div class="spinner"></div>
+</div>
 <table>
   <thead>
     <tr>
@@ -78,6 +81,8 @@
     switchElement.addEventListener("change", function() {
       var ipId = this.dataset.id;
       var newStatus = this.checked ? true : false ;
+      loader.style.display = "flex";
+      document.body.style.pointerEvents = "none";
 
       fetch(`/admin/users/${ipId}/update_ip_restriction`, {
         method: "PATCH",
@@ -89,14 +94,12 @@
       }).then(response => response.json())
         .then(data => {
           if (data.success) {
-            window.location.reload(); // Refresh the page after success
-          } else {
-            throw new Error(data.errors.join(", "));
+            window.location.reload();
           }
-        }).catch(error => {
-          console.error("Error updating IP restriction:", error);
-          alert("Error updating IP restriction: " + error.message);
-          this.checked = !this.checked; // Revert the switch state if there was an error
+        })
+        .finally(() => {
+          loader.style.display = "none";
+          document.body.style.pointerEvents = "auto";
         });
     });
   });
