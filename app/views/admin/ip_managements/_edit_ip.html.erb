@@ -53,7 +53,7 @@
         <%= f.text_field :user_name, value: ip.user_name, class: "text-field", placeholder: "Name", maxlength: 22, required: true %>
         <%= f.text_field :ip_address, value: ip.ip_address, class: "text-field", placeholder: "IP Address", maxlength: 15, required: true %>
       </div>
-      <%= f.submit "Update", class: "submit-btn" %>
+      <%= f.submit "Update", class: "submit-btn", data: { disable_with: "Processing..." }  %>
     <% end %>
   </div>
 </div>

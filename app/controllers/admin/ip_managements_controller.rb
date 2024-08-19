@@ -14,7 +14,7 @@ class Admin::IpManagementsController < ApplicationController
       @ip.user_name = params[:name]
       @ip.ip_address = params[:ip_address]
       exist_ip = IpManagement.where(ip_address: params[:ip_address])
-      if exist_ip
+      if exist_ip.present?
         flash[:error] = "IP Address already added"
         redirect_to admin_ip_managements_path
         return
