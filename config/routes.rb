@@ -72,7 +72,7 @@ Rails.application.routes.draw do
   get '/show_oncalls', :to => "oncall_support#show_oncalls", as: 'show_oncalls'
   get '/users_attendance', :to => "attendance#users_attendance", as: 'users_attendance'
 
-
+  resources :dashboard, only: [:index], controller: 'attendance'
 
   resources :leaves, only: [:new, :create, :index, :edit, :update, :destroy, :show]
   get '/approve', :to => "leaves#approve", as: 'approve'
