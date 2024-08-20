@@ -11,9 +11,14 @@ class Admin::IpManagementsController < ApplicationController
       
     def create
       @ip = IpManagement.new
-      @ip.user_name = params[:name]
+      @ip.user_name = params[:name].strip
       @ip.ip_address = params[:ip_address]
-      exist_ip = IpManagement.where(ip_address: params[:ip_address])
+      exist_ip = IpManagement.where(ip_address: params[:ip_address], deleted_at: nil)
+      if @ip.user_name.blank?
+        flash[:error] = "Name cannot be empty or contain only spaces"
+        redirect_to admin_ip_managements_path
+        return
+      end    
       if exist_ip.present?
         flash[:error] = "IP Address already added"
         redirect_to admin_ip_managements_path
