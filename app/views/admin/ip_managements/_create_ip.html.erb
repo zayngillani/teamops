@@ -1,0 +1,59 @@
+<style>
+  .modal-ip {
+    background-color: #fefefe;
+    margin: 20% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 47%;
+    border-radius: 10px;
+    height: 45%;
+    margin-top: 100px;
+  }
+  .input-group {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.input-group input {
+    width: 45%;
+    padding: 10px;
+    margin-right: 10px;
+
+}
+
+.input-group button {
+    padding: 10px;
+    cursor: pointer;
+}
+
+
+.submit-btn {
+    background-color: #FFA500; /* Orange */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    width: 99%;
+    border-radius: 6px;
+}
+
+.submit-btn:hover {
+    background-color: #FFA500; /* Orange */
+}
+</style>
+<div id="myModal" class="modal" style="display: none;">
+  <div class="modal-ip">
+      <div class="modal-header">
+        <span class="report-close-modal" onclick="document.getElementById('myModal').style.display='none'">&times;</span>
+      </div>
+      <h4 style="margin-left: 1%; margin-top: 1%;">Add IP Address</h4><br><br>
+          <%= form_with url: admin_ip_managements_path, method: :post, remote: true, id: "checkout_form" do |f| %>
+               <div class="input-group">
+             <%= f.text_field :name, class: "text-field", placeholder: "Name", class: "text-field", maxlength: 22, required: true %>
+             <%= f.text_field :ip_address, class: "text-field", placeholder: "IP Address", class: "text-field", maxlength: 15, required: true %>
+               </div>
+             <%= f.submit "Add", class: "submit-btn", data: { disable_with: "Processing..." }%>
+          <% end %>
+  </div>
+</div>

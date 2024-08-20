@@ -1,5 +1,8 @@
 <div class="main-content" style="margin-left: 260px;">
 <%= link_to "Create Employee", new_admin_user_path, class: "sign-out-button", id: "checkInButton", style: "float: right; margin-right: 20px; margin-bottom: 10px; margin-top: 15px;" %>
+<div id="loader" class="loader" style="display: none;">
+  <div class="spinner"></div>
+</div>
 <table>
   <thead>
     <tr>
@@ -19,7 +22,12 @@
       <td><%= item.id %></td>
       <td><%= item.name %></td>
       <td><%= item.email %></td>
-      <td><%= item.ip_address.present? ? item.ip_address : "N/A"%>
+      <td class="table-ip-column">
+        <label class="switch">
+          <input type="checkbox" class="toggle-switch" data-id="<%= item.id %>"<%= item.can_outside_access ? "checked" : "" %>>
+          <span class="slider round"></span>
+        </label>
+      </td>
       <td>
         <%= link_to "View", admin_user_detail_path(id: item.id, month: Date.current.month, year: Date.current.year), class: "sign-out-button"%>
       </td>
@@ -68,3 +76,32 @@
 </table>
 <%= will_paginate @session, renderer: WillPaginate::ActionView::LinkRenderer, class: 'pagination' %>
 </div>
+<script>
+  document.querySelectorAll(".toggle-switch").forEach(function(switchElement) {
+    switchElement.addEventListener("change", function() {
+      var ipId = this.dataset.id;
+      var newStatus = this.checked ? true : false ;
+      loader.style.display = "flex";
+      document.body.style.pointerEvents = "none";
+
+      fetch(`/admin/users/${ipId}/update_ip_restriction`, {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-Token": document.querySelector("meta[name='csrf-token']").getAttribute("content")
+        },
+        body: JSON.stringify({ can_outside_access: newStatus })
+      }).then(response => response.json())
+        .then(data => {
+          if (data.success) {
+            window.location.reload();
+          }
+        })
+        .finally(() => {
+          loader.style.display = "none";
+          document.body.style.pointerEvents = "auto";
+        });
+    });
+  });
+
+</script>
