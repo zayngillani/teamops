@@ -139,18 +139,22 @@ class AttendanceController < ApplicationController
           total_break_time_seconds
      end
 
-     def restrict_ip
+    def restrict_ip
+      allowed_ips = IpManagement.where(deleted_at: nil, status: 0).pluck(:ip_address)
+      Rails.logger.info "Allowed IPs: #{allowed_ips.inspect}"
+      
       if current_user&.can_outside_access == false
-        allowed_ips = IpManagement.all.where(deleted_at: nil, status: 0).pluck(:ip_address)
         client_ip = request.headers['X-Forwarded-For']&.split(',')&.first&.strip || request.remote_ip
-        client_ip = client_ip.split(',').first.strip
+        Rails.logger.info "Client IP: #{client_ip}"
+
         unless allowed_ips.include?(client_ip)
           redirect_to root_path, alert: 'Access denied from this IP address.'
         end
       else
-         return
+        return
       end
     end
+
      def fetch_attendance_data
       @month = params[:month].present? ? params[:month].to_i : Date.today.month
       @year = params[:year].present? ? params[:year].to_i : Date.today.year
