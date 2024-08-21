@@ -1,7 +1,7 @@
 class ApplicationController < ActionController::Base
     #  before_action :authenticate_ip!
      before_action :authenticate_user!
-     http_basic_authenticate_with name: "#{ENV["BASIC_HTTP_NAME"]}", password: "#{ENV["BASIC_HTTP_PASSWORD"]}", if: ->{ENV['BASIC_HTTP_AUTH'] == "true"}
+     # http_basic_authenticate_with name: "#{ENV["BASIC_HTTP_NAME"]}", password: "#{ENV["BASIC_HTTP_PASSWORD"]}", if: ->{ENV['BASIC_HTTP_AUTH'] == "true"}
    
      private
    
