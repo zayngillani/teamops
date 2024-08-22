@@ -139,16 +139,16 @@ class AttendanceController < ApplicationController
           total_break_time_seconds
      end
 
-    def restrict_ip
+     def restrict_ip
       if current_user&.can_outside_access == false
-        allowed_ips = IpManagement.where(deleted_at: nil, status: 0).pluck(:ip_address)
+        allowed_ips = IpManagement.all.enable.where(deleted_at: nil).pluck(:ip_address)
         client_ip = request.headers['X-Forwarded-For'] || request.remote_ip
         client_ip = client_ip.split(',').first.strip
         unless allowed_ips.include?(client_ip)
           redirect_to root_path, alert: 'Access denied from this IP address.'
         end
       else
-        return
+         return
       end
     end
 
@@ -158,13 +158,9 @@ class AttendanceController < ApplicationController
       @start_date = Date.new(@year, @month, 1)
       @end_date = @start_date.end_of_month
       @attendance_records = Attendance.where(
-        "check_in_time <= ? AND (check_out_time >= ? OR check_out_time IS NULL) AND user_id = ?",
-        @end_date.end_of_day, @start_date.beginning_of_day, current_user.id
+        "check_in_time >= ? AND check_in_time <= ? AND (check_out_time IS NULL OR check_out_time >= ?) AND user_id = ?",
+        @start_date.beginning_of_day, @end_date.end_of_day, @start_date.beginning_of_day, current_user.id
       ).order(created_at: :desc)
-      @today_attendance = @attendance_records.find do |record|
-        record.check_in_time.to_date == Date.today
-      end
-      @attendance_records
      end
   
      def calculate_total_hours
