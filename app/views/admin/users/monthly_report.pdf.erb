@@ -185,6 +185,7 @@
         <% end %>
       <% end %>
       <% (@start_date..@end_date).each do |date| %>
+        <% next if date.saturday? || date.sunday? && !on_calls[date] %>
         <tr>
           <% session = @user_sessions.find { |s| s.check_in_time.to_date == date } %>
           <td><%= date.strftime("%A %b #{date.day.ordinalize}") %></td>
