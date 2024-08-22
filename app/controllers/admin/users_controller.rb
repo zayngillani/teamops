@@ -1,14 +1,15 @@
 class Admin::UsersController < ApplicationController
   before_action :validate_email_format, only: [:create, :update]
 
-     def index
-      session = User.where(role: "user", deleted: false).order(created_at: :desc)
+    def index
+      session = User.where(role: "user", deleted: false)
+                    .order(name: :asc)
       @session = session.paginate(page: params[:page], per_page: 10)
-     end
-
-     def new
-       @user = User.new
-     end
+    end
+  
+    def new
+      @user = User.new
+    end
    
     def create
       unless params[:user][:password] == params[:user][:password_confirmation]
