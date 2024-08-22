@@ -142,18 +142,9 @@ class AttendanceController < ApplicationController
     def restrict_ip
       if current_user&.can_outside_access == false
         allowed_ips = IpManagement.where(deleted_at: nil, status: 0).pluck(:ip_address)
-        client_ip = request.remote_ip
-
-        # Extract IPv4 if it's an IPv4-mapped IPv6 address
-        if client_ip.include?(':')
-          # Example: IPv6 format like ::ffff:192.168.1.1
-          ipv4_mapped = client_ip.match(/(?:.*:)(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})$/)
-          client_ip = ipv4_mapped[1] if ipv4_mapped
-        end
-
-        Rails.logger.info "Client IP (IPv4): #{client_ip}"
+        client_ip = request.headers['X-Forwarded-For'] || request.remote_ip
+        Rails.logger.info "Client IP: #{client_ip}"
         Rails.logger.info "Allowed IPs: #{allowed_ips.inspect}"
-
         unless allowed_ips.include?(client_ip)
           redirect_to root_path, alert: 'Access denied from this IP address.'
         end
