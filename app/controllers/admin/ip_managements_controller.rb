@@ -14,28 +14,14 @@ class Admin::IpManagementsController < ApplicationController
       @ip.user_name = params[:name].strip
       @ip.ip_address = params[:ip_address]
       exist_ip = IpManagement.where(ip_address: params[:ip_address], deleted_at: nil)
-      if @ip.user_name.blank?
-        flash[:error] = "Name cannot be empty or contain only spaces"
-        redirect_to admin_ip_managements_path
-        return
-      end    
-      if exist_ip.present?
-        flash[:error] = "IP Address already added"
-        redirect_to admin_ip_managements_path
-        return
-      end
-      if valid_ip?(params[:ip_address])
+      if validate_name_and_ip(@ip.user_name, @ip.ip_address)
         if @ip.save
           flash[:success] = "IP Address added successfully"
-          redirect_to admin_ip_managements_path
         else
           flash[:error] = "Failed to save IP Address"
-          redirect_to admin_ip_managements_path
         end
-      else
-        flash[:error] = "Given IP Address is not valid"
-        redirect_to admin_ip_managements_path
       end
+      redirect_to admin_ip_managements_path
     end
 
     def update_status
@@ -49,11 +35,15 @@ class Admin::IpManagementsController < ApplicationController
   
     def update
       @ip = IpManagement.find(params[:id])
-      if @ip 
-        @ip.update(ip_management_params)
-        flash[:success] = "IP Address updated"
-      else
-        flash[:error] = 'IP Address not found'
+      ip_name = params[:ip_management][:user_name]
+      ip_address = params[:ip_management][:ip_address]
+      if validate_name_and_ip(ip_name, ip_address)
+        if @ip
+          @ip.update(ip_management_params)
+          flash[:success] = "IP Address updated"
+        else
+          flash[:error] = 'IP Address not found'
+        end
       end
       redirect_to admin_ip_managements_path
     end
@@ -76,6 +66,22 @@ class Admin::IpManagementsController < ApplicationController
 
     def valid_ip?(ip)
       IPAddr.new(ip) rescue false
+    end
+
+    def validate_name_and_ip(name, ip_address)
+      if name.blank?
+        flash[:error] = "Name cannot be empty or contain only spaces"
+        return false
+      end
+      if IpManagement.exists?(ip_address: ip_address, deleted_at: nil)
+        flash[:error] = "IP Address already added"
+        return false
+      end
+      unless valid_ip?(ip_address)
+        flash[:error] = "Given IP Address is not valid"
+        return false
+      end
+      true
     end
 
 end

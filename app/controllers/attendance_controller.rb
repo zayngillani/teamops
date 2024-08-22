@@ -140,6 +140,10 @@ class AttendanceController < ApplicationController
      end
 
      def restrict_ip
+      oncall_approved = Oncall.exists?(user_id: current_user.id, request_status: 1, start_date: ..Date.today, end_date: Date.today..)
+      if oncall_approved
+        return
+      end
       if current_user&.can_outside_access == false
         allowed_ips = IpManagement.all.enable.where(deleted_at: nil).pluck(:ip_address)
         client_ip = request.headers['X-Forwarded-For'] || request.remote_ip
@@ -147,8 +151,6 @@ class AttendanceController < ApplicationController
         unless allowed_ips.include?(client_ip)
           redirect_to root_path, alert: 'Access denied from this IP address.'
         end
-      else
-         return
       end
      end
 
