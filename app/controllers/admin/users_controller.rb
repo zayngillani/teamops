@@ -407,18 +407,11 @@ class Admin::UsersController < ApplicationController
     
 
     def monthly_report
-      if params[:selected_users].present?
-        user_ids = params[:selected_users].split(',')
-        @users = User.where(id: user_ids).order(name: :asc)
-      else
-        @users = User.active.where(role: "user", deleted: false).order(name: :asc)
-      end
-
       @month = params[:month].to_i
       @year = params[:year].to_i
       @start_date = Date.new(@year, @month, 1)
       @end_date = @start_date.end_of_month
-
+      @users = fetch_users
       @total_hours = {}
       @leaves = {}
       current_month_start = @start_date.beginning_of_month
@@ -597,9 +590,9 @@ class Admin::UsersController < ApplicationController
     def fetch_users
       if params[:selected_users].present?
         user_ids = params[:selected_users].split(',')
-        @users = User.where(id: user_ids).where('created_at <= ?', @end_date.end_of_day).order(name: :asc)
+        @users = User.where(id: user_ids).where('join_date <= ?', @end_date.end_of_day).order(name: :asc)
       else
-        User.active.where(role: "user", deleted: false).where('created_at <= ?', @end_date.end_of_day).order(name: :asc)
+        User.active.where(role: "user", deleted: false).where('join_date <= ?', @end_date.end_of_day).order(name: :asc)
       end
     end
    end
