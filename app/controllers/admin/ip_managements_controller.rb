@@ -13,7 +13,11 @@ class Admin::IpManagementsController < ApplicationController
       @ip = IpManagement.new
       @ip.user_name = params[:name].strip
       @ip.ip_address = params[:ip_address]
-      exist_ip = IpManagement.where(ip_address: params[:ip_address], deleted_at: nil)
+      if IpManagement.exists?(ip_address: params[:ip_address], deleted_at: nil)
+        flash[:error] = "IP Address already added"
+        redirect_to admin_ip_managements_path
+        return
+      end
       if validate_name_and_ip(@ip.user_name, @ip.ip_address)
         if @ip.save
           flash[:success] = "IP Address added successfully"
@@ -71,10 +75,6 @@ class Admin::IpManagementsController < ApplicationController
     def validate_name_and_ip(name, ip_address)
       if name.blank?
         flash[:error] = "Name cannot be empty or contain only spaces"
-        return false
-      end
-      if IpManagement.exists?(ip_address: ip_address, deleted_at: nil)
-        flash[:error] = "IP Address already added"
         return false
       end
       unless valid_ip?(ip_address)
