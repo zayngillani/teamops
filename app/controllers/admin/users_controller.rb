@@ -174,7 +174,7 @@ class Admin::UsersController < ApplicationController
       @user = User.find_by(id: params[:id])
       @month = params[:month].to_i
       @year = params[:year].to_i
-      @users = User.active.where(role: "user", deleted: false).order(created_at: :desc)
+      @users = User.active.where(role: "user", deleted: false).order(name: :asc)
       @start_date = Date.new(@year, @month, 1)
       @end_date = @start_date.end_of_month
       @public_holidays = PublicHoliday.where("start_date <= ? AND end_date >= ?", @end_date, @start_date)
