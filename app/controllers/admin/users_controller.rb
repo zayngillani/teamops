@@ -216,16 +216,16 @@ class Admin::UsersController < ApplicationController
     end
 
     def monthly_excel
-      if params[:selected_users].present?
-        user_ids = params[:selected_users].split(',')
-        @users = User.where(id: user_ids).order(name: :asc)
-      else
-        @users = User.active.where(role: "user", deleted: false).order(name: :asc)
-      end
       @month = params[:month].to_i
       @year = params[:year].to_i
       @start_date = Date.new(@year, @month, 1)
       @end_date = @start_date.end_of_month
+      if params[:selected_users].present?
+        user_ids = params[:selected_users].split(',')
+        @users = fetch_users
+      else
+        @users = fetch_users
+      end
       @total_hours = {}
       @public_holidays = PublicHoliday.where("start_date <= ? AND end_date >= ?", @end_date, @start_date)
       @users.each do |user|
@@ -597,6 +597,10 @@ class Admin::UsersController < ApplicationController
         return true
       end
       false
+    end
+
+    def fetch_users
+      User.active.where(role: "user", deleted: false).where('created_at <= ?', @end_date.end_of_day).order(name: :asc)
     end
    end
    
