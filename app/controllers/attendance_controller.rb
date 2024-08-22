@@ -144,8 +144,6 @@ class AttendanceController < ApplicationController
         allowed_ips = IpManagement.where(deleted_at: nil, status: 0).pluck(:ip_address)
         client_ip = request.headers['X-Forwarded-For'] || request.remote_ip
         client_ip = client_ip.split(',').first.strip
-        Rails.logger.info "Client IP: #{client_ip}"
-        Rails.logger.info "Allowed IPs: #{allowed_ips.inspect}"
         unless allowed_ips.include?(client_ip)
           redirect_to root_path, alert: 'Access denied from this IP address.'
         end
