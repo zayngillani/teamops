@@ -143,12 +143,11 @@ class LeavesController < ApplicationController
       start_date: year_start..year_end
     ).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }
   
-    annual_leaves_count + leave_days > 9
+    annual_leaves_count + leave_days > ENV["ANNUAL_LEAVE"]
   end
   
   def exceeds_quarterly_leave_limit?(leave_type, leave_days, quarter_start, quarter_end)
     return false unless leave_type == 0
-  binding.pry
     existing_quarterly_leave_days = Leave.where(
       user_id: current_user.id,
       leave_type: 0,
@@ -156,6 +155,6 @@ class LeavesController < ApplicationController
       start_date: quarter_start..quarter_end
     ).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }
   
-    existing_quarterly_leave_days + leave_days > 3
+    existing_quarterly_leave_days + leave_days > ENV["QUATER_LEAVE"]
   end
 end
