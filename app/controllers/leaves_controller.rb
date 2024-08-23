@@ -7,7 +7,6 @@ class LeavesController < ApplicationController
     current_month_start = @start_date.beginning_of_month
     current_month_end = @end_date.end_of_month
     @leaves = Leave.where(user_id: current_user.id)
-    .where("start_date >= ? AND start_date <= ?", current_month_start, current_month_end)
     .order(created_at: :desc).paginate(page: params[:page], per_page: 10)
     current_year_start = Date.new(@start_date.year, 1, 1)
     current_year_end = Date.new(@end_date.year, 12, 31)
@@ -22,72 +21,57 @@ class LeavesController < ApplicationController
   def new
     @leaves = current_user.leaves
   end
-     
+  
   def create
     start_date = params[:start_date]
     end_date = params[:end_date]
-    leave_start = Date.parse(params[:start_date])
-    leave_end = Date.parse(params[:end_date])
-    current_month_start = Date.today.beginning_of_month
-    current_month_end = Date.today.end_of_month
-    next_month_start = current_month_start.next_month
-    next_month_end = current_month_end.next_month
-    leaves_current_month = Leave.where(user_id: current_user.id)
-    .where("start_date >= ? AND start_date <= ?", current_month_start, current_month_end)
-    .count
-    leaves_next_month = Leave.where(user_id: current_user.id)
-    .where("start_date >= ? AND start_date <= ?", next_month_start, next_month_end)
-    .count
-    holiday = PublicHoliday.find_by(start_date: start_date..end_date)
-    if start_date.present?
-      if leave_start > next_month_end
-        redirect_to leaves_path, flash: { error: "You cannot request leaves for future months" }
-        return
-      elsif leave_start.between?(current_month_start, current_month_end)
-        if leaves_current_month >= 2
-          redirect_to leaves_path, flash: { error: "You can only request two leaves in the current month" }
-          return
-        end
-      elsif leave_start.between?(next_month_start, next_month_end)
-        if leaves_next_month >= 2
-          redirect_to leaves_path, flash: { error: "You can only request two leaves in the next month" }
-          return
-        end
-      end
-    end
-    if (leave_start..leave_end).any? { |date| date.saturday? || date.sunday? }
-      redirect_to leaves_path, flash: { error: "You cannot request leave including weekends." }
+    leave_start = Date.parse(start_date)
+    leave_end = Date.parse(end_date)
+    current_date = Date.today
+    current_year_start = Date.new(current_date.year, 1, 1)
+    current_year_end = Date.new(current_date.year, 12, 31)
+    leave_days = (leave_end - leave_start).to_i + 1
+    current_quarter_start, current_quarter_end = get_quarter_dates(leave_start)
+    if invalid_leave_dates?(leave_start, leave_end)
+      redirect_to leaves_path, flash: { error: "Invalid leave dates" }
       return
     end
-    if leave_start.saturday? || leave_start.sunday? || leave_end.saturday? || leave_end.sunday?
-      redirect_to leaves_path, flash: { error: "You can't request leave for weekends (Saturday or Sunday)." }
+    if leave_includes_weekends?(leave_start, leave_end)
+      redirect_to leaves_path, flash: { error: "You cannot request leave including weekends." }
       return
     end
     if leave_start == Date.today
       redirect_to leaves_path, flash: { error: "You cannot request leave for today. Please select a future date." }
       return
     end
-    if params[:start_date] > params[:end_date]
+    if leave_start > leave_end
       redirect_to leaves_path, flash: { error: "End date must be greater than or equal to start date" }
       return
     end
-    if holiday.present?
-      redirect_to leaves_path, flash: { error: "You can't request for Leave on Public Holiday" }
+    if holiday_on_leave?(leave_start, leave_end)
+      redirect_to leaves_path, flash: { error: "You can't request leave on a public holiday" }
       return
     end
-    if Leave.exists?(user_id: current_user.id, status: [0, 1, 2], start_date: ..start_date, end_date: end_date..)
-      redirect_to leaves_path, flash: { error: "Leave Already Submitted" }
+    if overlapping_leave?(leave_start, leave_end)
+      redirect_to leaves_path, flash: { error: "Leave already submitted for the selected dates" }
+      return
+    end
+    if exceeds_annual_leave_limit?(params[:leave_type].to_i, leave_days, current_year_start, current_year_end)
+      redirect_to leaves_path, flash: { error: "You have exceeded the maximum annual leave limit of 9 days per year" }
+      return
+    end
+    if exceeds_quarterly_leave_limit?(params[:leave_type].to_i, leave_days, current_quarter_start, current_quarter_end)
+      redirect_to leaves_path, flash: { error: "You cannot request more than 3 days of leave per quarter." }
       return
     end
     @leave = Leave.new
-    @leave.start_date = params[:start_date]
-    @leave.end_date = params[:end_date]
+    @leave.start_date = leave_start
+    @leave.end_date = leave_end
     @leave.user_id = current_user.id
     @leave.leave_type = params[:leave_type].to_i
     @leave.reason = params[:reason]
     if @leave.save
-      # SlackService.new(current_user, "Request leave from", @leave).request_leave
-      flash[:success] = 'Leave Request submitted'
+      flash[:success] = 'Leave request submitted'
       redirect_to leaves_path
     else
       render :new
@@ -122,5 +106,56 @@ class LeavesController < ApplicationController
     @quarterly_leaves = @quarterly.sum do |leave|
       (leave.end_date - leave.start_date).to_i + 1
     end
+  end
+
+  def get_quarter_dates(date)
+    case (date.month - 1) / 3
+    when 0 then [Date.new(date.year, 1, 1), Date.new(date.year, 3, 31)]
+    when 1 then [Date.new(date.year, 4, 1), Date.new(date.year, 6, 30)]
+    when 2 then [Date.new(date.year, 7, 1), Date.new(date.year, 9, 30)]
+    when 3 then [Date.new(date.year, 10, 1), Date.new(date.year, 12, 31)]
+    end
+  end
+  
+  def invalid_leave_dates?(start_date, end_date)
+    start_date.nil? || end_date.nil?
+  end
+  
+  def leave_includes_weekends?(start_date, end_date)
+    (start_date..end_date).any? { |date| date.saturday? || date.sunday? }
+  end
+  
+  def holiday_on_leave?(start_date, end_date)
+    PublicHoliday.exists?(start_date: start_date..end_date)
+  end
+  
+  def overlapping_leave?(start_date, end_date)
+    Leave.exists?(user_id: current_user.id, status: [0, 1, 2], start_date: ..end_date, end_date: start_date..)
+  end
+  
+  def exceeds_annual_leave_limit?(leave_type, leave_days, year_start, year_end)
+    return false unless leave_type == 1
+  
+    annual_leaves_count = Leave.where(
+      user_id: current_user.id,
+      leave_type: 1,
+      status: [0, 1],
+      start_date: year_start..year_end
+    ).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }
+  
+    annual_leaves_count + leave_days > 9
+  end
+  
+  def exceeds_quarterly_leave_limit?(leave_type, leave_days, quarter_start, quarter_end)
+    return false unless leave_type == 0
+  binding.pry
+    existing_quarterly_leave_days = Leave.where(
+      user_id: current_user.id,
+      leave_type: 0,
+      status: [0, 1],
+      start_date: quarter_start..quarter_end
+    ).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }
+  
+    existing_quarterly_leave_days + leave_days > 3
   end
 end

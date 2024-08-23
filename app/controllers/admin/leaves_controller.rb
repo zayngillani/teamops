@@ -48,6 +48,6 @@ class Admin::LeavesController < ApplicationController
                else
                     flash[:error] = error
                end
-               redirect_to admin_leave_path
+               redirect_to admin_leaves_path
      end
 end
