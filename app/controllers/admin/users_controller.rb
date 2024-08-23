@@ -477,11 +477,11 @@ class Admin::UsersController < ApplicationController
     end
 
     def monthly_users_list
-      @users = User.active.where(role: "user", deleted: false).order(name: :asc)
       @month = params[:month].to_i
       @year = params[:year].to_i
       @start_date = Date.new(@year, @month, 1)
       @end_date = @start_date.end_of_month
+      @users = fetch_users
       @total_hours = {}
       current_month_start = @start_date.beginning_of_month
       current_month_end = @end_date.end_of_month
