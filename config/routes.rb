@@ -10,7 +10,16 @@ Rails.application.routes.draw do
   
   
   namespace :admin do
-    resources :users, only: [:new, :create, :index, :edit, :update, :destroy]
+    resources :users, only: [:new, :create, :index, :edit, :update, :destroy] do
+      member do
+        patch 'update_ip_restriction'
+      end
+    end
+    resources :ip_managements do
+      member do
+        patch :update_status
+      end
+    end
     resources :oncall_support, only: [:index, :show, :create, :update]
     resources :leaves, only: [:index, :show, :create, :update]
     resources :daily_reports, only: [:index, :show] do
@@ -64,7 +73,7 @@ Rails.application.routes.draw do
   get '/show_oncalls', :to => "oncall_support#show_oncalls", as: 'show_oncalls'
   get '/users_attendance', :to => "attendance#users_attendance", as: 'users_attendance'
 
-
+  resources :dashboard, only: [:index], controller: 'attendance'
 
   resources :leaves, only: [:new, :create, :index, :edit, :update, :destroy, :show]
   get '/approve', :to => "leaves#approve", as: 'approve'

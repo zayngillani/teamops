@@ -3,9 +3,7 @@ require 'net/ftp'
 
 module Api
   module V1
-    class JobApplicationsController < ApplicationController
-      protect_from_forgery with: :null_session
-      skip_before_action :authenticate_user!
+    class JobApplicationsController < Api::BaseController
 
       def create
         @job_application = JobApplication.new(job_application_params)

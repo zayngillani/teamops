@@ -1,14 +1,15 @@
 class Admin::UsersController < ApplicationController
   before_action :validate_email_format, only: [:create, :update]
 
-     def index
-      session = User.where(role: "user", deleted: false).order(created_at: :desc)
+    def index
+      session = User.where(role: "user", deleted: false)
+                    .order(name: :asc)
       @session = session.paginate(page: params[:page], per_page: 10)
-     end
-
-     def new
-       @user = User.new
-     end
+    end
+  
+    def new
+      @user = User.new
+    end
    
     def create
       unless params[:user][:password] == params[:user][:password_confirmation]
@@ -173,7 +174,7 @@ class Admin::UsersController < ApplicationController
       @user = User.find_by(id: params[:id])
       @month = params[:month].to_i
       @year = params[:year].to_i
-      @users = User.active.where(role: "user", deleted: false).order(created_at: :desc)
+      @users = User.active.where(role: "user", deleted: false).order(name: :asc)
       @start_date = Date.new(@year, @month, 1)
       @end_date = @start_date.end_of_month
       @public_holidays = PublicHoliday.where("start_date <= ? AND end_date >= ?", @end_date, @start_date)
@@ -183,7 +184,7 @@ class Admin::UsersController < ApplicationController
     def leave_report
       @month = params[:month].to_i
       @year = params[:year].to_i
-      @users = User.active.where(role: "user", deleted: false).order(created_at: :desc)
+      @users = User.active.where(role: "user", deleted: false).order(name: :asc)
       @start_date = Date.new(@year, @month, 1)
       @end_date = @start_date.end_of_month
       @public_holidays = PublicHoliday.where("start_date <= ? AND end_date >= ?", @start_date.end_of_month, @end_date.beginning_of_month)
@@ -215,16 +216,11 @@ class Admin::UsersController < ApplicationController
     end
 
     def monthly_excel
-      if params[:selected_users].present?
-        user_ids = params[:selected_users].split(',')
-        @users = User.where(id: user_ids).order(name: :asc)
-      else
-        @users = User.active.where(role: "user", deleted: false).order(name: :asc)
-      end
       @month = params[:month].to_i
       @year = params[:year].to_i
       @start_date = Date.new(@year, @month, 1)
       @end_date = @start_date.end_of_month
+      @users = fetch_users
       @total_hours = {}
       @public_holidays = PublicHoliday.where("start_date <= ? AND end_date >= ?", @end_date, @start_date)
       @users.each do |user|
@@ -328,11 +324,11 @@ class Admin::UsersController < ApplicationController
               user_on_calls = Oncall.where('(start_date <= ? AND end_date >= ?) OR (start_date >= ? AND start_date <= ?)', @end_date, @start_date, @start_date, @end_date).where(request_status: 1, user_id: user.id)
               user_on_calls.each do |oncall|
                 (oncall.start_date..oncall.end_date).each do |date|
-                  on_calls[date] = oncall.reason
+                  on_calls[date] = date
                 end
               end
               (@start_date..@end_date).each do |date|
-                next if date.saturday? || date.sunday?
+                next if date.saturday? || date.sunday? && !on_calls[date]
                 attendance = user.attendances.find_by(check_in_time: date.beginning_of_day..date.end_of_day)
                 total_hours = attendance.present? ? (attendance.total_hours || 0) : 0
                 if attendance.present?
@@ -411,18 +407,11 @@ class Admin::UsersController < ApplicationController
     
 
     def monthly_report
-      if params[:selected_users].present?
-        user_ids = params[:selected_users].split(',')
-        @users = User.where(id: user_ids).order(name: :asc)
-      else
-        @users = User.active.where(role: "user", deleted: false).order(name: :asc)
-      end
-
       @month = params[:month].to_i
       @year = params[:year].to_i
       @start_date = Date.new(@year, @month, 1)
       @end_date = @start_date.end_of_month
-
+      @users = fetch_users
       @total_hours = {}
       @leaves = {}
       current_month_start = @start_date.beginning_of_month
@@ -486,13 +475,13 @@ class Admin::UsersController < ApplicationController
           end
         end
     end
-    
+
     def monthly_users_list
-      @users = User.active.where(role: "user", deleted: false).order(name: :asc)
       @month = params[:month].to_i
       @year = params[:year].to_i
       @start_date = Date.new(@year, @month, 1)
       @end_date = @start_date.end_of_month
+      @users = fetch_users
       @total_hours = {}
       current_month_start = @start_date.beginning_of_month
       current_month_end = @end_date.end_of_month
@@ -514,7 +503,22 @@ class Admin::UsersController < ApplicationController
         @total_working_hours = working_days * regular_hours_per_day
       end
     end
-
+      
+    def update_ip_restriction
+      user = User.find_by(id: params[:id])
+      
+      if user.nil?
+        render json: { success: false, errors: ["User not found"] }, status: :not_found
+        return
+      end
+    
+      if user.update(can_outside_access: params[:can_outside_access])
+        render json: { success: true }, status: :ok
+      else
+        render json: { success: false, errors: user.errors.full_messages }, status: :unprocessable_entity
+      end
+    end
+    
     private
    
     def user_params
@@ -581,6 +585,15 @@ class Admin::UsersController < ApplicationController
         return true
       end
       false
+    end
+
+    def fetch_users
+      if params[:selected_users].present?
+        user_ids = params[:selected_users].split(',')
+        @users = User.where(id: user_ids).where('join_date <= ?', @end_date.end_of_day).order(name: :asc)
+      else
+        User.active.where(role: "user", deleted: false).where('join_date <= ?', @end_date.end_of_day).order(name: :asc)
+      end
     end
    end
    

@@ -189,11 +189,17 @@
                         On Call Support
                     </div>
                 </a>
+                <a href="<%= admin_ip_managements_path %>">
+                    <div class="menu-item <%= 'active' if current_page?(admin_ip_managements_path) %>">
+                        <%= image_tag("ip-address.svg", class: "menu-icon") %>
+                        IP Management
+                    </div>
+                </a>
             </div>
         <% else %>
             <div class="menu">
-                <a href="<%= attendance_index_path %>">
-                    <div class="menu-item <%= 'active' if current_page?(attendance_index_path) %>">
+                <a href="<%= dashboard_index_path %>">
+                    <div class="menu-item <%= 'active' if current_page?(dashboard_index_path) %>">
                         <%= image_tag("dashboard.svg", class: "menu-icon") %>
                         Dashboard
                     </div>

@@ -88,7 +88,7 @@
      margin-right: 10px;
      border-radius: 5px;
      cursor: pointer;
-     border-radius: 8px;
+     border-radius: 1px;
    }
 
    .check-out-btn{
@@ -121,16 +121,20 @@
       cursor: pointer;
     }
 
-    .select-status{
-      margin-right: 10px;
-    }
-    .pos{
-      width: 51%;
-    }
-    
-    .filter_i{
-      margin-left: 10px;
-    }
+   .request-button {
+    background-color: #F89320;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin-right: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    border-radius: 1px;
+  }
 
    .leave-request {
     background-color: #F89320;
@@ -146,114 +150,7 @@
     cursor: pointer;
     border-radius: 1px;
   }
-
-  .leaveTable {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    margin-top: 2%;
-}
-
-.leaveTable h2 {
-    margin-bottom: 20px;
-}
-
-.leave-form-fields-inline, .reason-fields-inline {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 20px;
-    margin-bottom: 15px;
-}
-
-.leave-form-fields-inline .field, .reason-fields-inline .field {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.leave-form-fields-inline .field span, .reason-fields-inline .field span {
-    display: block;
-    font-size: 16px;
-    padding: 5px 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    width: 200px;
-    text-align: center;
-}
-
-#leave-super-display {
-    width: 200px;
-}
-
-.super-field {
-    width: 200px;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    margin: 15px 0;
-}
-
-.leave-btns-container {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 15px;
-}
-
-.leave-reject-btn , .after-approved-btn{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 140px;
-    height: 40px;
-    border-radius: 8px;
-    border: none;
-    background: #F0F3F4;
-    text-decoration: none;
-}
-
-.leave-approved-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #F89320 !important;
-  width: 150px;
-  height: 40px;
-  top: 33px;
-  left: 693px;
-  gap: 12px;
-  border-radius: 8px;
-  border: 1px;
-  text-decoration: none;
-}
-
-.leave-approved-btn:hover {
-    cursor: pointer;
-}
-
-.leave-reject-btn {
-    background: #F0F3F4;
-    color: #7A8699;
-}
-
-.leave-reject-btn:hover {
-    cursor: pointer;
-}
-
-.after-approved-btn {
-    background-color: #D6FFD8 !important;
-    color: #00B208;
-}
-
-.leave-reject-btn-text, .after-approved-btn-text {
-    font-family: Poppins;
-    font-size: 14px;
-    font-weight: 500;
-    text-align: center;
-}
-
+  
   .leave-container {
     display: flex;
     gap: 10px;
@@ -607,7 +504,6 @@
   }
 
   
-  
   .oncall-status-column-approved span {
     display: inline-block;
     width: fit-content;
@@ -640,43 +536,6 @@
     background-color: #FDE7CE;
     color: #F78530;
   }
-
-  .leave-table-container {
-    border-collapse: collapse;
-    width: 100%;
-    margin-top: 2.07vh;
-    background: #FFFFFF;
-  }
-  
-  .leave-table-container thead th {
-    padding: 12px 77px;
-    text-align: center; /* Ensure all headers are centered */
-    font-weight: bold; /* Make the header text bold */
-    color: black; /* Make the header text black */
-  }
-
-  .request-button {
-    background-color: #F89320;
-    border: none;
-    color: white;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin-right: 10px;
-    border-radius: 5px;
-    vertical-align: middle;
-    cursor: pointer;
-    border-radius: 8px;
-  }
-
-  .icon-class {
-    width: 16px;
-    height: 16px;
-    vertical-align: middle;
-    margin-right: 8px;
-  }
   
   .modal-export {
     background-color: #fefefe;
@@ -699,35 +558,6 @@
     text-decoration: none;
     cursor: pointer;
   }
-
-  /* Loader */
-.loader {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000; /* Make sure it is on top of other content */
-}
-
-.spinner {
-  border: 8px solid #f3f3f3;
-  border-top: 8px solid #3498db;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
   
 /* Flash Message Alerts */
 .alert {
@@ -872,6 +702,18 @@
 
 .initial {
   font-weight: bold;
+}
+
+.profile-picture {
+  width: 185px;
+  height: 180px;
+  border-radius: 50%;
+  background-color: #ccc;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 24px;
+  color: #fff;
 }
 
 .profile-fields {
@@ -1280,16 +1122,6 @@ form .button input:hover{
   height: 40px;
 }
 
-.select-leave {
-  width: 210px;
-  font-size: 16px;
-  margin-left: 1%;
-  background-color: white ;
-  height: 40px;
-  border-radius: 8px;
-  border: unset;
-}
-
 .no-data {
   text-align: center;
   vertical-align: middle;
@@ -1300,10 +1132,6 @@ form .button input:hover{
 
 .form-inline {
   display: flex; /* Use flexbox for inline layout */
-}
-.leave-inline {
-  display: flex; /* Use flexbox for inline layout */
-  margin-left: 21%;
 }
 
 .float-right {

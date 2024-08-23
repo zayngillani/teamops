@@ -1,8 +1,6 @@
 module Api
   module V1
-    class ContactDetailsController < ApplicationController
-      protect_from_forgery with: :null_session
-      skip_before_action :authenticate_user!
+    class ContactDetailsController < Api::BaseController
 
       def create
         contact_detail = ContactDetail.new(contact_detail_params)

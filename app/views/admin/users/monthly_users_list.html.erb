@@ -39,7 +39,7 @@
           <label><%= check_box_tag 'under_time[]', 'under_time', true, class: 'columnCheckbox' %> Under Time</label><br>
           <label><%= check_box_tag 'leaves[]', 'leaves', true, class: 'columnCheckbox' %> Leaves</label><br>
           <label><%= check_box_tag 'absentees[]', 'absentees', true, class: 'columnCheckbox' %> Absentees</label>
-          <%= submit_tag 'Download Excel', class: "excel-btn", onclick: "downloadExcel(event)" %>
+          <%= submit_tag 'Download Excel', class: "excel-btn", onclick: "downloadExcel(event, this)" %>
         <% end %>
         <p style="text-align: center; margin-top: 10px;"></p>
         <div class="modal-footer"></div>
@@ -50,17 +50,17 @@
     <table>
       <thead>
         <tr>
+          <th>Select All <input type="checkbox" id="select-all-users" /></th>
           <th>Name</th>
           <th>Total Hours</th>
-          <th>Select All <input type="checkbox" id="select-all-users" /></th>
         </tr>
       </thead>
       <tbody>
         <% @users.each do |user| %>
           <tr>
+            <td><%= check_box_tag 'se lected_users[]', user.id, false, class: 'userCheckbox' %></td>
             <td><%= user&.name %></td>
             <td><%= "#{@total_hours[user.id] / 3600 || 0} hours #{@total_hours[user&.id] % 3600 / 60 || 0} minutes" %></td>
-            <td><%= check_box_tag 'selected_users[]', user.id, false, class: 'userCheckbox' %></td>
           </tr>
         <% end %>
       </tbody>
@@ -191,8 +191,10 @@ function generatePDF(event) {
   document.body.removeChild(form);
 }
 
-function downloadExcel(event) {
+function downloadExcel(event, button) {
   event.preventDefault();
+  button.disabled = true;
+  button.value = 'Processing...';
 
   const selectedUsers = [];
   document.querySelectorAll('.userCheckbox:checked').forEach(function(checkbox) {
@@ -201,12 +203,16 @@ function downloadExcel(event) {
 
   if (selectedUsers.length === 0) {
     alert('Please select at least one user.');
+    button.disabled = false;
+    button.value = 'Download Excel';
     return;
   }
 
   const columnCheckboxes = document.querySelectorAll('.columnCheckbox:checked');
   if (columnCheckboxes.length === 0) {
     alert('Please select at least one column.');
+    button.disabled = false;
+    button.value = 'Download Excel';
     return;
   }
 

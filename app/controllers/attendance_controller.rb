@@ -1,4 +1,5 @@
 class AttendanceController < ApplicationController
+  before_action :restrict_ip, only: [:create_session, :end_session, :break_session]
 
      def index
       @user = current_user
@@ -138,19 +139,30 @@ class AttendanceController < ApplicationController
           total_break_time_seconds
      end
 
+     def restrict_ip
+      oncall_approved = Oncall.exists?(user_id: current_user.id, request_status: 1, start_date: ..Date.today, end_date: Date.today..)
+      if oncall_approved
+        return
+      end
+      if current_user&.can_outside_access == false
+        allowed_ips = IpManagement.all.enable.where(deleted_at: nil).pluck(:ip_address)
+        client_ip = request.headers['X-Forwarded-For'] || request.remote_ip
+        client_ip = client_ip.split(',').first.strip
+        unless allowed_ips.include?(client_ip)
+          redirect_to root_path, alert: 'Access denied from this IP address.'
+        end
+      end
+     end
+
      def fetch_attendance_data
       @month = params[:month].present? ? params[:month].to_i : Date.today.month
       @year = params[:year].present? ? params[:year].to_i : Date.today.year
       @start_date = Date.new(@year, @month, 1)
       @end_date = @start_date.end_of_month
       @attendance_records = Attendance.where(
-        "check_in_time <= ? AND (check_out_time >= ? OR check_out_time IS NULL) AND user_id = ?",
-        @end_date.end_of_day, @start_date.beginning_of_day, current_user.id
+        "check_in_time >= ? AND check_in_time <= ? AND (check_out_time IS NULL OR check_out_time >= ?) AND user_id = ?",
+        @start_date.beginning_of_day, @end_date.end_of_day, @start_date.beginning_of_day, current_user.id
       ).order(created_at: :desc)
-      @today_attendance = @attendance_records.find do |record|
-        record.check_in_time.to_date == Date.today
-      end
-      @attendance_records
      end
   
      def calculate_total_hours
