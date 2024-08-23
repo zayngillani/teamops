@@ -324,11 +324,11 @@ class Admin::UsersController < ApplicationController
               user_on_calls = Oncall.where('(start_date <= ? AND end_date >= ?) OR (start_date >= ? AND start_date <= ?)', @end_date, @start_date, @start_date, @end_date).where(request_status: 1, user_id: user.id)
               user_on_calls.each do |oncall|
                 (oncall.start_date..oncall.end_date).each do |date|
-                  on_calls[date] = oncall.reason
+                  on_calls[date] = date
                 end
               end
               (@start_date..@end_date).each do |date|
-                next if date.saturday? || date.sunday?
+                next if date.saturday? || date.sunday? && !on_calls[date]
                 attendance = user.attendances.find_by(check_in_time: date.beginning_of_day..date.end_of_day)
                 total_hours = attendance.present? ? (attendance.total_hours || 0) : 0
                 if attendance.present?
@@ -477,11 +477,11 @@ class Admin::UsersController < ApplicationController
     end
 
     def monthly_users_list
-      @users = User.active.where(role: "user", deleted: false).order(name: :asc)
       @month = params[:month].to_i
       @year = params[:year].to_i
       @start_date = Date.new(@year, @month, 1)
       @end_date = @start_date.end_of_month
+      @users = fetch_users
       @total_hours = {}
       current_month_start = @start_date.beginning_of_month
       current_month_end = @end_date.end_of_month
