@@ -46,22 +46,22 @@
                 <div class="actions-container">
                   <button class="modal-btn-edit" data-target="myModalEdit<%= ip.id %>">Edit</button>
                   <%= render partial: 'edit_ip', locals: { ip: ip } %>
-                  <button class="modal-btn-delete" data-target="myModalDelete<%= ip.id %>">Remove</button>
+                  <button class="modal-btn-delete" style="color: red;" data-target="myModalDelete<%= ip.id %>">Remove</button>
                   <div id="myModalDelete<%= ip.id %>" class="modal">
                     <div class="modal-content">
                       <div class="modal-header">
-                        <span class="report-close-modal" onclick="document.getElementById('myModal').style.display='none'">&times;</span>
+                        <span class="closeModalBtn report-close-modal" style="cursor: pointer;" onclick="document.getElementById('myModal').style.display='none'">&times;</span>
                       </div>
                     <div class="del-icon">
-                    <%= image_tag("delete-ip.svg", width: "40", height: "40", alt: "Edit User") %>
+                    <%= image_tag("delete-ip.svg", width: "70", height: "70", alt: "Edit User") %>
                     </div><br>
-                      <h3>Remove IP Address</h3>
+                      <h2 style="color: black;">Remove IP Address</h2>
                       <p style="text-align: center; margin-top: 10px;">Are you sure you want to remove this IP address.<br> Removing this IP Address will restrict the employee from checking in from this IP in the future.</p>
                       <hr class="grey-line">
                       <div id="timerDisplayModal"></div>
                       <div class="modal-footer">
                         <%= button_to "Yes, Remove", admin_ip_management_path(ip.id), method: :delete, class: "ip-status-column del-btn" %>
-                        <button class="closeModalBtn sign-out-button">Cancel</button>
+                        <button class="closeModalBtn download-resume-btn shedule-interview-btn hover" style="color: white; cursor: pointer">Cancel</button>
                       </div>
                     </div>
                   </div>
