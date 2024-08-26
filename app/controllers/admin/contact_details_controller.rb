@@ -2,7 +2,7 @@ class Admin::ContactDetailsController < ApplicationController
   before_action :authorize_admin!
 
   def index
-    @contact_details = ContactDetail.all
+    @contact_details = ContactDetail.order(Arel.sql("details->>'name' ASC"))
 
     respond_to do |format|
       format.html
