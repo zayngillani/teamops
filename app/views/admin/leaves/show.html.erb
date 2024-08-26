@@ -1,59 +1,139 @@
-<div class="leaveTable">
+<style>
+.leave-details-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    max-width: 950px;
+    margin: auto;
+    margin-left: 23%;
+}
+
+.leave-details-container h2 {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.leave-form-fields-inline {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.leave-form-fields-inline .field {
+    flex: 1;
+}
+
+.leave-form-fields-inline .field input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #E3E3E3;
+    border-radius: 4px;
+    font-size: 14px;
+    background-color: #f9f9f9;
+}
+
+.reason-fields {
+    margin-bottom: 20px;
+}
+
+.reason-fields textarea {
+    width: 100%;
+    height: 120px;
+    padding: 12px;
+    border: 1px solid #E3E3E3;
+    border-radius: 4px;
+    font-size: 14px;
+    background-color: #f9f9f9;
+    resize: none;
+}
+
+.leave-btns-container {
+    display: flex;
+    justify-content: flex-end;
+    gap: 20px;
+}
+
+.leave-btns-container button {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.leave-reject-btn {
+    background-color: #f5f5f5;
+    color: #000;
+}
+
+.leave-approved-btn {
+    background-color: #FF9F00;
+    color: #fff;
+}
+
+.after-approved-btn {
+    background-color: #00C851;
+    color: #fff;
+}
+
+</style>
+<br>
+<div class="leave-details-container">
     <h2>Leave Details</h2>
     <div class="leave-form-fields-inline">
         <div class="field">
-            <span><%= @leave.leave_type.capitalize%></span>
+            <input type="text" value="<%= @leave.leave_type.capitalize %>" disabled placeholder="Quarterly">
         </div>
         <div class="field">
-            <span><%= @leave_days_count %></span>
+            <input type="text" value="<%= @leave_days_count %>" disabled placeholder="Leaves Count">
         </div>
     </div>
     <div class="leave-form-fields-inline">
         <div class="field">
-            <span><%= @leave.start_date.strftime("%d %B, %Y") %></span>
+            <input type="text" value="<%= @leave.start_date.strftime("%d %B, %Y") %>" disabled placeholder="Start Date">
         </div>
         <div class="field">
-            <span><%= @leave.end_date.strftime("%d %B, %Y") %></span>
+            <input type="text" value="<%= @leave.end_date.strftime("%d %B, %Y") %>" disabled placeholder="End Date">
         </div>
     </div>
-    <div class="reason-fields-inline">
-        <div class="field">
-            <span><%= @leave.reason %></span>
-        </div>
+    <div class="reason-fields">
+        <textarea disabled placeholder="Reason for leave..."><%= @leave.reason %></textarea>
     </div>
     <%= form_with model: @leave, url: admin_leave_path, method: :put, remote: true, id: "checkout_form" do |f| %>
         <%= f.hidden_field :action_type, id: 'action_type' %>
         <% if @leave.status == "approved" || @leave.status == "rejected" && @leave.supervisor.present? %>
             <div class="leave-form-fields-inline">
                 <div class="field">
-                    <span id="leave-super-display"><%= @leave.supervisor.present? ? @leave.supervisor : "N/A" %></span>
+                    <input type="text" id="leave-super-display" value="<%= @leave.supervisor.present? ? @leave.supervisor : "N/A" %>" disabled placeholder="Approved By">
                 </div>
             </div>
         <% else %>
-            <%= f.text_field :supervisor, class: "super-field", required: true, pattern: "\S+.*", title: "Supervisor name cannot be empty or contain only spaces", placeholder: "Approved By" ,maxlength: 22 %>
+            <div class="field">
+                <%= f.text_field :supervisor, class: "super-field", required: true, pattern: "\S+.*", title: "Supervisor name cannot be empty or contain only spaces", placeholder: "Approved By", maxlength: 22 %>
+            </div>
         <% end %>
         <div class="leave-btns-container">
             <% if @leave.status == "approved" %>
-                <%= button_tag(type: 'button', class: "after-approved-btn hover") do %>
-                    <div class="after-approved-btn-text">Approved</div>
-                <% end %>
+                <button type="button" class="after-approved-btn">Approved</button>
             <% else %>
-                <%= button_tag(type: 'button', class: "leave-reject-btn hover", onclick: "submitForm('reject', this)") do %>
-            <% if @leave.status == "rejected" %>
-                <div class="leave-reject-btn-text">Rejected</div>
-            <% else %>
-                    <div class="leave-reject-btn-text">Reject</div>
-            <% end %>
-                <% end %>
-                <% if @leave.status == "pending" %>
-                    <%= button_tag(type: 'button', class: "leave-approved-btn hover", onclick: "submitForm('approve', this)") do %>
-                        <div class="shedule-interview-btn-text">Approve</div>
+                <button type="button" class="leave-reject-btn" onclick="submitForm('reject', this)">
+                    <% if @leave.status == "rejected" %>
+                        Rejected
+                    <% else %>
+                        Reject
                     <% end %>
+                </button>
+                <% if @leave.status == "pending" %>
+                    <button type="button" class="leave-approved-btn" onclick="submitForm('approve', this)">Approve</button>
                 <% end %>
             <% end %>
         </div>
     <% end %>
 </div>
+
 
 <script>
 function submitForm(actionType, button) {
