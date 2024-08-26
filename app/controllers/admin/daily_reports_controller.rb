@@ -2,7 +2,7 @@ class Admin::DailyReportsController < ApplicationController
   skip_before_action :verify_authenticity_token, only: [:index] # Use with caution
 
   def index
-    @users = User.active.where(role: 'user').ransack(name_cont: params[:q]).result.order(created_at: :desc).paginate(page: params[:page], per_page: 10)
+    @users = User.active.where(role: 'user').ransack(name_cont: params[:q]).result.order(name: :asc).paginate(page: params[:page], per_page: 10)
     respond_to do |format|
       format.html
       format.js { render partial: 'search', locals: { users: @users } }

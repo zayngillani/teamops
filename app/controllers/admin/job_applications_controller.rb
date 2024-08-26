@@ -3,7 +3,7 @@ class Admin::JobApplicationsController < ApplicationController
 
   def index
     @job_post = JobPost.find (params[:job_post_id])
-    @job_applications = @job_post.job_applications.available.all.paginate(page: params[:page], per_page: 10)
+    @job_applications = @job_post.job_applications.available.all.order(name: :asc).paginate(page: params[:page], per_page: 10)
 
     respond_to do |format|
       format.html
