@@ -167,7 +167,7 @@ class Admin::UsersController < ApplicationController
     end
 
     def archived_user
-      @users = User.where(role: "user", deleted: 1).order(created_at: :desc).paginate(page: params[:page], per_page: 10)
+      @users = User.where(role: "user", deleted: 1).order(name: :asc).paginate(page: params[:page], per_page: 10)
     end
 
     def user_leave
