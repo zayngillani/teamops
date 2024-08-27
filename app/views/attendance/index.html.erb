@@ -20,12 +20,35 @@
         <% content_for :link_button do %>
           <%= button_to "Check-In", create_session_path, class: "sign-out-button check-btn", data: { disable_with: "Processing..." } %>
         <% end %>
+        <div id="timerDisplay">00:00:00</div> <!-- Show 00:00:00 if no session -->
       <% elsif session.present? && session.check_out_time.nil? %>
         <% create_at = session.created_at %>
         <div id="timerDisplay" data-created-at="<%= create_at&.iso8601 || nil %>" data-system-time="<%= Time.zone.now.iso8601 %>"></div>
+        <script>
+          document.addEventListener("turbo:load", function() {
+            var timerDisplay = document.getElementById("timerDisplay");
+            if (timerDisplay) {
+              var createdAt = new Date(timerDisplay.getAttribute("data-created-at"));
+              var systemTime = new Date(timerDisplay.getAttribute("data-system-time"));
+
+              function updateTimer() {
+                var now = new Date();
+                var elapsed = now - systemTime + (systemTime - createdAt);
+                var hours = Math.floor(elapsed / (1000 * 60 * 60));
+                var minutes = Math.floor((elapsed % (1000 * 60 * 60)) / (1000 * 60));
+                var seconds = Math.floor((elapsed % (1000 * 60)) / 1000);
+                timerDisplay.innerText = `${hours}h ${minutes}m ${seconds}s`;
+              }
+
+              setInterval(updateTimer, 1000);
+              updateTimer(); // Initial call to display the time immediately
+            }
+          });
+        </script>
       <% end %>
     </div>
   </div>
+</div>
 
   <div style="float: right; margin-top: 20px;">
     <% if session.present? %>
