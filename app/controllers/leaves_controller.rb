@@ -32,6 +32,17 @@ class LeavesController < ApplicationController
     current_year_end = Date.new(current_date.year, 12, 31)
     leave_days = (leave_end - leave_start).to_i + 1
     current_quarter_start, current_quarter_end = get_quarter_dates(leave_start)
+    one_year_anniversary = current_user.join_date + 1.year
+    restricted_period_end = Date.today + 7.days
+
+    if Date.today < one_year_anniversary
+      redirect_to root_path, flash: { error: "Leave requests are available only after 1 year of service." }
+      return
+    end
+    if leave_start.between?(Date.today, restricted_period_end)
+      redirect_to root_path, flash: { error: "You can only apply for annual leaves starting one week before your anniversary." }
+      return
+    end
     if invalid_leave_dates?(leave_start, leave_end)
       redirect_to leaves_path, flash: { error: "Invalid leave dates" }
       return
