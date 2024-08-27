@@ -1,0 +1,181 @@
+:root {
+  --color1: #899dab;
+  --color2: #f0f3f4;
+  --color3: #344054;
+  --color4: #667085;
+  --color5: #d4d8dd;
+  --color6: #666666;
+  --color7: #f89320;
+  --color8: #999999;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #f7f9fe !important; /* off-white background */
+  /* font-family:; */
+}
+
+i {
+  color: var(--color1);
+}
+
+.main-content {
+  background-color: #f7f9fe !important ;
+  margin-left: 285px;
+  margin-right: 35px;
+
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.header {
+  gap: 30px;
+  margin: 20px 0 0 0;
+}
+
+
+
+.sign-out-button{
+  width: 136px;
+}
+.notification {
+  background-color: var(--color2);
+  height: 40px;
+  width: 40px;
+
+  border-radius: 500px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.notification i {
+  font-size: 18.6px;
+  width: 18.6px;
+  height: 21.55px;
+}
+
+.profile {
+  width: 46px !important;
+  height: 46px !important;
+}
+
+.profile .dropdown-content , .notification .notification-dropdown{
+  display: none !important;
+}
+
+.profile:hover .dropdown-content ,.notification:hover .notification-dropdown{
+  display: flex !important;
+}
+
+.dropdown-content {
+  display: contents;
+  background-color: #fff !important;
+  gap: 33px;
+  display: flex;
+  flex-direction: column;
+  width: 239px !important;
+  position: absolute !important;
+  top: 100px;
+  left: 82.9%;
+  margin: 0 !important;
+  border-radius: 10px;
+  padding: 26px 22px !important;
+}
+.profile .profile-pic {
+  width: 32px;
+  height: 32px;
+}
+
+.name-email .employe-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color3);
+}
+.name-email .email {
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--color4);
+}
+
+.sign-out-profile {
+  gap: 20px;
+}
+
+.profile-btn,
+.profile-signout-btn {
+  gap: 15px;
+}
+.profile-btn i,
+.profile-signout-btn i {
+  color: var(--color5) !important;
+}
+
+.welcome-card {
+  background-color: #fff;
+  border-radius: 10px;
+  height: 200px;
+  padding: 35px;
+}
+.welcome-card h3 {
+  font-size: 22px;
+  color: var(--color6);
+  font-weight: 600;
+}
+
+.welcome-card h1 {
+  font-size: 30px;
+  color: var(--color7);
+  font-weight: 600;
+}
+.welcome-card p {
+  font-size: 16px;
+  color: var(--color8);
+  font-weight: 400;
+}
+
+
+
+.welcome-card .welcome-user
+{
+    float: left;
+}
+
+
+
+
+.notification-dropdown{
+  background-color: #fff !important;
+  gap: 40px;
+  display: flex !important;
+  flex-direction: column;
+  width: 340px !important;
+  position: absolute;
+  top: 100px;
+  left: 73.9%;
+  height: 423px;
+  margin: 0 !important;
+  border-radius: 10px;
+  padding: 30px 28px !important;
+}
+
+
+
+
+
+@media screen and (max-width:1440px){
+  #timerDisplay{
+    font-size: 49px !important;
+  }
+}@media screen and (max-width:1024px){
+  #timerDisplay{
+    margin-left: 46% !important;
+    font-size: 35px !important;
+  }
+}

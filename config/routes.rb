@@ -13,6 +13,7 @@ Rails.application.routes.draw do
     resources :users, only: [:new, :create, :index, :edit, :update, :destroy] do
       member do
         patch 'update_ip_restriction'
+        get 'dashboard', to: 'dashboard'
       end
     end
     resources :ip_managements do
@@ -56,6 +57,7 @@ Rails.application.routes.draw do
     get '/monthly_users_list', :to => "users#monthly_users_list", as: 'monthly_users_list'
     get 'monthly_excel/:month/:year', to: 'users#monthly_excel', as: :users_monthly_excel, defaults: { format: :xlsx }
     get '/archived_user', :to => "users#archived_user", as: 'archived_user'
+    get '/admin_dashboard', :to => "users#admin_dashboard", as: 'admin_dashboard'
 
     #Daily Reports
   end
@@ -71,6 +73,7 @@ Rails.application.routes.draw do
   post '/create_oncall', :to => "oncall_support#create_oncall", as: 'create_oncall'
   get '/show_oncalls', :to => "oncall_support#show_oncalls", as: 'show_oncalls'
   get '/users_attendance', :to => "attendance#users_attendance", as: 'users_attendance'
+
 
   resources :dashboard, only: [:index], controller: 'attendance'
 

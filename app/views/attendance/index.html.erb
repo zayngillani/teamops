@@ -1,17 +1,19 @@
-<style>
-  body {
-    background-color: #f1f1f1; /* off-white background */
-    margin: 0;
-    padding: 0;
-  }
-  </style>
+
+
+
+
+
+
+
   <body>
-<div class="content" style="margin-left: 220px;">
-  <div class="card">
+
+  <div class="welcome-card">
+   <div class="d-flex flex-column  justify-content-center gap-2 ms-4 welcome-user" >
     <h3>Welcome</h3>
     <h1><%= current_user.name %></h1>
-    <h4>Have a nice day at work</h4>
-    <div class="button-container">
+    <p>Have a nice day at work</p>
+   </div>
+    <div class="button-container mt-0">
       <% content_for :link_button do %>
         <%= button_to "Request Leaves", new_leave_path, method: :get, class: "request-button" %>
       <% end %>
@@ -22,7 +24,7 @@
         <% end %>
       <% elsif session.present? && session.check_out_time.nil? %>
         <% create_at = session.created_at %>
-        <div id="timerDisplay" data-created-at="<%= create_at&.iso8601 || nil %>" data-system-time="<%= Time.zone.now.iso8601 %>"></div>
+        <div id="timerDisplay" class="mt-0" data-created-at="<%= create_at&.iso8601 || nil %>" data-system-time="<%= Time.zone.now.iso8601 %>"></div>
       <% end %>
     </div>
   </div>
@@ -33,16 +35,16 @@
       <% if session.breaks.present? %>
         <% if session.breaks.last.break_out_time.nil? %>
           <% content_for :link_button do %>
-            <%= button_to "Break-Out", break_session_path, class: "sign-out-button check-btn", id: "checkOutButtonModal", data: { disable_with: "Processing..." } %>
+            <%= button_to "Break-Out", break_session_path, class: "sign-out-button check-btn me-0# ", id: "checkOutButtonModal", data: { disable_with: "Processing..." } %>
           <% end %>
             <% else %>
           <% content_for :link_button do %>
-            <%= button_to "Break-In", break_session_path, class: "sign-out-button check-btn", id: "checkOutButtonModal", data: { disable_with: "Processing..." } %>
+            <%= button_to "Break-In", break_session_path, class: "sign-out-button check-btn me-0#", id: "checkOutButtonModal", data: { disable_with: "Processing..." } %>
         <% end %>
         <% end %>
       <% else %>
           <% content_for :link_button do %>
-            <%= button_to "Break-In", break_session_path, class: "sign-out-button check-btn", id: "checkOutButtonModal", data: { disable_with: "Processing..." } %>
+            <%= button_to "Break-In", break_session_path, class: "sign-out-button check-btn me-0#", id: "checkOutButtonModal", data: { disable_with: "Processing..." } %>
         <% end %>
         <% end %>
       <% end %>
@@ -74,7 +76,11 @@
       </div>
     <% end %>
   <% end %>
-</div>
+<%
+=begin%>
+ </div> 
+<%
+=end%>
   </body>
 <script>
     document.addEventListener("turbo:load", function() {
