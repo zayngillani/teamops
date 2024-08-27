@@ -6,6 +6,9 @@
   <div class="action-header-position pos">
     <div class="action-header-text">
     </div>
+    <%= form_tag leaves_path, method: :get, id: "filterForm", style: "display: flex; margin-left: 20%;" do %>  
+      <%= select_tag 'year', options_for_select(((Date.current.year - 5)..Date.current.year).to_a.reverse, params[:year].presence || Date.current.year), id: 'year', class: 'form-control select-year year-drop' %>
+    <% end %>
     <div class="create-job-btn">
       <button id="modal-btn" class="request-button">
         <img src="<%= asset_path('leave_logo.svg') %>" class="icon-class" alt="Leave Logo" />
@@ -23,6 +26,7 @@
         <th>Start Date</th>
         <th>End Date</th>
         <th>Supervisor</th>
+        <th>Type</th>
         <th> Status</th>
       </tr>
     </thead>
@@ -33,6 +37,7 @@
           <td class="table-title-column"><%= leave.start_date.strftime("%B %d, %Y") %></td>
           <td class="table-title-column"><%= leave.end_date.strftime("%B %d, %Y") %></td>
           <td class="table-title-column"><%= leave.supervisor.present? ? leave.supervisor.capitalize : "N/A" %></td>
+          <td class="table-title-column"><%= leave.leave_type.capitalize %></td>
           <% if leave.status == "pending" %>
             <td class="oncall-status-column-pending">
               <span>Pending</span>
@@ -61,14 +66,9 @@
 
 document.addEventListener("turbo:load", function() {
   var form = document.getElementById("filterForm");
-  var monthSelect = document.getElementById("month");
   var yearSelect = document.getElementById("year");
 
-  if (form && monthSelect && yearSelect) {
-    monthSelect.addEventListener("change", function() {
-      form.submit();
-    });
-
+  if (form && yearSelect) {
     yearSelect.addEventListener("change", function() {
       form.submit();
     });

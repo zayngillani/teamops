@@ -21,6 +21,7 @@
         <th>Name</th>
         <th>Leave Status</th>
         <th>Approved By</th>
+        <th>Type</th>
         <th>Action</th>
       </tr>
     </thead>
@@ -44,6 +45,7 @@
             </td>
           <% end %>
           <td class="table-title-column"><%= leave.supervisor.present? ? leave.supervisor : "N/A" %></td>
+          <td class="table-title-column"><%= leave.leave_type.capitalize %></td>
           <td class="table-title-column archived"><%= link_to 'View', admin_leave_path(id: leave.id) %></td>
         </tr>
       <% end %>
