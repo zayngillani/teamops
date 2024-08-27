@@ -15,19 +15,21 @@
       <% content_for :link_button do %>
         <%= button_to "Request Leaves", new_leave_path, method: :get, class: "request-button" %>
       <% end %>
+
       <% session = current_user.attendances.order(created_at: :asc).last %>
+
       <% if current_user.attendances.empty? || current_user.attendances.last.check_in_time <= 16.hours.ago || session.total_hours.present? %>
         <% content_for :link_button do %>
           <%= button_to "Check-In", create_session_path, class: "sign-out-button check-btn", data: { disable_with: "Processing..." } %>
         <% end %>
-        <div id="timerDisplay">00:00:00</div> <!-- Show 00:00:00 if no session -->
+        <div id="timerDisplay">00:00:00</div>
       <% elsif session.present? && session.check_out_time.nil? %>
         <% create_at = session.created_at %>
         <div id="timerDisplay" data-created-at="<%= create_at&.iso8601 || nil %>" data-system-time="<%= Time.zone.now.iso8601 %>"></div>
         <script>
           document.addEventListener("turbo:load", function() {
             var timerDisplay = document.getElementById("timerDisplay");
-            if (timerDisplay) {
+            if (timerDisplay && timerDisplay.getAttribute("data-created-at")) {
               var createdAt = new Date(timerDisplay.getAttribute("data-created-at"));
               var systemTime = new Date(timerDisplay.getAttribute("data-system-time"));
 
