@@ -22,7 +22,6 @@
         <% content_for :link_button do %>
           <%= button_to "Check-In", create_session_path, class: "sign-out-button check-btn", data: { disable_with: "Processing..." } %>
         <% end %>
-        <div id="timerDisplay">00:00:00</div>
       <% elsif session.present? && session.check_out_time.nil? %>
         <% create_at = session.created_at %>
         <div id="timerDisplay" data-created-at="<%= create_at&.iso8601 || nil %>" data-system-time="<%= Time.zone.now.iso8601 %>"></div>
