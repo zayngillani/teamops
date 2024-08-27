@@ -1,8 +1,16 @@
 <div class="main-content" style="margin-left: 260px; margin-top: 10px;">
   <div class="form-inline">
     <%= form_tag admin_monthly_users_list_path, method: :get, id: "filterForm" do %>
-      <%= select_tag 'month', options_for_select(Date::MONTHNAMES.compact.each_with_index.map { |month, index| [month, index + 1] }, params[:month].presence || Date.current.month), id: 'month', class: 'form-control select-month' %>
-      <%= select_tag 'year', options_for_select((Date.current.year..Date.current.year + 5).to_a, params[:year].presence || Date.current.year), id: 'year', class: 'form-control select-year' %>
+    <% selected_year = params[:year].presence || Date.current.year %>
+    <%= select_tag 'month', options_for_select(
+      if selected_year.to_i == Date.current.year
+        Date::MONTHNAMES[1..Date.current.month].map.with_index(1) { |month, index| [month, index] }
+      else
+        Date::MONTHNAMES.compact.each_with_index.map { |month, index| [month, index + 1] }
+      end,
+      params[:month].presence || Date.current.month),
+      id: 'month', class: 'form-control select-month' %>
+    <%= select_tag 'year', options_for_select((2000..Date.current.year).to_a.reverse, selected_year), id: 'year', class: 'form-control select-year' %>
     <% end %>
     <p class="form-control select-hours">Expected Hours:<strong> <%= @total_working_hours %></strong></p>
     <button type="button" id="modal-btn-pdf" class="modal-btn btn-style float-right">Download PDF</button>
