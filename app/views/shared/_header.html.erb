@@ -1,89 +1,13 @@
-<div class="header bg-transparent">
-  <div class="spacer"></div>
-
+<div class="header">
+  <div class="spacer"></div> <!-- Spacer to push buttons to the right -->
   <%= yield(:user_name) %>
   <%= yield(:link_button) %>
 
-  <div class="notification" id="notification">
-    <img src="<%= asset_path('bell-icon.svg') %>" alt="Bell Icon" class="img-fluid" id="notificationToggle">
-
-    <div class="notification-dropdown d-none" id="notificationDropdown">
-      <div class="notification-item">
-        <p>New comment on your post</p>
-        <span class="timestamp">2 mins ago</span>
-      </div>
-      <div class="notification-item">
-        <p>John Doe liked your photo</p>
-        <span class="timestamp">10 mins ago</span>
-      </div>
-      <div class="notification-item">
-        <p>Your password was changed</p>
-        <span class="timestamp">1 hour ago</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="profile  me-0" id="profile" style="background-color: none !important">
-    <img src="<%= asset_path('profile.jpg') %>" alt="Profile Picture" class="img-fluid profile-image" id="profileToggle">
-    
-    <div class="dropdown-content d-none" id="dropdownContent">
-      <div class="d-flex align-items-center gap-1">
-        <div class="profile-pic">
-          <img src="<%= asset_path('profile.jpg') %>" alt="Profile Picture" class="img-fluid">
-        </div>
-        <div class="name-email">
-          <div class="employe-name">
-            <%= current_user.name %>
-          </div>
-          <div class="email">
-            <%= current_user.email %>
-          </div>
-        </div>
-      </div>
-
-      <div class="d-flex flex-column sign-out-profile mt-3"> 
-        <div class="profile-btn d-flex align-items-center"> 
-          <a class="dropdown-item d-flex align-items-center" href="<%= admin_user_profile_path %>">
-            <i class="fa fa-user me-2"></i>
-            Profile
-          </a>
-        </div>
-        <div class="border"></div>
-        <div class="profile-signout-btn">
-          <%= button_to destroy_user_session_path, method: :delete, class: "dropdown-item logout-btn d-flex align-items-center" do %>
-            <i class="fa-solid fa-right-from-bracket me-2"></i>
-            Log Out
-          <% end %>
-        </div>
-      </div>
+  <div class="profile">
+    <span class="initial"><%= current_user.name.split.first[0] + current_user.name.split.last[0] %></span>
+    <div class="dropdown-content">
+      <%= button_to "Profile", admin_user_profile_path, method: :get %>
+      <%= button_to "Sign out", destroy_user_session_path, method: :delete %>
     </div>
   </div>
 </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', () => {
-  const profileToggle = document.getElementById('profileToggle');
-  const dropdownContent = document.getElementById('dropdownContent');
-  const notificationToggle = document.getElementById('notificationToggle');
-  const notificationDropdown = document.getElementById('notificationDropdown');
-
-  profileToggle.addEventListener('click', () => {
-    dropdownContent.classList.toggle('show');
-    notificationDropdown.classList.remove('show');
-  });
-
-  notificationToggle.addEventListener('click', () => {
-    notificationDropdown.classList.toggle('show');
-    dropdownContent.classList.remove('show');
-  });
-
-  document.addEventListener('click', (event) => {
-    if (!profileToggle.contains(event.target) && !dropdownContent.contains(event.target)) {
-      dropdownContent.classList.remove('show');
-    }
-    if (!notificationToggle.contains(event.target) && !notificationDropdown.contains(event.target)) {
-      notificationDropdown.classList.remove('show');
-    }
-  });
-});
-</script>
