@@ -328,7 +328,7 @@ class Admin::UsersController < ApplicationController
                 end
               end
               (@start_date..@end_date).each do |date|
-                next if date.saturday? || date.sunday? && !on_calls[date]
+                is_weekend = date.saturday? || date.sunday?
                 attendance = user.attendances.find_by(check_in_time: date.beginning_of_day..date.end_of_day)
                 total_hours = attendance.present? ? (attendance.total_hours || 0) : 0
                 if attendance.present?
@@ -350,9 +350,9 @@ class Admin::UsersController < ApplicationController
                     attendance.present? ? attendance.check_out_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A",
                     attendance.present? ? formatted_reg_hours : "N/A",
                     attendance.present? ? formatted_overtime_hours : "N/A",
-                    "","On Call",
+                    "On Call","",
                     attendance.present? ? formatted_total_hours : "N/A",
-                  ], style: [nil, nil, nil, nil, nil, nil, entry_style, nil]
+                  ], style: [nil, nil, nil, nil, nil, entry_style, nil, nil]
                   total_oncall_hours += total_hours if total_hours.present?
                 elsif is_public_holiday
                   sheet.add_row [
@@ -380,6 +380,7 @@ class Admin::UsersController < ApplicationController
                   ]
                   total_hours_sum += total_hours
                 else
+                  next if is_weekend
                   sheet.add_row [
                     date.strftime("%A %b #{date.day.ordinalize}"),
                     "","","",
