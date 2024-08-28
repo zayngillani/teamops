@@ -11,9 +11,6 @@ class Admin::UsersController < ApplicationController
       @user = User.new
     end
    
-    def admin_dashboard
-      
-    end
     def create
       unless params[:user][:password] == params[:user][:password_confirmation]
         flash[:error] = "Passwords don't match. Please check and re-type your confirm password."

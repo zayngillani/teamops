@@ -39,7 +39,7 @@
         }
 
         .menu {
-            width: auto;
+            width: 100%;
             margin-top: -38px;
         }
 
@@ -69,18 +69,14 @@
             font-weight: bold;
         }
 
-        <%
-=begin%>
- .menu-item::before {
+        .menu-item::before {
             content: '';
             display: inline-block;
             margin-right: 10px;
             width: 20px;
             height: 20px;
             background-size: contain;
-        } 
-<%
-=end%>
+        }
 
 
         .menu-item:nth-child(2)::before {
@@ -139,12 +135,6 @@
         </div>
         <% if current_user.admin? %>
             <div class="menu">
-             <a href="<%= admin_admin_dashboard_path %>">
-                    <div class="menu-item <%= 'active' if current_page?(admin_admin_dashboard_path) %>">
-                        <%= image_tag("employee.svg", class: "menu-icon") %>
-                        Dashboard
-                    </div>
-                </a>
                 <a href="<%= admin_users_path %>">
                     <div class="menu-item <%= 'active' if current_page?(admin_users_path) %>">
                         <%= image_tag("employee.svg", class: "menu-icon") %>

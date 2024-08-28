@@ -72,7 +72,7 @@
       justify-content: space-between;
       align-items: center;
       overflow: hidden;
-      /* background-color: #F7F9FE; */
+      background-color: #f1f1f1;
       padding: 20px 10px;
     }
 
@@ -121,20 +121,20 @@
       cursor: pointer;
     }
 
-   .request-button {
-    background-color: #F89320;
-    border: none;
-    color: white;
-    padding: 10px 20px;
-    text-align: center;
-    text-decoration: none;
-    display: inline-block;
-    font-size: 16px;
-    margin-right: 10px;
-    /* border-radius: 5px; */
-    cursor: pointer;
-    border-radius: 10px !important;
-  }
+    .select-status{
+      margin-right: 10px;
+    }
+    .pos{
+      width: 51%;
+    }
+    
+    .filter_i{
+      margin-left: 10px;
+    }
+
+    .year-drop{
+      margin-right: 41px;
+    }
 
    .leave-request {
     background-color: #F89320;
@@ -284,6 +284,7 @@
   }
 
    .content {
+     background-color: #F1F1F1; /* Off-white background color for the content */
      padding: 12px;
      height: auto;
    }
@@ -358,10 +359,10 @@
       color: darkgray;
     }
 
-   /* .spacer {
+   .spacer {
     border-radius: 1px;
     flex-grow: 1;
-   } */
+   }
 
    .timer {
     flex-direction: column;
@@ -821,7 +822,7 @@
   width: 65px;
   height: 65px;
   border-radius: 50%;
- 
+  background-color: #ccc;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -838,7 +839,7 @@
   margin-right: 20px;
 }
 
-/* .dropdown-content {
+.dropdown-content {
   display: none;
   position: fixed;
   background-color: #f9f9f9;
@@ -847,7 +848,7 @@
   right: 0;
   margin-right: 11px;
   margin-top: 130px;
-} */
+}
 
 .profile:hover .dropdown-content {
   display: block;
@@ -1113,7 +1114,7 @@ form .button input:hover{
 
 /* Change color of dropdown links on hover */
 .dropdown-content-action button:hover {
-  background-color: #F7F9FE;
+  background-color: #f1f1f1;
 }
 
 .dropdown-action:hover .dropdown-content-action {
@@ -1279,7 +1280,7 @@ form .button input:hover{
   width: auto;
   font-size: 16px;
   margin-left: 1%;
-  background-color: #F7F9FE;
+  background-color: #f1f1f1;
   height: 40px;
 }
 
