@@ -1,0 +1,90 @@
+<style>
+  .modal-leave {
+    background-color: #fefefe;
+    margin: 20% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 30%;
+    border-radius: 10px;
+    height: 110%;
+    margin-top: 100px;
+  }
+  .input-group {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.input-group input {
+    width: 45%;
+    padding: 10px;
+    margin-right: 10px;
+
+}
+
+.input-group button {
+    padding: 10px;
+    cursor: pointer;
+}
+
+
+.submit-btn {
+    background-color: #FFA500; /* Orange */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    width: 99%;
+    border-radius: 6px;
+}
+
+.submit-btn:hover {
+    background-color: #FFA500; /* Orange */
+}
+
+  .text-field {
+
+  }
+
+  .text-field:focus {
+    border-color: #66afe9;
+    outline: none;
+    box-shadow: 0 0 5px rgba(102, 175, 233, 0.6);
+  }
+
+  .text-field:hover {
+    border-color: #888;
+  }
+
+</style>
+<div id="myModal" class="modal" style="display: none;">
+  <div class="modal-leave">
+      <div class="modal-header">
+        <span class="report-close-modal" onclick="document.getElementById('myModal').style.display='none'">&times;</span>
+      </div>
+      <h4 style="margin-left: 1%; margin-top: 1%;">Request Leaves</h4><br><br>
+          <%= form_with url: leaves_path, method: :post, remote: true, id: "checkout_form" do |f| %>
+               <div class="field">
+               <%= f.label :leave_type, "Leave Type" %><br>
+               <%= f.select :leave_type, options_for_select([['Quarterly (Casual / Sick)', 0], ['Annual', 1]]), 
+                {required: true }, 
+                { style: "width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 3px; box-sizing: border-box; margin-bottom: 15px; font-size: 16px; background-color: white;" } %>
+               </div>
+               <div class="field">
+               <%= f.label :start_date %>
+               <%= f.date_field :start_date, min: Date.today, max: Date.today + 4.months, required: true %>
+               </div><br>
+               <div class="field">
+               <%= f.label :end_date %>
+               <%= f.date_field :end_date, min: Date.today, max: Date.today + 4.months, required: true %>
+               </div><br>
+               <div class="field">
+               <%= f.label :reason %>
+               <%= f.text_area :reason, class: "oncall_textarea", placeholder: "Enter reason for leaves" ,required: true %>
+               </div><br><br>
+               <div class="modal-footer">
+               <%= f.submit "Submit", class: "check-out-btn" %>
+               </div>
+          <% end %>
+  </div>
+</div>

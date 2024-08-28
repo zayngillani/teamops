@@ -1,76 +1,94 @@
-<div class="container-leave" style="margin-left: 100px;">
-  <div class="container-leaf">
-    <strong style="margin-bottom: 10px;">Pending Requests</strong>
-    <% if @pending_leaves.empty? %>
-      <p>N/A</p>
-    <% else %>
-    <table class="display">
-      <thead>
-        <tr>
-          <th>User</th>
-          <th>Leaves</th>
-        </tr>
-      </thead>
-      <tbody>
-      <% @pending_leaves.each do |item| %>
-        <tr>
-          <td><%= item.name %></td>
-          <td><%= link_to "View", leave_path(id: item.id), class: "sign-out-button"%>
-</td>
-        </tr>
-      <% end %>
-      </tbody>
-    </table>
+<% content_for :link_button do %>
+  <div class="leave-inline">
+    <p class="form-control select-leave">Annual Leaves<strong style="float: inline-end;"> <%= ENV['ANNUAL_LEAVE'].to_i - @annual_leaves %></strong></p>
+    <p class="form-control select-leave">Quarterly Leaves<strong style="float: inline-end;"> <%= ENV['QUATER_LEAVE'].to_i - @quarterly_leaves %></strong></p>
+  </div>
+  <div class="action-header-position pos">
+    <div class="action-header-text">
+    </div>
+    <%= form_tag leaves_path, method: :get, id: "filterForm", style: "display: flex; margin-left: 20%;" do %>  
+      <%= select_tag 'year', options_for_select(((Date.current.year - 5)..Date.current.year).to_a.reverse, params[:year].presence || Date.current.year), id: 'year', class: 'form-control select-year year-drop' %>
     <% end %>
+    <div class="create-job-btn">
+      <button id="modal-btn" class="request-button">
+        <img src="<%= asset_path('leave_logo.svg') %>" class="icon-class" alt="Leave Logo" />
+          Request Leaves
+      </button>
+    </div>
   </div>
-  
-  <div class="container-leaf">
-    <strong style="margin-bottom: 10px;">Accepted Requests</strong>
-    <% if @accepted_leaves.empty? %>
-      <p>N/A</p>
-    <% else %>
-    <table class="display">
-      <thead>
-        <tr>
-          <th>User</th>
-          <th>Leaves</th>
-        </tr>
-      </thead>
-      <tbody>
-      <% @accepted_leaves.each do |item| %>
-        <tr>
-          <td><%= item.name %></td>
-          <td><%= link_to "View", leave_path(id: item.id, accept: true), class: "sign-out-button"%>
-        </tr>
-      <% end %>
-      </tbody>
-    </table>
-      <% end %>
-  </div>
-  
-  <div class="container-leaf">
-    <strong style="margin-bottom: 10px;">Rejected Requests</strong>
-    <% if @rejected_leaves.empty? %>
-      <p>N/A</p>
-    <% else %>
-    <table class="display">
-      <thead>
-        <tr>
-          <th>User</th>
-          <th>Action</th>
-        </tr>
-      </thead>
-      <tbody>
-      <% @rejected_leaves.each do |item| %>
-        <tr>
-          <td><%= item.name %></td>
-          <td><%= link_to "View", leave_path(id: item.id, reject: true), class: "sign-out-button"%>
+<% end %>
+<%= render 'create_leave' %>
+
+<div style="margin-left: 260px; overflow-x: auto; height: 695px;">
+  <table class="leave-table-container">
+    <thead>
+      <tr class="dashboard-table-lines">
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Supervisor</th>
+        <th>Type</th>
+        <th> Status</th>
+      </tr>
+    </thead>
+    <tbody>
+    <% if @leaves.present? %>
+      <% @leaves.each do |leave| %>
+        <tr class="dashboard-table-lines">
+          <td class="table-title-column"><%= leave.start_date.strftime("%B %d, %Y") %></td>
+          <td class="table-title-column"><%= leave.end_date.strftime("%B %d, %Y") %></td>
+          <td class="table-title-column"><%= leave.supervisor.present? ? leave.supervisor.capitalize : "N/A" %></td>
+          <td class="table-title-column"><%= leave.leave_type.capitalize %></td>
+          <% if leave.status == "pending" %>
+            <td class="oncall-status-column-pending">
+              <span>Pending</span>
+            </td>
+          <% elsif leave.status == "approved" %>
+            <td class="oncall-status-column-approved">
+              <span>Approved</span>
+            </td>
+          <% elsif leave.status == "rejected" %>
+            <td class="oncall-status-column-rejected">
+              <span>Rejected</span>
+            </td>
+          <% end %>
         </tr>
       <% end %>
-      </tbody>
-    </table>
-      <% end %>
+     <% else %>
+      <tr><td colspan="4" style="text-align: center;">No data present</td></tr>
+     <% end %>
+    </tbody>
+  </table>
+  <div class="pagination-container">
+  <%= will_paginate @leaves, renderer: PaginationHelper::DailyReportsRenderer, remote: true %>
   </div>
 </div>
+<script>
 
+document.addEventListener("turbo:load", function() {
+  var form = document.getElementById("filterForm");
+  var yearSelect = document.getElementById("year");
 
+  if (form && yearSelect) {
+    yearSelect.addEventListener("change", function() {
+      form.submit();
+    });
+  }
+});
+
+document.addEventListener("turbo:load", function() {
+  var addIpModal = document.getElementById("myModal");
+  var addIpBtn = document.getElementById("modal-btn");
+
+  if (addIpBtn) {
+    addIpBtn.onclick = function() {
+      addIpModal.style.display = "block";
+    }
+  }
+
+  window.onclick = function(event) {
+    if (event.target === addIpModal) {
+      addIpModal.style.display = "none";
+    }
+  }
+  });
+</script>
