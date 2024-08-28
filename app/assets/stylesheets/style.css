@@ -7,6 +7,8 @@
   --color6: #666666;
   --color7: #f89320;
   --color8: #999999;
+  --color12: #15294B;
+  
 }
 
 * {
@@ -59,6 +61,7 @@ i {
   font-size: 18.6px;
   width: 18.6px;
   height: 21.55px;
+
 }
 
 .profile {
@@ -178,4 +181,12 @@ i {
     margin-left: 46% !important;
     font-size: 35px !important;
   }
+}
+
+
+.logout-btn,.profile-btn a{
+  border: none !important;
+  font-size: 16px !important;
+  font-weight: 400 !important;
+   color: var(--color12) !important;
 }

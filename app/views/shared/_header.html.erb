@@ -9,7 +9,7 @@
   <div class="notification" id="notification">
          <img src="<%= asset_path('bell-icon.svg') %>" alt="Bell Icon" class="img-fluid">
 
-    <div class="notification-dropdown">
+    <div class="notification-dropdown d-none">
       <div class="notification-item">
         <p>New comment on your post</p>
         <span class="timestamp">2 mins ago</span>
@@ -27,42 +27,42 @@
   </div> <!-- Closing div for .notification -->
 
   <!-- User Profile Section -->
-  <div class="profile me-0" id="profile">
-    <span class="initial">
-      <%= current_user.name.split.first[0] + current_user.name.split.last[0] %>
-    </span>
-    <div class="dropdown-content d-flex flex-column">
-      <div class="d-flex align-items-center gap-1">
-        <div class="profile-pic">
-          <img src="<%= asset_path('Profile.png') %>" alt="Profile Picture" class="img-fluid">
-        </div>
-        <div class="name-email">
-          <div class="employe-name">
-            <%= current_user.name %> <!-- Display current user's name -->
+    <div class="profile me-0" id="profile">
+      <span class="initial">
+        <%= current_user.name.split.first[0] + current_user.name.split.last[0] %>
+      </span>
+      <div class="dropdown-content d-flex flex-column">
+        <div class="d-flex align-items-center gap-1">
+          <div class="profile-pic">
+            <img src="<%= asset_path('Profile.png') %>" alt="Profile Picture" class="img-fluid">
           </div>
-          <div class="email">
-            <%= current_user.email %> <!-- Display current user's email -->
+          <div class="name-email">
+            <div class="employe-name">
+              <%= current_user.name %> <!-- Display current user's name -->
+            </div>
+            <div class="email">
+              <%= current_user.email %> <!-- Display current user's email -->
+            </div>
           </div>
         </div>
-      </div>
 
-      <div class="d-flex flex-column sign-out-profile mt-3"> 
-        <div class="profile-btn d-flex align-items-center"> 
-          <a class="dropdown-item d-flex align-items-center" href="<%= admin_user_profile_path %>">
-            <i class="fa fa-user me-2"></i>
-            Profile
-          </a>
-        </div> <!-- Closing div for .profile-btn -->
-        <div class="border"></div>
-        <div class="profile-signout-btn">
-          <a class="dropdown-item d-flex align-items-center" href="<%= destroy_user_session_path %>" data-method="delete">
-            <i class="fa-solid fa-right-from-bracket me-2"></i>
-            Sign out
-          </a>
-        </div> <!-- Closing div for .profile-signout-btn -->
-      </div> <!-- Closing div for .sign-out-profile -->
-    </div> <!-- Closing div for .dropdown-content -->
-  </div> <!-- Closing div for .profile -->
+        <div class="d-flex flex-column sign-out-profile mt-3"> 
+          <div class="profile-btn d-flex align-items-center"> 
+            <a class="dropdown-item d-flex align-items-center" href="<%= admin_user_profile_path %>">
+              <i class="fa fa-user me-2"></i>
+              Profile
+            </a>
+          </div> <!-- Closing div for .profile-btn -->
+          <div class="border"></div>
+          <div class="profile-signout-btn">
+            <%= button_to destroy_user_session_path, method: :delete, class: "dropdown-item logout-btn d-flex align-items-center" do %>
+              <i class="fa-solid fa-right-from-bracket me-2"></i>
+              Log Out
+            <% end %>
+          </div> <!-- Closing div for .profile-signout-btn -->
+        </div> <!-- Closing div for .sign-out-profile -->
+      </div> <!-- Closing div for .dropdown-content -->
+    </div> <!-- Closing div for .profile -->
 </div> <!-- Closing div for .header -->
 
 
