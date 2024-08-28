@@ -22,6 +22,7 @@ Rails.application.routes.draw do
       end
     end
     resources :oncall_support, only: [:index, :show, :create, :update]
+    resources :leaves, only: [:index, :show, :create, :update]
     resources :daily_reports, only: [:index, :show] do
       collection do
         get :search
