@@ -69,11 +69,11 @@ i {
   height: 46px !important;
 }
 
-.profile .dropdown-content , .notification .notification-dropdown{
+.profile .dropdown-content {
   display: none !important;
 }
 
-.profile:hover .dropdown-content ,.notification:hover .notification-dropdown{
+.profile:hover .dropdown-content {
   display: flex !important;
 }
 
@@ -154,9 +154,10 @@ i {
 
 
 .notification-dropdown{
+  display: none !important;
   background-color: #fff !important;
   gap: 40px;
-  display: flex !important;
+  /* display: flex !important; */
   flex-direction: column;
   width: 340px !important;
   position: absolute;
