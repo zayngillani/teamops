@@ -36,11 +36,11 @@ class LeavesController < ApplicationController
     restricted_period_end = Date.today + 7.days
 
     if Date.today < one_year_anniversary
-      redirect_to root_path, flash: { error: "Leave requests are available only after 1 year of service." }
+      redirect_to leaves_path, flash: { error: "Leave requests are available only after 1 year of service." }
       return
     end
-    if leave_start.between?(Date.today, restricted_period_end)
-      redirect_to root_path, flash: { error: "You can only apply for annual leaves starting one week before your anniversary." }
+    if leave_start.between?(Date.today, restricted_period_end) && params[:leave_type].to_i == 1
+      redirect_to leaves_path, flash: { error: "You can only apply for annual leaves starting one week before your anniversary." }
       return
     end
     if invalid_leave_dates?(leave_start, leave_end)
@@ -141,7 +141,7 @@ class LeavesController < ApplicationController
   end
   
   def overlapping_leave?(start_date, end_date)
-    Leave.exists?(user_id: current_user.id, status: [0, 1, 2], start_date: ..end_date, end_date: start_date..)
+    Leave.exists?(user_id: current_user.id, status: [0, 1], start_date: ..end_date, end_date: start_date..)
   end
   
   def exceeds_annual_leave_limit?(leave_type, leave_days, year_start, year_end)
