@@ -184,11 +184,14 @@
         <% end %>
       <% end %>
       <% (@start_date..@end_date).each do |date| %>
-        <% next if date.saturday? || date.sunday? && !on_calls[date] %>
+        <% is_weekend = date.saturday? || date.sunday? %>
         <tr>
           <% session = @user_sessions.find { |s| s.check_in_time.to_date == date } %>
-          <td><%= date.strftime("%A %b #{date.day.ordinalize}") %></td>
+          <% if !is_weekend %>
+            <td><%= date.strftime("%A %b #{date.day.ordinalize}") %></td>
+          <% end %>
           <% if on_calls[date] %>
+            <td><%= date.strftime("%A %b #{date.day.ordinalize}") %></td>
             <td><%= session ? session.check_in_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A" %></td>
             <td><%= session && session.check_out_time ? session.check_out_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A" %></td>
           <td>
@@ -280,6 +283,7 @@
                 <% end %>
               </td>
             <% else %>
+            <% next if is_weekend %>
             <td style="text-align: center;" colspan="7">No Session</td>
             <% end %>
         </tr>
