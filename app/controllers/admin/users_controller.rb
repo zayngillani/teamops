@@ -5,6 +5,7 @@ class Admin::UsersController < ApplicationController
       session = User.where(role: "user", deleted: false)
                     .order(name: :asc)
       @session = session.paginate(page: params[:page], per_page: 10)
+      @all_users_same_status = User.pluck(:can_outside_access).uniq.length == 1
     end
   
     def new
@@ -516,6 +517,15 @@ class Admin::UsersController < ApplicationController
         render json: { success: true }, status: :ok
       else
         render json: { success: false, errors: user.errors.full_messages }, status: :unprocessable_entity
+      end
+    end
+
+    def update_all_ip_restrictions
+      can_outside_access = params[:can_outside_access]
+      if User.where(role: "user").update_all(can_outside_access: can_outside_access)
+        render json: { success: true }
+      else
+        render json: { success: false }, status: :unprocessable_entity
       end
     end
     

@@ -9,7 +9,13 @@
       <th>ID</th>
       <th>Name</th>
       <th>Email</th>
-      <th>IP Address </th>
+      <th class="table-ip-column">
+      <label class="switch">
+        <input type="checkbox" id="toggle-all" class="toggle-switch-all" <%= @all_users_same_status ? 'checked' : '' %>>
+        <span class="slider round"></span>
+      </label>
+        <span id="toggle-status"></span>
+      </th>
       <th>Attendance</th>
       <th></th>
       <tr><td colspan="7" style="border-bottom: 1px solid black;"></td></tr>
@@ -77,29 +83,73 @@
 <%= will_paginate @session, renderer: WillPaginate::ActionView::LinkRenderer, class: 'pagination' %>
 </div>
 <script>
-  document.querySelectorAll(".toggle-switch").forEach(function(switchElement) {
-    switchElement.addEventListener("change", function() {
-      var ipId = this.dataset.id;
-      var newStatus = this.checked ? true : false ;
+document.addEventListener("DOMContentLoaded", function () {
+  const toggleAllSwitch = document.querySelector("#toggle-all");
+  const loader = document.getElementById("loader");
+  const toggleStatus = document.getElementById("toggle-status");
+  toggleAllSwitch.addEventListener("change", function () {
+    const newStatus = this.checked;
+    loader.style.display = "flex";
+    document.body.style.pointerEvents = "none";
+    fetch("/admin/users/update_all_ip_restrictions", {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        "X-CSRF-Token": document.querySelector("meta[name='csrf-token']").getAttribute("content"),
+      },
+      body: JSON.stringify({ can_outside_access: newStatus }),
+    })
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        } else {
+          throw new Error("Network response was not ok.");
+        }
+      })
+      .then((data) => {
+        if (data.success) {
+          document.querySelectorAll(".toggle-switch").forEach(function (switchElement) {
+            switchElement.checked = newStatus;
+          });
+        } else {
+          console.error("Failed to update IP restrictions.");
+        }
+      })
+      .catch((error) => {
+        console.error("There was a problem with the fetch operation:", error);
+      })
+      .finally(() => {
+        loader.style.display = "none";
+        document.body.style.pointerEvents = "auto";
+      });
+  });
+
+  document.querySelectorAll(".toggle-switch").forEach(function (switchElement) {
+    switchElement.addEventListener("change", function () {
+      const userId = this.dataset.id;
+      const newStatus = this.checked;
       loader.style.display = "flex";
       document.body.style.pointerEvents = "none";
 
-      fetch(`/admin/users/${ipId}/update_ip_restriction`, {
+      fetch(`/admin/users/${userId}/update_ip_restriction`, {
         method: "PATCH",
         headers: {
           "Content-Type": "application/json",
-          "X-CSRF-Token": document.querySelector("meta[name='csrf-token']").getAttribute("content")
+          "X-CSRF-Token": document.querySelector("meta[name='csrf-token']").getAttribute("content"),
         },
-        body: JSON.stringify({ can_outside_access: newStatus })
-      }).then(response => response.json())
-        .then(data => {
+        body: JSON.stringify({ can_outside_access: newStatus }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
           if (data.success) {
-            window.location.reload();
+          } else {
+            console.error("Failed to update individual IP restriction.");
           }
         })
         .finally(() => {
           loader.style.display = "none";
           document.body.style.pointerEvents = "auto";
+        });
         });
     });
   });

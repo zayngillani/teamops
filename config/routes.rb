@@ -14,6 +14,9 @@ Rails.application.routes.draw do
       member do
         patch 'update_ip_restriction'
       end
+      collection do
+        patch 'update_all_ip_restrictions'
+      end
     end
     resources :ip_managements do
       member do
