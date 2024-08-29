@@ -1,9 +1,9 @@
 <% content_for :link_button do %>
-     <%= form_tag admin_oncall_support_index_path, method: :get, id: "filterForm", style: "display: flex; margin-left: 20%;" do %>
-     <%= select_tag 'month', options_for_select(Date::MONTHNAMES.compact.each_with_index.map { |month, index| [month, index + 1] }, params[:month].presence || Date.current.month), id: 'month', class: 'form-control select-month' %>
-     <%= select_tag 'year', options_for_select((Date.current.year..Date.current.year + 5).to_a, params[:year].presence || Date.current.year), id: 'year', class: 'form-control select-year' %>
-     <%= select_tag 'request_status', options_for_select([['All Requests', ''], ['Pending', 0], ['Approved', 1], ['Rejected', 2]], params[:request_status]), id: 'request_status', class: 'form-control select-status filter_i' %>
-     <% end  %>
+    <%= form_tag admin_oncall_support_index_path, method: :get, id: "filterForm", style: "display: flex; margin-left: 20%;" do %>
+      <%= select_tag 'month', options_for_select(Date::MONTHNAMES.compact.each_with_index.map { |month, index| [month, index + 1] if index + 1 <= Date.current.month + 1 }.compact, params[:month].presence || Date.current.month), id: 'month', class: 'form-control select-month' %>
+      <%= select_tag 'year', options_for_select((Date.current.year..Date.current.year + 1).to_a, params[:year].presence || Date.current.year), id: 'year', class: 'form-control select-year' %>
+      <%= select_tag 'request_status', options_for_select([['All Requests', ''], ['Pending', 0], ['Approved', 1], ['Rejected', 2]], params[:request_status]), id: 'request_status', class: 'form-control select-status filter_i' %>
+    <% end %>
 
        <div class="action-header-position pos">
     <div class="action-header-text">
