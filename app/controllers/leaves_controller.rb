@@ -90,7 +90,8 @@ class LeavesController < ApplicationController
       flash[:success] = 'Leave request submitted'
       redirect_to leaves_path
     else
-      render :new
+      flash[:error] = "Reason cannot be empty or contain only spaces."
+      redirect_to leaves_path
     end
   end
 
