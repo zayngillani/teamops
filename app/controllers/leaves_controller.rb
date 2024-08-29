@@ -73,7 +73,7 @@ class LeavesController < ApplicationController
       return
     end
     if exceeds_annual_leave_limit?(params[:leave_type].to_i, leave_days, current_year_start, current_year_end)
-      redirect_to leaves_path, flash: { error: "You have exceeded the maximum annual leave limit of 9 days per year" }
+      redirect_to leaves_path, flash: { error: "You have exceeded the maximum annual leave limit of 8 days per year" }
       return
     end
     if exceeds_quarterly_leave_limit?(params[:leave_type].to_i, leave_days, current_quarter_start, current_quarter_end)
