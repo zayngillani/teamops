@@ -107,6 +107,8 @@
         <% @selected_columns.each do |column| %>
           <td>
             <% case column %>
+            <% when 'expected_hours' %>
+              <%= @total_working_hours %>
             <% when 'regular_hours' %>
               <%= reg_hours %>
             <% when 'worked_hours' %>

@@ -280,6 +280,8 @@ class Admin::UsersController < ApplicationController
               data_row = [user.name]
               columns_to_include.each do |column|
                 case column
+                when 'expected_hours'
+                  data_row << @total_working_hours
                 when 'regular_hours'
                   data_row << reg_hours
                 when 'worked_hours'
