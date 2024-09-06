@@ -1,7 +1,7 @@
 <% content_for :link_button do %>
     <%= form_tag show_report_path, method: :get, id: "filterForm", style: "display: flex; margin-right: 52%;" do %>
-      <%= select_tag 'month', options_for_select(Date::MONTHNAMES.compact.each_with_index.map { |month, index| [month, index + 1] }, params[:month].presence || Date.current.month), id: 'month', class: 'form-control select-month' %>
-      <%= select_tag 'year', options_for_select((Date.current.year..Date.current.year + 5).to_a, params[:year].presence || Date.current.year), id: 'year', class: 'form-control select-year' %>
+      <%= select_tag 'month', options_for_select(Date::MONTHNAMES.compact.each_with_index.map { |month, index| [month, index + 1] if index + 1 <= Date.current.month + 1 }.compact, params[:month].presence || Date.current.month), id: 'month', class: 'form-control select-month' %>
+      <%= select_tag 'year', options_for_select((Date.current.year..Date.current.year + 1).to_a, params[:year].presence || Date.current.year), id: 'year', class: 'form-control select-year' %>
     <% end %>
 <% end %>
 <div class="reportTable">

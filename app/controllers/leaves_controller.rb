@@ -73,7 +73,7 @@ class LeavesController < ApplicationController
       return
     end
     if exceeds_annual_leave_limit?(params[:leave_type].to_i, leave_days, current_year_start, current_year_end)
-      redirect_to leaves_path, flash: { error: "You have exceeded the maximum annual leave limit of 9 days per year" }
+      redirect_to leaves_path, flash: { error: "You have exceeded the maximum annual leave limit of 8 days per year" }
       return
     end
     if exceeds_quarterly_leave_limit?(params[:leave_type].to_i, leave_days, current_quarter_start, current_quarter_end)
@@ -90,7 +90,8 @@ class LeavesController < ApplicationController
       flash[:success] = 'Leave request submitted'
       redirect_to leaves_path
     else
-      render :new
+      flash[:error] = "Reason cannot be empty or contain only spaces."
+      redirect_to leaves_path
     end
   end
 

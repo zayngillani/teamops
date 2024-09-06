@@ -21,6 +21,7 @@
         </div>
         <h4>Select Columns to Export to PDF</h4><br>
         <%= form_tag admin_monthly_report_path(params[:month], params[:year]), method: :get do %>
+          <label><%= check_box_tag 'expected_hours[]', 'expected_hours', true, class: 'PdfCheckbox' %> Expected Hours</label><br>
           <label><%= check_box_tag 'regular_hours[]', 'regular_hours', true, class: 'PdfCheckbox' %> Regular Hours</label><br>
           <label><%= check_box_tag 'worked_hours[]', 'worked_hours', true, class: 'PdfCheckbox' %> Worked Hours</label><br>
           <label><%= check_box_tag 'over_time[]', 'over_time', true, class: 'PdfCheckbox' %> Over Time</label><br>
@@ -41,6 +42,7 @@
         </div>
         <h4>Select Columns to Export</h4><br>
         <%= form_tag admin_users_monthly_excel_path(params[:month], params[:year]), method: :get, id: "exportForm" do %>
+          <label><%= check_box_tag 'expected_hours[]', 'expected_hours', true, class: 'columnCheckbox' %> Expected Hours</label><br>
           <label><%= check_box_tag 'regular_hours[]', 'regular_hours', true, class: 'columnCheckbox' %> Regular Hours</label><br>
           <label><%= check_box_tag 'worked_hours[]', 'worked_hours', true, class: 'columnCheckbox' %> Worked Hours</label><br>
           <label><%= check_box_tag 'over_time[]', 'over_time', true, class: 'columnCheckbox' %> Over Time</label><br>

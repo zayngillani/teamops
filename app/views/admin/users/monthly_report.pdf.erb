@@ -66,7 +66,8 @@
 </style>
 
 <h1 class="attendance-heading">Monthly Report</h1>
-<p style="float: right; margin: 5px;">Month: <strong><%= Date::MONTHNAMES[@month] %></strong></p>
+<p style="float: right; margin: 5px;">Month: <strong><%= Date::MONTHNAMES[@month] %></strong> <span><strong><%= @year %></strong></span>
+</p>
 <table class="attendance-table user-data">
   <thead>
     <tr>
@@ -97,9 +98,35 @@
         @attendance_days = @attendance_data.count
         @public_holidays_count = @public_holidays.count
         reg_hours = user.leaves.present? ? (@total_working_hours - @current_user_leaves * 8) : @total_working_hours
-        working_hours = @total_hours[user.id] / 3600
-        overtime = reg_hours < working_hours ? (working_hours - reg_hours) : 0
-        undertime = reg_hours > working_hours ? (reg_hours - working_hours) : 0
+        reg_seconds = reg_hours * 3600
+        total_seconds = @total_hours[user.id] || 0
+        working_hours = total_seconds / 3600
+        working_minutes = (total_seconds % 3600) / 60
+        overtime_hours = 0
+        overtime_minutes = 0
+        undertime_hours = 0
+        undertime_minutes = 0        
+        if total_seconds > reg_seconds
+          remaining_overtime_seconds = total_seconds - reg_seconds          
+          overtime_hours = remaining_overtime_seconds / 3600
+          overtime_minutes = (remaining_overtime_seconds % 3600) / 60
+        else
+          overtime_hours = 0
+          overtime_minutes = 0
+        end        
+        if total_seconds < reg_seconds
+          remaining_seconds = reg_seconds - total_seconds          
+          undertime_hours = remaining_seconds / 3600
+          undertime_minutes = (remaining_seconds % 3600) / 60
+        else
+          undertime_hours = 0
+          undertime_minutes = 0
+        end
+        overtime_minutes ||= 0
+        undertime_minutes ||= 0
+        formatted_working_time = "%02d:%02d" % [working_hours, working_minutes]
+        formatted_overtime = "%02d:%02d" % [overtime_hours, overtime_minutes]
+        formatted_undertime = "%02d:%02d" % [undertime_hours, undertime_minutes] 
         absentee_days = [@total_days - (@attendance_days + @current_user_leaves), 0].max
       %>
       <tr>
@@ -107,14 +134,16 @@
         <% @selected_columns.each do |column| %>
           <td>
             <% case column %>
+            <% when 'expected_hours' %>
+              <%= @total_working_hours %>
             <% when 'regular_hours' %>
               <%= reg_hours %>
             <% when 'worked_hours' %>
-              <%= working_hours %>
+            <%= formatted_working_time %>
             <% when 'over_time' %>
-              <%= overtime %>
+              <%= formatted_overtime %>
             <% when 'under_time' %>
-              <%= undertime %>
+              <%= formatted_undertime %>
             <% when 'leaves' %>
               <%= @current_user_leaves %>
             <% when 'absentees' %>

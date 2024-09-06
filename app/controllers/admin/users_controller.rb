@@ -5,6 +5,7 @@ class Admin::UsersController < ApplicationController
       session = User.where(role: "user", deleted: false)
                     .order(name: :asc)
       @session = session.paginate(page: params[:page], per_page: 10)
+      @all_users_same_status = User.pluck(:can_outside_access).uniq.length == 1
     end
   
     def new
@@ -279,6 +280,8 @@ class Admin::UsersController < ApplicationController
               data_row = [user.name]
               columns_to_include.each do |column|
                 case column
+                when 'expected_hours'
+                  data_row << @total_working_hours
                 when 'regular_hours'
                   data_row << reg_hours
                 when 'worked_hours'
@@ -328,7 +331,7 @@ class Admin::UsersController < ApplicationController
                 end
               end
               (@start_date..@end_date).each do |date|
-                next if date.saturday? || date.sunday? && !on_calls[date]
+                is_weekend = date.saturday? || date.sunday?
                 attendance = user.attendances.find_by(check_in_time: date.beginning_of_day..date.end_of_day)
                 total_hours = attendance.present? ? (attendance.total_hours || 0) : 0
                 if attendance.present?
@@ -350,9 +353,9 @@ class Admin::UsersController < ApplicationController
                     attendance.present? ? attendance.check_out_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A",
                     attendance.present? ? formatted_reg_hours : "N/A",
                     attendance.present? ? formatted_overtime_hours : "N/A",
-                    "","On Call",
+                    "On Call","",
                     attendance.present? ? formatted_total_hours : "N/A",
-                  ], style: [nil, nil, nil, nil, nil, nil, entry_style, nil]
+                  ], style: [nil, nil, nil, nil, nil, entry_style, nil, nil]
                   total_oncall_hours += total_hours if total_hours.present?
                 elsif is_public_holiday
                   sheet.add_row [
@@ -380,6 +383,7 @@ class Admin::UsersController < ApplicationController
                   ]
                   total_hours_sum += total_hours
                 else
+                  next if is_weekend
                   sheet.add_row [
                     date.strftime("%A %b #{date.day.ordinalize}"),
                     "","","",
@@ -516,6 +520,15 @@ class Admin::UsersController < ApplicationController
         render json: { success: true }, status: :ok
       else
         render json: { success: false, errors: user.errors.full_messages }, status: :unprocessable_entity
+      end
+    end
+
+    def update_all_ip_restrictions
+      can_outside_access = params[:can_outside_access]
+      if User.where(role: "user").update_all(can_outside_access: can_outside_access)
+        render json: { success: true }
+      else
+        render json: { success: false }, status: :unprocessable_entity
       end
     end
     
