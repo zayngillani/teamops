@@ -78,6 +78,14 @@
     </tr>
   </thead>
   <tbody>
+    <% total_expected_hours = 0
+      total_regular_hours = 0
+      total_worked_hours = 0
+      total_overtime_hours = 0
+      total_undertime_hours = 0
+      total_leaves = 0
+      total_absentees = 0
+    %>
     <% @users.each do |user| %>
       <%
         user_creation_date = user.created_at.to_date
@@ -128,6 +136,14 @@
         formatted_overtime = "%02d:%02d" % [overtime_hours, overtime_minutes]
         formatted_undertime = "%02d:%02d" % [undertime_hours, undertime_minutes] 
         absentee_days = [@total_days - (@attendance_days + @current_user_leaves), 0].max
+
+        total_expected_hours += @total_working_hours
+        total_regular_hours += reg_hours
+        total_worked_hours += total_seconds / 3600.0
+        total_overtime_hours += overtime_hours + overtime_minutes / 60.0
+        total_undertime_hours += undertime_hours + undertime_minutes / 60.0
+        total_leaves += @current_user_leaves
+        total_absentees += absentee_days
       %>
       <tr>
         <td><%= user.name %></td>
@@ -153,6 +169,29 @@
         <% end %>
       </tr>
     <% end %>
+    <tr>
+      <td><strong>Total</strong></td>
+      <% @selected_columns.each do |column| %>
+        <td>
+          <% case column %>
+          <% when 'expected_hours' %>
+            <%= total_expected_hours %>
+          <% when 'regular_hours' %>
+            <%= total_regular_hours %>
+          <% when 'worked_hours' %>
+            <%= "%02d:%02d" % [total_worked_hours.floor, (total_worked_hours % 1 * 60).round] %>
+          <% when 'over_time' %>
+            <%= "%02d:%02d" % [total_overtime_hours.floor, (total_overtime_hours % 1 * 60).round] %>
+          <% when 'under_time' %>
+            <%= "%02d:%02d" % [total_undertime_hours.floor, (total_undertime_hours % 1 * 60).round] %>
+          <% when 'leaves' %>
+            <%= total_leaves %>
+          <% when 'absentees' %>
+            <%= total_absentees %>
+          <% end %>
+        </td>
+      <% end %>
+    </tr>
   </tbody>
 </table>
 <div class="page-break"></div>
