@@ -5,7 +5,7 @@ class Admin::UsersController < ApplicationController
       session = User.where(role: "user", deleted: false)
                     .order(name: :asc)
       @session = session.paginate(page: params[:page], per_page: 10)
-      @all_users_same_status = User.pluck(:can_outside_access).uniq.length == 1
+      @all_users_same_status = session.pluck(:can_outside_access).uniq
     end
   
     def new

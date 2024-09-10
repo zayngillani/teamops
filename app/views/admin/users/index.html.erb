@@ -11,7 +11,7 @@
       <th>Email</th>
       <th class="table-ip-column">
       <label class="switch">
-        <input type="checkbox" id="toggle-all" class="toggle-switch-all" <%= @all_users_same_status ? 'checked' : '' %>>
+        <input type="checkbox" id="toggle-all" class="toggle-switch-all" <%= @all_users_same_status == [true] ? 'checked' : '' %>>
         <span class="slider round"></span>
       </label>
         <span id="toggle-status"></span>
