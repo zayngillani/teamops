@@ -249,9 +249,17 @@ class Admin::UsersController < ApplicationController
           wb.add_worksheet(name: "Monthly Report") do |sheet|
             styles = wb.styles
             header_style = styles.add_style(b: true)
+            bold_style = styles.add_style(b: true)
             headers = ["Name"]
             headers += columns_to_include.map(&:humanize)
             sheet.add_row headers, style: header_style
+            total_expected_hours ||= 0
+            total_regular_hours ||= 0
+            total_worked_hours ||= 0
+            total_overtime_hours ||= 0
+            total_undertime_hours ||= 0
+            total_leaves ||= 0
+            total_absentees ||= 0
             @users.each do |user|
               current_user_leaves = Leave.where("start_date <= ? AND end_date >= ? AND status = ? AND user_id = ?", @end_date, @start_date, 1, user.id).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }
               reg_hours = user.leaves.present? ? (@total_working_hours - current_user_leaves * 8) : @total_working_hours
@@ -276,7 +284,44 @@ class Admin::UsersController < ApplicationController
               @attendance_data = user.attendances.where(check_in_time: @start_date.beginning_of_day..@end_date.end_of_day)
               @attendance_days = @attendance_data.count
               @public_holidays_count = @public_holidays.count
+              reg_hours = user.leaves.present? ? (@total_working_hours - @current_user_leaves * 8) : @total_working_hours
+              reg_seconds = reg_hours * 3600
+              total_seconds = @total_hours[user.id] || 0
+              working_hours = total_seconds / 3600
+              working_minutes = (total_seconds % 3600) / 60
+              overtime_hours = 0
+              overtime_minutes = 0
+              undertime_hours = 0
+              undertime_minutes = 0        
+              if total_seconds > reg_seconds
+                remaining_overtime_seconds = total_seconds - reg_seconds          
+                overtime_hours = remaining_overtime_seconds / 3600
+                overtime_minutes = (remaining_overtime_seconds % 3600) / 60
+              else
+                overtime_hours = 0
+                overtime_minutes = 0
+              end        
+              if total_seconds < reg_seconds
+                remaining_seconds = reg_seconds - total_seconds          
+                undertime_hours = remaining_seconds / 3600
+                undertime_minutes = (remaining_seconds % 3600) / 60
+              else
+                undertime_hours = 0
+                undertime_minutes = 0
+              end
+              overtime_minutes ||= 0
+              undertime_minutes ||= 0
+              formatted_working_time = "%02d:%02d" % [working_hours, working_minutes]
+              formatted_overtime = "%02d:%02d" % [overtime_hours, overtime_minutes]
+              formatted_undertime = "%02d:%02d" % [undertime_hours, undertime_minutes]
               absentee_days = [@total_days - (@attendance_days + @current_user_leaves), 0].max
+              total_expected_hours += @total_working_hours
+              total_regular_hours += reg_hours
+              total_worked_hours += total_seconds / 3600.0
+              total_overtime_hours += overtime_hours + overtime_minutes / 60.0
+              total_undertime_hours += undertime_hours + undertime_minutes / 60.0
+              total_leaves += @current_user_leaves
+              total_absentees += absentee_days
               data_row = [user.name]
               columns_to_include.each do |column|
                 case column
@@ -285,11 +330,11 @@ class Admin::UsersController < ApplicationController
                 when 'regular_hours'
                   data_row << reg_hours
                 when 'worked_hours'
-                  data_row << working_hours
+                  data_row << formatted_working_time
                 when 'over_time'
-                  data_row << overtime
+                  data_row << formatted_overtime
                 when 'under_time'
-                  data_row << undertime
+                  data_row << formatted_undertime
                 when 'leaves'
                   data_row << current_user_leaves
                 when 'absentees'
@@ -298,7 +343,33 @@ class Admin::UsersController < ApplicationController
               end
               sheet.add_row data_row
             end
-          end
+              totals_row = ['Total']
+              columns_to_include.each do |column|
+                case column
+                when 'expected_hours'
+                  totals_row << total_expected_hours
+                when 'regular_hours'
+                  totals_row << total_regular_hours
+                when 'worked_hours'
+                  total_worked_minutes = (total_worked_hours * 60).to_i % 60
+                  total_worked_hours_formatted = "%02d:%02d" % [total_worked_hours.to_i, total_worked_minutes]
+                  totals_row << total_worked_hours_formatted
+                when 'over_time'
+                  total_overtime_minutes = (total_overtime_hours * 60).to_i % 60
+                  total_overtime_hours_formatted = "%02d:%02d" % [total_overtime_hours.to_i, total_overtime_minutes]
+                  totals_row << total_overtime_hours_formatted
+                when 'under_time'
+                  total_undertime_minutes = (total_undertime_hours * 60).to_i % 60
+                  total_undertime_hours_formatted = "%02d:%02d" % [total_undertime_hours.to_i, total_undertime_minutes]
+                  totals_row << total_undertime_hours_formatted
+                when 'leaves'
+                  totals_row << total_leaves
+                when 'absentees'
+                  totals_row << total_absentees
+                end
+              end
+              sheet.add_row totals_row, style: bold_style
+            end
           @users.each do |user|
             wb.add_worksheet(name: "#{user.name}_#{user.id}") do |sheet|
               styles = wb.styles
