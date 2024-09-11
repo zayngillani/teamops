@@ -63,7 +63,7 @@ class AttendanceController < ApplicationController
      def end_session
       if params[:report].present?
         @session = current_user.attendances.last
-        if @session.present?
+        if @session.present? && @session.check_out_time.nil?
           @session.update!(check_out_time: Time.now.utc)
           total_duration_seconds = @session.check_out_time - @session.check_in_time
           total_break_time = calculate_total_break_time(@session)
