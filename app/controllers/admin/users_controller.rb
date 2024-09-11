@@ -420,8 +420,8 @@ class Admin::UsersController < ApplicationController
                 if is_oncall
                   sheet.add_row [
                     date.strftime("%A %b #{date.day.ordinalize}"),
-                    attendance.present? ? attendance.check_in_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A",
-                    attendance.present? ? attendance.check_out_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A",
+                    attendance.present? && attendance.check_in_time.present? ? attendance.check_in_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A" ,
+                    attendance.present? && attendance.check_out_time.present? ? attendance.check_out_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A" ,
                     attendance.present? ? formatted_reg_hours : "N/A",
                     attendance.present? ? formatted_overtime_hours : "N/A",
                     "On Call","",
