@@ -175,19 +175,19 @@
         <td>
           <% case column %>
           <% when 'expected_hours' %>
-            <%= total_expected_hours %>
+          <strong><%= total_expected_hours %></strong>
           <% when 'regular_hours' %>
-            <%= total_regular_hours %>
+            <strong><%= total_regular_hours %></strong>
           <% when 'worked_hours' %>
-            <%= "%02d:%02d" % [total_worked_hours.floor, (total_worked_hours % 1 * 60).round] %>
+            <strong><%= "%02d:%02d" % [total_worked_hours.floor, (total_worked_hours % 1 * 60).round] %></strong>
           <% when 'over_time' %>
-            <%= "%02d:%02d" % [total_overtime_hours.floor, (total_overtime_hours % 1 * 60).round] %>
+            <strong><%= "%02d:%02d" % [total_overtime_hours.floor, (total_overtime_hours % 1 * 60).round] %></strong>
           <% when 'under_time' %>
-            <%= "%02d:%02d" % [total_undertime_hours.floor, (total_undertime_hours % 1 * 60).round] %>
+            <strong><%= "%02d:%02d" % [total_undertime_hours.floor, (total_undertime_hours % 1 * 60).round] %></strong>
           <% when 'leaves' %>
-            <%= total_leaves %>
+            <strong><%= total_leaves %></strong>
           <% when 'absentees' %>
-            <%= total_absentees %>
+            <strong><%= total_absentees %></strong>
           <% end %>
         </td>
       <% end %>
@@ -205,7 +205,7 @@
         <p>Supervisor: <strong><%= user.supervisor.present? ? user.supervisor : "Fahad" %></strong></p>
       </div>
       <div class="right-section">
-        <p>Month: <strong><%= Date::MONTHNAMES[@month] %></strong></p>
+        <p>Month: <strong><%= Date::MONTHNAMES[@month] %><span><%= @year %></span></strong></p>
         <p>Regular Hours: 8</p>
       </div>
     </div>
