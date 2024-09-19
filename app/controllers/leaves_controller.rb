@@ -6,8 +6,10 @@ class LeavesController < ApplicationController
     @end_date = @start_date.end_of_month
     current_month_start = @start_date.beginning_of_month
     current_month_end = @end_date.end_of_month
-    @leaves = Leave.where(user_id: current_user.id).where("extract(year from start_date) = ?", @year)
-    .order(created_at: :desc).paginate(page: params[:page], per_page: 10)
+    @leaves = Leave.where(user_id: current_user.id)
+               .where("extract(year from start_date) = ? AND extract(month from start_date) = ?", @year, @month)
+               .order(created_at: :desc)
+               .paginate(page: params[:page], per_page: 10)
     current_year_start = Date.new(@start_date.year, 1, 1)
     current_year_end = Date.new(@end_date.year, 12, 31)
     @annual_leaves = Leave.where(user_id: current_user.id, leave_type: 1, status: 1)
