@@ -15,7 +15,7 @@ class LeavesController < ApplicationController
     @annual_leaves = @annual_leaves.sum do |leave|
       (leave.end_date - leave.start_date).to_i + 1
     end
-    @quarterly_leaves = calculate_quarterly_leaves
+    @quarterly_leaves = calculate_quarterly_leaves(@month , @year)
   end
 
   def new
@@ -101,9 +101,9 @@ class LeavesController < ApplicationController
     params.require(:leaves).permit(:start_date, :end_date, :reason)
   end
 
-  def calculate_quarterly_leaves
-    current_year = Date.current.year
-    current_month = Date.current.month
+  def calculate_quarterly_leaves(month , year)
+    current_year = year
+    current_month = month
     case current_month
     when 1..3
       quarter_start = Date.new(current_year, 1, 1)
