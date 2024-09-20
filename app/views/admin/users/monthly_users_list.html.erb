@@ -265,10 +265,5 @@ function downloadExcel(event, button) {
   document.body.appendChild(form);
   form.submit();
   document.body.removeChild(form);
-
-  // Reload the page after a short delay to ensure the download starts
-  setTimeout(() => {
-    location.reload();
-  }, 2000); // Adjust delay as needed
 }
 </script>
