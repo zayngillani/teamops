@@ -10,7 +10,7 @@
       end,
       params[:month].presence || Date.current.month),
       id: 'month', class: 'form-control select-month' %>
-    <%= select_tag 'year', options_for_select((2000..Date.current.year).to_a.reverse, selected_year), id: 'year', class: 'form-control select-year' %>
+    <%= select_tag 'year', options_for_select((2024..Date.current.year).to_a.reverse, selected_year), id: 'year', class: 'form-control select-year' %>
     <% end %>
     <p class="form-control select-hours">Expected Hours:<strong> <%= @total_working_hours %></strong></p>
     <button type="button" id="modal-btn-pdf" class="modal-btn btn-style float-right">Download PDF</button>
