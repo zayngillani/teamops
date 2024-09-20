@@ -36,7 +36,7 @@ class OncallSupportController < ApplicationController
           is_public_holiday = public_holidays.any? { |holiday| date.between?(holiday.start_date, holiday.end_date) }
           is_approved_leave = approved_leaves.any? { |leave| date.between?(leave.start_date, leave.end_date) }
             unless is_weekend || is_public_holiday || is_approved_leave
-              redirect_to show_oncalls_path, flash: { error: "On-call requests can only be created on weekends, approved leaves, or public holidays." }
+              redirect_to show_oncalls_path, flash: { error: "On-call requests are only allowed on holidays, weekends, or during approved leave." }
               return
             end
           end
