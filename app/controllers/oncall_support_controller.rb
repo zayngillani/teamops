@@ -24,7 +24,7 @@ class OncallSupportController < ApplicationController
                redirect_to show_oncalls_path, flash: { error: "End date must be greater than or equal to start date" }
                return
           end
-          if Oncall.exists?(user_id: current_user.id, request_status: [0, 1, 2], start_date: ..params[:start_date], end_date: params[:end_date]..)
+          if Oncall.exists?(user_id: current_user.id, request_status: [0, 1], start_date: ..params[:start_date], end_date: params[:end_date]..)
                redirect_to show_oncalls_path, flash: { error: "Oncall Already Submitted" }
                return
           end
