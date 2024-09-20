@@ -2,9 +2,10 @@
   <div style="margin-left: 20%; position: absolute;">
     <h3 style="display: inline-block; margin-right: 20px;"><%= @user.name %>'s Reports</h3>
     <%= form_tag admin_daily_report_path(@user.id), method: :get, id: "filterForm", style: "display: inline-block; margin-bottom: 0;" do %>
-      <%= select_tag 'month', options_for_select(Date::MONTHNAMES.compact.each_with_index.map { |month, index| [month, index + 1] }, params[:month].presence || Date.current.month), id: 'month', class: 'form-control select-month', style: "margin-right: 10px;" %>
-      <%= select_tag 'year', options_for_select((Date.current.year..Date.current.year + 5).to_a, params[:year].presence || Date.current.year), id: 'year', class: 'form-control select-year', style: "margin-right: 10px;" %>
-    <% end %>
+      <%= select_tag 'month', options_for_select(Date::MONTHNAMES[1..Date.current.month].map.with_index(1) { |month, index| [month, index] },
+        params[:month].presence || Date.current.month), id: 'month', class: 'form-control select-month' %>
+        <%= select_tag 'year', options_for_select((2024..Date.current.year)), id: 'year', class: 'form-control select-year' %>
+      <% end %>
   </div>
 <% end %>
 <div class="reportTable">
