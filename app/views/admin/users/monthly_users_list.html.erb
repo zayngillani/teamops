@@ -68,7 +68,7 @@
       <tbody>
         <% @users.each do |user| %>
           <tr>
-            <td><%= check_box_tag 'se lected_users[]', user.id, false, class: 'userCheckbox' %></td>
+            <td><%= check_box_tag 'selected_users[]', user.id, false, class: 'userCheckbox' %></td>
             <td><%= user&.name %></td>
             <td><%= "#{@total_hours[user.id] / 3600 || 0} hours #{@total_hours[user&.id] % 3600 / 60 || 0} minutes" %></td>
           </tr>

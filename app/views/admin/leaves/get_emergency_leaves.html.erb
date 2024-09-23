@@ -1,15 +1,14 @@
 <% content_for :link_button do %>
-    <%= form_tag admin_leaves_path, method: :get, id: "filterForm", style: "display: flex; margin-left: 20%;" do %>
+    <%= form_tag get_emergency_leaves_admin_leaves_path, method: :get, id: "filterForm", style: "display: flex; margin-left: 20%;" do %>
       <%= select_tag 'month', options_for_select(Date::MONTHNAMES.compact.each_with_index.map { |month, index| [month, index + 1] if index + 1 <= Date.current.month + 1 }.compact, params[:month].presence || Date.current.month), id: 'month', class: 'form-control select-month' %>
       <%= select_tag 'year', options_for_select((Date.current.year..Date.current.year + 1).to_a, params[:year].presence || Date.current.year), id: 'year', class: 'form-control select-year' %>
-      <%= select_tag 'status', options_for_select([['All Requests', ''], ['Pending', 0], ['Approved', 1], ['Rejected', 2]], params[:status]), id: 'status', class: 'form-control select-status filter_i' %>
     <% end  %>
 
-  <div class="action-header-position pos">
+    <div class="action-header-position pos">
     <div class="action-header-text">
     </div>
     <div class="create-job-btn">
-      <%= button_to "Emergency Leaves", get_emergency_leaves_admin_leaves_path, 
+      <%= button_to "Create Leave", create_emergency_leaves_admin_leaves_path, 
         method: :get, 
         class: "sign-out-button check-btn", 
         data: { disable_with: "Processing..." },
@@ -25,8 +24,8 @@
       <tr class="dashboard-table-lines">
         <th>Name</th>
         <th>Leave Status</th>
-        <th>Approved By</th>
-        <th>Type</th>
+        <th>Leave Type</th>
+        <th>Date</th>
         <th>Action</th>
       </tr>
     </thead>
@@ -49,8 +48,8 @@
               <span>Rejected</span>
             </td>
           <% end %>
-          <td class="table-title-column"><%= leave.supervisor.present? ? leave.supervisor : "N/A" %></td>
           <td class="table-title-column"><%= leave.leave_type.capitalize %></td>
+          <td class="table-title-column"><%= leave.start_date.present? ? leave.start_date.strftime("%d %b %Y") : "N/A" %></td>
           <td class="table-title-column archived"><%= link_to 'View', admin_leave_path(id: leave.id) %></td>
         </tr>
       <% end %>
