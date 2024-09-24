@@ -93,7 +93,7 @@ class Admin::LeavesController < ApplicationController
         
           if emergency_leaves_check.present?
             flash[:error] = "The selected employee has already marked emergency leave for this month. Please select a different month or employee."
-            redirect_to create_emergency_leaves_admin_leaves_path and return true
+            redirect_to new_emergency_leaves_admin_leaves_path and return true
           end
         
           false
@@ -105,7 +105,7 @@ class Admin::LeavesController < ApplicationController
         
           if existing_leaves.present?
             flash[:error] = "Leave already created"
-            redirect_to create_emergency_leaves_admin_leaves_path and return true
+            redirect_to new_emergency_leaves_admin_leaves_path and return true
           end
         
           false
@@ -128,7 +128,7 @@ class Admin::LeavesController < ApplicationController
         
           if limit_reached
             flash[:error] = "Emergency leave cannot be marked. The selected employee has no unused leave available."
-            redirect_to create_emergency_leaves_admin_leaves_path and return true
+            redirect_to new_emergency_leaves_admin_leaves_path and return true
           end
         
           false
