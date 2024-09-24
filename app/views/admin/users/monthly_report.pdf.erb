@@ -243,7 +243,7 @@
       <% end %>
       <% @user_leaves.each do |leave| %>
         <% (leave.start_date..leave.end_date).each do |date| %>
-          <% leaves[date] = leave.reason %>
+          <% leaves[date] = leave %>
         <% end %>
       <% end %>
       <% @user_on_calls.each do |on_call| %> 
@@ -311,7 +311,7 @@
         <% elsif public_holidays.key?(date) %>
           <td style="text-align: center;" colspan="7"><strong><%= public_holidays[date] %></strong></td>
           <% elsif leaves.key?(date) %>
-            <td style="text-align: center;" colspan="7"><strong>On Leave</strong></td>
+            <td style="text-align: center;" colspan="7"><strong><%= leaves[date]&.emergency ? "Emergency Leave" : "On Leave" %></strong></td>
           <% elsif session %>
               <td><%= session.check_in_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") %></td>
               <td><%= session.check_out_time.present? ? session.check_out_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A" %></td>

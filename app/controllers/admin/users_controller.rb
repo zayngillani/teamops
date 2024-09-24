@@ -391,7 +391,7 @@ class Admin::UsersController < ApplicationController
               user_leaves = Leave.where("start_date <= ? AND end_date >= ? AND status = ? AND user_id = ?", @end_date, @start_date, 1, user.id)
               user_leaves.each do |leave|
                 (leave.start_date..leave.end_date).each do |date|
-                  leaves[date] = leave.reason
+                  leaves[date] = leave
                 end
               end
               on_calls = {}
@@ -439,7 +439,7 @@ class Admin::UsersController < ApplicationController
                   sheet.add_row [
                     date.strftime("%A %b #{date.day.ordinalize}"),
                     "","","","",
-                    "On Leave",
+                    leaves[date]&.emergency ? "Emergency Leave" : "On Leave",
                     "","",
                   ], style: [nil, nil, nil, nil, entry_style, nil, nil]
                 elsif attendance

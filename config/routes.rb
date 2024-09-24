@@ -24,7 +24,13 @@ Rails.application.routes.draw do
       end
     end
     resources :oncall_support, only: [:index, :show, :create, :update]
-    resources :leaves, only: [:index, :show, :create, :update]
+    resources :leaves, only: [:index, :show, :create, :update] do
+      collection do
+        get 'get_emergency_leaves'
+        post 'create_emergency_leaves'
+        get 'new_emergency_leaves'
+      end
+    end
     resources :daily_reports, only: [:index, :show] do
       collection do
         get :search
