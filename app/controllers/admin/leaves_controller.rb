@@ -50,11 +50,11 @@ class Admin::LeavesController < ApplicationController
           @leaves = Leave.where("start_date <= ? AND end_date >= ? AND emergency = ?", @current_month_end, @current_month_start, true).paginate(page: params[:page], per_page: 10)
      end
 
-     def create_emergency_leaves
+     def new_emergency_leaves
           @users = User.where(role: "user", deleted: false).order(name: :asc).paginate(page: params[:page], per_page: 10)
      end
 
-     def new_emergency_leaves
+     def create_emergency_leaves
           selected_user = params[:selected_user_id]
           leave_type = params[:leave_type]
           reason = params[:reason]

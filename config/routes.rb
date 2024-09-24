@@ -27,8 +27,8 @@ Rails.application.routes.draw do
     resources :leaves, only: [:index, :show, :create, :update] do
       collection do
         get 'get_emergency_leaves'
-        get 'create_emergency_leaves'
-        post 'new_emergency_leaves'
+        post 'create_emergency_leaves'
+        get 'new_emergency_leaves'
       end
     end
     resources :daily_reports, only: [:index, :show] do
