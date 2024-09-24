@@ -41,46 +41,73 @@
   font-size: 12px;
   margin-top: 5px;
 }
+
+/* Container to hold dropdowns and the button */
+.form-inline-container {
+  display: flex;
+  justify-content: space-between; /* Align items to the left and right */
+  align-items: center; /* Center items vertically */
+  gap: 20px; /* Space between dropdowns and the button */
+  width: 100%; /* Full width container */
+}
+
+/* Container for the dropdowns */
+.dropdown-container {
+  display: flex;
+  gap: 20px; /* Space between the dropdowns */
+  align-items: flex-start; /* Align dropdowns to the top */
+  margin-right: 500px;
+}
+
+/* Container for the button */
+.continue-button-container {
+  display: flex;
+  justify-content: flex-end; /* Push button to the right */
+}
+
+
 </style>
 
 <% content_for :link_button do %>
   <%= form_with url: new_emergency_leaves_admin_leaves_path, method: :post, id: 'leaveForm', local: true do %>
-    <!-- Leave type selection -->
-    <div class="form-group">
-      <%= select_tag 'leave_type', 
-        options_for_select(
-          [["Quarterly", "quarterly"], ["Annual", "annual"]], 
-          params[:leave_type]
-        ), 
-        id: 'leave_type', 
-        class: 'form-control select-leave-type', 
-        prompt: 'Select Leave Type' %>
-      <span id="leaveTypeError" class="error-message" style="display: none;">This field is required.</span>
-    </div>
+    <div class="form-inline-container">
+      <!-- Container for dropdowns -->
+      <div class="dropdown-container">
+        <div class="form-group">
+          <%= select_tag 'leave_type', 
+            options_for_select(
+              [["Quarterly", "quarterly"], ["Annual", "annual"]], 
+              params[:leave_type]
+            ), 
+            id: 'leave_type', 
+            class: 'form-control select-leave-type', 
+            prompt: 'Select Leave Type' %>
+          <span id="leaveTypeError" class="error-message" style="display: none;">This field is required.</span>
+        </div>
 
-    <!-- Reason selection -->
-    <div class="form-group">
-      <%= select_tag 'reason', 
-        options_for_select(
-          [["Personal", "personal"], ["Medical", "medical"], ["Family", "family"]], 
-          params[:reason]
-        ), 
-        id: 'reason', 
-        class: 'form-control select-reason', 
-        prompt: 'Select Reason' %>
-      <span id="reasonError" class="error-message" style="display: none;">This field is required.</span>
-    </div>
+        <div class="form-group">
+          <%= select_tag 'reason', 
+            options_for_select(
+              [["Personal", "personal"], ["Medical", "medical"], ["Family", "family"]], 
+              params[:reason]
+            ), 
+            id: 'reason', 
+            class: 'form-control select-reason', 
+            prompt: 'Select Reason' %>
+          <span id="reasonError" class="error-message" style="display: none;">This field is required.</span>
+        </div>
+      </div>
 
-    <!-- Continue button -->
-    <div class="continue-leaves">
-      <button type="button" class="sign-out-button w-auto" id="continueBtn" onclick="openCalendarModal()">
-        Continue
-      </button>
+      <!-- Continue button on the right side -->
+      <div class="continue-button-container">
+        <button type="button" class="sign-out-button w-auto" id="continueBtn" onclick="openCalendarModal()">
+          Continue
+        </button>
+      </div>
     </div>
   <% end %>
 <% end %>
 
-<!-- User selection table -->
 <div class="main-content" style="margin-left: 260px; margin-top: 10px;">
   <div id="users_data">
     <table>
@@ -107,7 +134,6 @@
   </div>
 </div>
 
-<!-- Modal for calendar date selection -->
 <div id="calendarModal" class="modal">
   <div class="modal-content">
     <span class="close" onclick="closeCalendarModal()">&times;</span>

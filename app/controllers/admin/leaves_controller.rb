@@ -60,14 +60,16 @@ class Admin::LeavesController < ApplicationController
           reason = params[:reason]
           selected_date = Date.parse(params[:selected_date]) rescue nil
           @user = User.find_by(id: selected_user)
-          
+          one_year_anniversary = @user.join_date + 1.year
+          quarterly_restricted = @user.join_date + 3.months
+
           return if validate_emergency_leaves(selected_user, selected_date) ||
                     validate_existing_leaves(selected_user, selected_date) ||
-                    validate_leave_limits(selected_user, leave_type)
+                    validate_leave_limits(selected_user, leave_type) ||
+                    invalid_leave_request?(selected_date, leave_type, one_year_anniversary, quarterly_restricted)
         
           @leave = Leave.create(user_id: selected_user, status: 1, reason: reason, leave_type: leave_type, start_date: selected_date, end_date: selected_date, supervisor: "Admin", emergency: true)
-          flash[:success] = "Emergency Leave Created Successfully"
-          redirect_to get_emergency_leaves_admin_leaves_path
+          redirect_to get_emergency_leaves_admin_leaves_path, flash: { success: "Emergency Leave Created Successfully." }
      end
 
      private
@@ -146,5 +148,33 @@ class Admin::LeavesController < ApplicationController
           when 10..12
             [Date.new(selected_date.year, 10, 1), Date.new(selected_date.year, 12, 31)]
           end
+        end
+
+        def public_holiday_exists?(selected_date)
+          PublicHoliday.where('? BETWEEN start_date AND end_date', selected_date).exists?
+        end
+
+        def invalid_leave_request?(selected_date, leave_type, one_year_anniversary, quarterly_restricted)
+          if selected_date.saturday? || selected_date.sunday?
+            redirect_to get_emergency_leaves_admin_leaves_path, flash: { error: "You cannot add emergency leave on weekends." }
+            return true
+          end
+        
+          if public_holiday_exists?(selected_date)
+            redirect_to get_emergency_leaves_admin_leaves_path, flash: { error: "You cannot add emergency leave on Public Holiday." }
+            return true
+          end
+        
+          if Date.today < one_year_anniversary && leave_type == 'annual'
+            redirect_to get_emergency_leaves_admin_leaves_path, flash: { error: "Leave requests are available only after 1 year of service." }
+            return true
+          end
+        
+          if Date.today < quarterly_restricted && leave_type == 'quarterly'
+            redirect_to get_emergency_leaves_admin_leaves_path, flash: { error: "You must complete 3 months of employment before requesting quarterly leave." }
+            return true
+          end
+        
+          false
         end
 end
