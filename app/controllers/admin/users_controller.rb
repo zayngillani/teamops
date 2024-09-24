@@ -441,7 +441,7 @@ class Admin::UsersController < ApplicationController
                     "","","","",
                     leaves[date]&.emergency ? "Emergency Leave" : "On Leave",
                     "","",
-                  ], style: [nil, nil, nil, nil, entry_style, nil, nil]
+                  ], style: [nil, nil, nil, nil, nil, entry_style, nil, nil]
                 elsif attendance
                   sheet.add_row [
                     date.strftime("%A %b #{date.day.ordinalize}"),
