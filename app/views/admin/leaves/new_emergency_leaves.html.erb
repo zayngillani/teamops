@@ -88,19 +88,19 @@
             ), 
             id: 'leave_type', 
             class: 'form-control select-leave-type type', 
-            prompt: 'Select Leave Type' %>
+            prompt: 'Leave Type' %>
           <span id="leaveTypeError" class="error-message-emergency" style="display: none;">This field is required.</span>
         </div>
 
         <div class="form-group">
           <%= select_tag 'reason', 
             options_for_select(
-              [["Personal", "personal"], ["Medical", "medical"], ["Family", "family"]], 
+              [["Seriously Sick", "Seriously Sick"], ["Death in Family", "Death in Family"], ["Accident", "Accident"]], 
               params[:reason]
             ), 
             id: 'reason', 
             class: 'form-control select-reason', 
-            prompt: 'Select Reason' %>
+            prompt: 'Reason' %>
           <span id="reasonError" class="error-message-emergency" style="display: none;">This field is required.</span>
         </div>
       </div>
