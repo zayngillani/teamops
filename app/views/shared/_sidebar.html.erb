@@ -177,12 +177,6 @@
                         Jobs
                     </div>
                 </a>
-                <a href="<%= admin_contact_details_path %>">
-                    <div class="menu-item <%= 'active' if current_page?(admin_contact_details_path) %>">
-                        <%= image_tag("contact-us-icon.svg", class: "menu-icon") %>
-                        Contact Details
-                    </div>
-                </a>
                 <a href="<%= admin_oncall_support_index_path(month: Date.current.month, year: Date.current.year)%>">
                     <div class="menu-item <%= 'active' if current_page?(admin_oncall_support_index_path) %>">
                         <%= image_tag("oncall.svg", class: "menu-icon") %>
