@@ -17,6 +17,14 @@ class Admin::LeavesController < ApplicationController
 
      def update
           @leave = Leave.find_by(id: params[:id])
+          @user = User.find_by(id: @leave.user_id)
+          current_year_start = Date.new(Date.today.year, 1, 1)
+          current_year_end = Date.new(Date.today.year, 12, 31)
+          leave_days = (@leave.end_date - @leave.start_date).to_i + 1
+          if exceeds_annual_leave_limit?(@leave.leave_type, leave_days, current_year_start, current_year_end, @user.id)
+            redirect_to admin_leaves_path, flash: { error: "#{@user.name} have exceeded the maximum annual leave limit of 8 days per year" }
+            return
+          end
           if params[:leave][:action_type] == "approve"
                if params[:leave].present?
                     supervisor = params[:leave][:supervisor]
@@ -60,9 +68,8 @@ class Admin::LeavesController < ApplicationController
           reason = params[:reason]
           selected_date = Date.parse(params[:selected_date]) rescue nil
           @user = User.find_by(id: selected_user)
-          one_year_anniversary = @user.join_date + 1.year
+          one_year_anniversary = @user.join_date + 3.months
           quarterly_restricted = @user.join_date + 3.months
-
           return if validate_emergency_leaves(selected_user, selected_date) ||
                     validate_existing_leaves(selected_user, selected_date) ||
                     validate_leave_limits(selected_user, leave_type) ||
@@ -115,9 +122,16 @@ class Admin::LeavesController < ApplicationController
           return false unless selected_user && leave_type
         
           start_date, end_date = determine_quarter_dates(selected_user, leave_type)
-          check_leaves = Leave.where(leave_type: leave_type, user_id: selected_user, status: 1)
+          if leave_type == 'annual'
+            year = Date.today.year
+            start_date = Date.new(year, 1, 1)
+            end_date = Date.new(year, 12, 31)
+            check_leaves = Leave.where(leave_type: leave_type, user_id: selected_user, status: 1)
                               .where("start_date <= ? AND end_date >= ?", end_date, start_date)
-        
+          else
+            check_leaves = Leave.where(leave_type: leave_type, user_id: selected_user, status: 1)
+                              .where("start_date <= ? AND end_date >= ?", end_date, start_date)
+          end
           total_leave_days = check_leaves.inject(0) do |sum, leave|
             leave_days = (leave.end_date - leave.start_date).to_i + 1
             sum + leave_days
@@ -166,7 +180,7 @@ class Admin::LeavesController < ApplicationController
           end
         
           if Date.today < one_year_anniversary && leave_type == 'annual'
-            redirect_to get_emergency_leaves_admin_leaves_path, flash: { error: "Leave requests are available only after 1 year of service." }
+            redirect_to get_emergency_leaves_admin_leaves_path, flash: { error: "Leave requests are available only after 3 months of service." }
             return true
           end
         
@@ -176,5 +190,18 @@ class Admin::LeavesController < ApplicationController
           end
         
           false
+        end
+
+        def exceeds_annual_leave_limit?(leave_type, leave_days, year_start, year_end, user_id)
+          return false unless leave_type == 'annual'
+        
+          annual_leaves_count = Leave.where(
+            user_id: user_id,
+            leave_type: 'annual',
+            status: 1,
+            start_date: year_start..year_end
+          ).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }
+        
+          annual_leaves_count + leave_days > ENV["ANNUAL_LEAVE"].to_i
         end
 end

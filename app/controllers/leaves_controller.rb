@@ -34,12 +34,12 @@ class LeavesController < ApplicationController
     current_year_end = Date.new(current_date.year, 12, 31)
     leave_days = (leave_end - leave_start).to_i + 1
     current_quarter_start, current_quarter_end = get_quarter_dates(leave_start)
-    one_year_anniversary = current_user.join_date + 1.year
+    one_year_anniversary = current_user.join_date + 3.months
     restricted_period_end = Date.today + 3.days
     quarterly_restricted = current_user.join_date + 3.months
 
     if Date.today < one_year_anniversary && params[:leave_type].to_i == 1
-      redirect_to leaves_path, flash: { error: "Leave requests are available only after 1 year of service." }
+      redirect_to leaves_path, flash: { error: "Leave requests are available only after 3 months of service." }
       return
     end
     if leave_start.between?(Date.today, restricted_period_end) && params[:leave_type].to_i == 1
