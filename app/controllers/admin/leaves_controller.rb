@@ -17,7 +17,8 @@ class Admin::LeavesController < ApplicationController
 
      def update
           @leave = Leave.find_by(id: params[:id])
-          @user = User.find_by(id: @leave.user_id)
+          binding.pry
+          @user = @leave.user
           current_year_start = Date.new(Date.today.year, 1, 1)
           current_year_end = Date.new(Date.today.year, 12, 31)
           leave_days = (@leave.end_date - @leave.start_date).to_i + 1
