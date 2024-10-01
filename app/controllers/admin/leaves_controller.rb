@@ -201,7 +201,7 @@ class Admin::LeavesController < ApplicationController
         def exceeds_leave_limit?(leave_type, leave_days, year_start, year_end, user_id)
           leave_limits = {
             'annual' => ENV["ANNUAL_LEAVE"].to_i,
-            'quarterly' => ENV["QUARTER_LEAVE"].to_i
+            'quarterly' => ENV["QUATER_LEAVE"].to_i
           }
 
           return false unless leave_limits.keys.include?(leave_type)        
