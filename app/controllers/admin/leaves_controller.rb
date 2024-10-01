@@ -21,11 +21,17 @@ class Admin::LeavesController < ApplicationController
           current_year_start = Date.new(Date.today.year, 1, 1)
           current_year_end = Date.new(Date.today.year, 12, 31)
           leave_days = (@leave.end_date - @leave.start_date).to_i + 1
-          if exceeds_annual_leave_limit?(@leave.leave_type, leave_days, current_year_start, current_year_end, @user.id)
-            redirect_to admin_leaves_path, flash: { error: "#{@user.name} have exceeded the maximum annual leave limit of 8 days per year" }
-            return
-          end
           if params[:leave][:action_type] == "approve"
+            if exceeds_leave_limit?(@leave.leave_type, leave_days, current_year_start, current_year_end, @user.id)
+              error_message = case @leave.leave_type
+                              when 'annual'
+                                "#{@user.name} has exceeded the maximum annual leave limit of 8 days per year"
+                              when 'quarterly'
+                                "#{@user.name} has exceeded the maximum quarterly leave limit of 3 days per quarter"
+                              end
+              redirect_to admin_leaves_path, flash: { error: error_message }
+              return
+            end
                if params[:leave].present?
                     supervisor = params[:leave][:supervisor]
                else
@@ -192,16 +198,20 @@ class Admin::LeavesController < ApplicationController
           false
         end
 
-        def exceeds_annual_leave_limit?(leave_type, leave_days, year_start, year_end, user_id)
-          return false unless leave_type == 'annual'
-        
-          annual_leaves_count = Leave.where(
+        def exceeds_leave_limit?(leave_type, leave_days, year_start, year_end, user_id)
+          leave_limits = {
+            'annual' => ENV["ANNUAL_LEAVE"].to_i,
+            'quarterly' => ENV["QUARTER_LEAVE"].to_i
+          }
+
+          return false unless leave_limits.keys.include?(leave_type)        
+          leaves_count = Leave.where(
             user_id: user_id,
-            leave_type: 'annual',
+            leave_type: leave_type,
             status: 1,
             start_date: year_start..year_end
-          ).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }
-        
-          annual_leaves_count + leave_days > ENV["ANNUAL_LEAVE"].to_i
+          ).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }        
+          leaves_count + leave_days > leave_limits[leave_type]
         end
+        
 end
