@@ -1,6 +1,6 @@
 <% content_for :link_button do %>
   <div class="leave-inline">
-    <p class="form-control select-leave">Annual Leaves<strong style="float: inline-end;"> <%= ENV['ANNUAL_LEAVE'].to_i - @annual_leaves %></strong></p>
+    <p class="form-control select-leave">Annual Leaves<strong style="float: inline-end;"> <%= (@unused_quarterly_leaves + ENV['ANNUAL_LEAVE'].to_i) - @annual_leaves %></strong></p>
     <p class="form-control select-leave">Quarterly Leaves<strong style="float: inline-end;"> <%= ENV['QUATER_LEAVE'].to_i - @quarterly_leaves %></strong></p>
   </div>
   <div class="action-header-position pos">
