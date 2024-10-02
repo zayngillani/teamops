@@ -18,6 +18,7 @@ class LeavesController < ApplicationController
       (leave.end_date - leave.start_date).to_i + 1
     end
     @quarterly_leaves = calculate_quarterly_leaves(@month , @year)
+    @unused_quarterly_leaves = calculate_unused_quarterly_leaves(@year)
   end
 
   def new
@@ -37,7 +38,10 @@ class LeavesController < ApplicationController
     one_year_anniversary = current_user.join_date + 3.months
     restricted_period_end = Date.today + 3.days
     quarterly_restricted = current_user.join_date + 3.months
-
+    if !params[:leave_type].present?
+      redirect_to leaves_path, flash: { error: "Please select leave type" }
+      return
+    end
     if Date.today < one_year_anniversary && params[:leave_type].to_i == 1
       redirect_to leaves_path, flash: { error: "Leave requests are available only after 3 months of service." }
       return
@@ -174,5 +178,25 @@ class LeavesController < ApplicationController
       start_date: quarter_start..quarter_end
     ).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }
     existing_quarterly_leave_days + leave_days > ENV["QUATER_LEAVE"].to_i
+  end
+
+  def calculate_unused_quarterly_leaves(year)
+    unused_leaves = 0
+    quarters = {
+      Q1: { start: Date.new(year, 1, 1), end: Date.new(year, 3, 31) },
+      Q2: { start: Date.new(year, 4, 1), end: Date.new(year, 6, 30) },
+      Q3: { start: Date.new(year, 7, 1), end: Date.new(year, 9, 30) },
+      Q4: { start: Date.new(year, 10, 1), end: Date.new(year, 12, 31) }
+    }
+    quarters.each do |quarter, range|
+      next unless Date.today > range[:end]  
+      quarterly_leaves = Leave.where(user_id: current_user.id, leave_type: 0, status: 1)
+                             .where("start_date >= ? AND end_date <= ?", range[:start], range[:end])
+                             .sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }
+      if quarterly_leaves < 3
+        unused_leaves += (3 - quarterly_leaves)
+      end
+    end
+    unused_leaves
   end
 end
