@@ -72,6 +72,7 @@
   <thead>
     <tr>
       <th>Name</th>
+      <% @break_column = @selected_columns.delete("breaks") %>
       <% @selected_columns.each do |column| %>
         <th><%= column.humanize %></th>
       <% end %>
@@ -215,6 +216,7 @@
   <br><br>
 <% total_on_call_hours = Hash.new(0) %>
 <% total_regular_hours = 0 %>
+<% total_break_time = 0 %>
 <% total_overtime_hours = 0 %>
   <table class="attendance-table user-attendance">
     <thead>
@@ -222,6 +224,9 @@
         <th>Date</th>
         <th>Check In</th>
         <th>Check Out</th>
+        <% if @break_column.present? %>
+        <th>Break</th>
+        <% end %>
         <th>Regular Hours</th>
         <th>Overtime</th>
         <th>Leaves</th>
@@ -235,6 +240,12 @@
       <% public_holidays = {} %>
       <% leaves = {} %>
       <% on_calls = {} %>
+      <% if @break_column.present?
+          colespan = 8
+        else
+          colespan = 7
+        end
+      %>
       <% @user_on_calls = Oncall.where('(start_date <= ? AND end_date >= ?) OR (start_date >= ? AND start_date <= ?)', @end_date, @start_date, @start_date, @end_date).where(request_status: 1, user_id: user.id) %>
       <% @public_holidays.each do |holiday| %>
         <% (holiday.start_date..holiday.end_date).each do |date| %>
@@ -309,12 +320,27 @@
             <% end %>
           </td>
         <% elsif public_holidays.key?(date) %>
-          <td style="text-align: center;" colspan="7"><strong><%= public_holidays[date] %></strong></td>
+          <td style="text-align: center;" colspan=<%= colespan %>><strong><%= public_holidays[date] %></strong></td>
           <% elsif leaves.key?(date) %>
-            <td style="text-align: center;" colspan="7"><strong><%= leaves[date]&.emergency ? "Emergency Leave" : "On Leave" %></strong></td>
+            <td style="text-align: center;" colspan=<%= colespan %>><strong><%= leaves[date]&.emergency ? "Emergency Leave" : "On Leave" %></strong></td>
           <% elsif session %>
               <td><%= session.check_in_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") %></td>
               <td><%= session.check_out_time.present? ? session.check_out_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A" %></td>
+              <% if @break_column.present? %>
+              <td>
+                <% if session.total_break.present? %>
+                  <% total_break_seconds = session.total_break %>
+                    <% if total_break_seconds >= 3600 %>
+                      <%= "#{total_break_seconds / 3600} hours #{total_break_seconds % 3600 / 60} minutes" %>
+                    <% else %>
+                      <%= "#{total_break_seconds / 60} minutes" %>
+                    <% end %>
+                    <% total_break_time += total_break_seconds %>
+                <% else %>
+                  N/A
+                <% end %>
+              </td>
+              <% end %>
               <td>
                 <% if session.total_hours.present? %>
                   <% total_hours = session.total_hours %>
@@ -354,7 +380,7 @@
               </td>
             <% else %>
             <% next if is_weekend %>
-            <td style="text-align: center;" colspan="7">No Session</td>
+            <td style="text-align: center;" colspan=<%= colespan %>>No Session</td>
             <% end %>
         </tr>
       <% end %>
@@ -362,6 +388,9 @@
         <td><strong>Total</strong></td>
         <td></td>
         <td></td>
+        <% if @break_column.present? %>
+          <td><strong><%= "#{total_break_time / 3600} hours #{total_break_time % 3600 / 60} minutes" %></strong></td>
+          <% end %>
         <td><strong><%= "#{total_regular_hours / 3600} hours #{total_regular_hours % 3600 / 60} minutes" %></strong></td>
         <td><strong><%= "#{total_overtime_hours / 3600} hours #{total_overtime_hours % 3600 / 60} minutes" %></strong></td>
         <td><%= @current_user_leaves %></td>
