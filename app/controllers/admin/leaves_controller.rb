@@ -18,8 +18,7 @@ class Admin::LeavesController < ApplicationController
      def update
           @leave = Leave.find_by(id: params[:id])
           @user = @leave.user
-          current_year_start = Date.new(Date.today.year, 1, 1)
-          current_year_end = Date.new(Date.today.year, 12, 31)
+          current_year_start, current_year_end = determine_leave_period(@leave.leave_type, @leave)
           leave_days = (@leave.end_date - @leave.start_date).to_i + 1
           if params[:leave][:action_type] == "approve"
             if exceeds_leave_limit?(@leave.leave_type, leave_days, current_year_start, current_year_end, @user.id)
@@ -203,7 +202,6 @@ class Admin::LeavesController < ApplicationController
             'annual' => ENV["ANNUAL_LEAVE"].to_i,
             'quarterly' => ENV["QUATER_LEAVE"].to_i
           }
-
           return false unless leave_limits.keys.include?(leave_type)        
           leaves_count = Leave.where(
             user_id: user_id,
@@ -212,6 +210,30 @@ class Admin::LeavesController < ApplicationController
             start_date: year_start..year_end
           ).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }        
           leaves_count + leave_days > leave_limits[leave_type]
+        end
+
+        def determine_leave_period(leave_type, leave)
+          if leave_type == 'annual'
+            current_year_start = Date.new(Date.today.year, 1, 1)
+            current_year_end = Date.new(Date.today.year, 12, 31)
+          elsif leave_type == 'quarterly'
+            leave_start = leave.start_date
+            case leave_start.month
+            when 1..3
+              current_year_start = Date.new(leave_start.year, 1, 1)
+              current_year_end = Date.new(leave_start.year, 3, 31)
+            when 4..6
+              current_year_start = Date.new(leave_start.year, 4, 1)
+              current_year_end = Date.new(leave_start.year, 6, 30)
+            when 7..9
+              current_year_start = Date.new(leave_start.year, 7, 1)
+              current_year_end = Date.new(leave_start.year, 9, 30)
+            when 10..12
+              current_year_start = Date.new(leave_start.year, 10, 1)
+              current_year_end = Date.new(leave_start.year, 12, 31)
+            end
+          end
+          [current_year_start, current_year_end]
         end
         
 end
