@@ -246,6 +246,7 @@ class Admin::UsersController < ApplicationController
           xlsx_package.use_shared_strings = true
           wb = xlsx_package.workbook
           columns_to_include = params[:selected_columns].split(',') || []
+          @break_column = columns_to_include.delete("break")
           wb.add_worksheet(name: "Monthly Report") do |sheet|
             styles = wb.styles
             header_style = styles.add_style(b: true)
@@ -376,11 +377,16 @@ class Admin::UsersController < ApplicationController
               header_style = wb.styles.add_style(b: true)
               entry_style = wb.styles.add_style(b: true, alignment: { horizontal: :center })
               session_style = wb.styles.add_style(alignment: { horizontal: :center })
-              sheet.add_row ["Date", "Check In", "Check Out", "Regular Hours", "Overtime", "Leaves", "On Call" ,"Total Hours"], style: header_style
-              total_hours_sum = 0
+              if @break_column.present?
+                sheet.add_row ["Date", "Check In", "Check Out", "Break" ,"Regular Hours", "Overtime", "Leaves", "On Call" ,"Total Hours"], style: header_style
+              else
+                sheet.add_row ["Date", "Check In", "Check Out", "Regular Hours", "Overtime", "Leaves", "On Call" ,"Total Hours"], style: header_style
+              end
+                total_hours_sum = 0
               total_oncall_hours = 0
               total_regular_hours = 0
               total_overtime_hours = 0
+              total_break_hours = 0
               public_holidays = {}
               @public_holidays.each do |holiday|
                 (holiday.start_date..holiday.end_date).each do |date|
@@ -405,6 +411,7 @@ class Admin::UsersController < ApplicationController
                 is_weekend = date.saturday? || date.sunday?
                 attendance = user.attendances.find_by(check_in_time: date.beginning_of_day..date.end_of_day)
                 total_hours = attendance.present? ? (attendance.total_hours || 0) : 0
+                total_break = attendance.present? ? (attendance.total_break || 0) : 0
                 if attendance.present?
                   regular_hours = total_hours > 28800 ? 28800 : total_hours
                   overtime_hours = total_hours > 28800 ? total_hours - 28800 : 0
@@ -412,6 +419,7 @@ class Admin::UsersController < ApplicationController
                   formatted_total_hours = format_time(total_hours)
                   formatted_overtime_hours = format_time(overtime_hours)
                 end
+                total_break_hours += total_break if total_break.present?
                 total_regular_hours += regular_hours if regular_hours.present?
                 total_overtime_hours += overtime_hours if overtime_hours.present?
                 is_public_holiday = public_holidays.key?(date)
@@ -420,13 +428,28 @@ class Admin::UsersController < ApplicationController
                 if is_oncall
                   sheet.add_row [
                     date.strftime("%A %b #{date.day.ordinalize}"),
-                    attendance.present? && attendance.check_in_time.present? ? attendance.check_in_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A" ,
-                    attendance.present? && attendance.check_out_time.present? ? attendance.check_out_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A" ,
+                    attendance.present? && attendance.check_in_time.present? ? attendance.check_in_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A",
+                    attendance.present? && attendance.check_out_time.present? ? attendance.check_out_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A",
+                    if @break_column.present?
+                      if attendance.present? && attendance.total_break.present?
+                        total_break_seconds = attendance.total_break
+                        if total_break_seconds >= 3600
+                          "#{total_break_seconds / 3600} hours #{total_break_seconds % 3600 / 60} minutes"
+                        else
+                          "#{total_break_seconds / 60} minutes"
+                        end
+                      else
+                        "N/A"
+                      end
+                    else
+                      "N/A"
+                    end,
                     attendance.present? ? formatted_reg_hours : "N/A",
                     attendance.present? ? formatted_overtime_hours : "N/A",
-                    "On Call","",
-                    attendance.present? ? formatted_total_hours : "N/A",
-                  ], style: [nil, nil, nil, nil, nil, entry_style, nil, nil]
+                    "On Call",
+                    "",
+                    attendance.present? ? formatted_total_hours : "N/A"
+                  ], style: [nil, nil, nil, nil, nil, entry_style, nil, nil, nil]
                   total_oncall_hours += total_hours if total_hours.present?
                 elsif is_public_holiday
                   sheet.add_row [
@@ -447,11 +470,25 @@ class Admin::UsersController < ApplicationController
                     date.strftime("%A %b #{date.day.ordinalize}"),
                     attendance.check_in_time.present? ? attendance.check_in_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A",
                     attendance.check_out_time.present? ? attendance.check_out_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A",
+                    if @break_column.present?
+                      if attendance.total_break.present?
+                        total_break_seconds = attendance.total_break
+                        if total_break_seconds >= 3600
+                          "#{total_break_seconds / 3600} hours #{total_break_seconds % 3600 / 60} minutes"
+                        else
+                          "#{total_break_seconds / 60} minutes"
+                        end
+                      else
+                        "N/A"
+                      end
+                    else
+                      "N/A"
+                    end,
                     attendance.total_hours.present? ? formatted_reg_hours : "N/A",
                     attendance.total_hours.present? ? formatted_overtime_hours : "N/A",
                     "","",
-                    attendance.total_hours.present? ? formatted_total_hours : "N/A",
-                  ]
+                    attendance.total_hours.present? ? formatted_total_hours : "N/A"
+                  ]                  
                   total_hours_sum += total_hours
                 else
                   next if is_weekend
@@ -467,7 +504,12 @@ class Admin::UsersController < ApplicationController
               oncall_hours = format_time(total_oncall_hours)
               regular = format_time(total_regular_hours)
               overtime = format_time(total_overtime_hours)
-              sheet.add_row ["Total:", "", "", regular, overtime, user_leaves.sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }, oncall_hours ,time_format], style: header_style
+              if @break_column.present?
+                breaks = format_time(total_break_hours)
+                sheet.add_row ["Total:", "", "", breaks, regular, overtime, user_leaves.sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }, oncall_hours ,time_format], style: header_style
+              else
+                sheet.add_row ["Total:", "", "", regular, overtime, user_leaves.sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }, oncall_hours ,time_format], style: header_style
+              end
               reg_hours = @total_working_hours - user_leaves.sum { |leave| (leave.end_date - leave.start_date).to_i + 1 } * 8 if user_leaves.present?
               reg_hours ||= @total_working_hours
               working_hours = @total_hours[user.id] / 3600
