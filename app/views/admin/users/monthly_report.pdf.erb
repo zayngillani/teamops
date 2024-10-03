@@ -277,7 +277,7 @@
             <td><%= session && session.check_out_time ? session.check_out_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A" %></td>
             <% if @break_column.present? %>
             <td>
-            <% if session.total_break.present? %>
+            <% if session.present? && session.total_break.present? %>
                   <% total_break_seconds = session.total_break %>
                     <% if total_break_seconds >= 3600 %>
                       <%= "#{total_break_seconds / 3600} hours #{total_break_seconds % 3600 / 60} minutes" %>
@@ -343,7 +343,7 @@
               <td><%= session.check_out_time.present? ? session.check_out_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A" %></td>
               <% if @break_column.present? %>
               <td>
-                <% if session.total_break.present? %>
+                <% if session.present? && session.total_break.present? %>
                   <% total_break_seconds = session.total_break %>
                     <% if total_break_seconds >= 3600 %>
                       <%= "#{total_break_seconds / 3600} hours #{total_break_seconds % 3600 / 60} minutes" %>
