@@ -40,5 +40,12 @@ class SlackService
                   "#{report_lines}"
           )
      end
+
+     def emergency_leave
+          @client.chat_postMessage(
+               channel: ENV["LEAVE_CHANNEL"],
+               text: "<@#{@user.slack_member_id}> #{@message} #{@time.start_date.strftime('%d/%B/%Y')} to #{@time.end_date.strftime('%d/%B/%Y')}"
+          )
+     end
    end
    

@@ -81,6 +81,7 @@ class Admin::LeavesController < ApplicationController
                     invalid_leave_request?(selected_date, leave_type, one_year_anniversary, quarterly_restricted)
         
           @leave = Leave.create(user_id: selected_user, status: 1, reason: reason, leave_type: leave_type, start_date: selected_date, end_date: selected_date, supervisor: "Admin", emergency: true)
+          SlackService.new(@leave.user, "Emergency Leave Created by Admin from", @leave).emergency_leave
           redirect_to get_emergency_leaves_admin_leaves_path, flash: { success: "Emergency Leave Created Successfully." }
      end
 
