@@ -6,7 +6,7 @@
   }
   .attendance-detail {
   display: flex;
-  margin-right: 22%;
+  margin-right: 19%;
   gap: 8px;
 }
   .break{
@@ -14,7 +14,7 @@
   }
 
   .checkin{
-    width: 192px;
+    width: 195px;
   }
   
   
@@ -30,28 +30,34 @@
           else
             session_time = Time.now - current_user_attendance.check_in_time if current_user_attendance
           end        
-          if session_time
-            total_minutes = (session_time / 60).to_i
-            hours = total_minutes / 60
-            minutes = total_minutes % 60
-            worked_time = format("%d:%02d h", hours, minutes)
-          else
-            worked_time = "0:00 h"
-          end
           if current_user_attendance.present?
             break_time = current_user_attendance.total_break || 0
             break_time = break_time.to_i
-            total_minutes = (break_time / 60).to_i
-            hours = total_minutes / 60
-            minutes = total_minutes % 60
-            break_hours = format("%d:%02d h", hours, minutes)
+            total_break_minutes = (break_time / 60).to_i
+            break_hours = format("%d:%02d h", total_break_minutes / 60, total_break_minutes % 60)
           else
             break_hours = "0:00 h"
+            total_break_minutes = 0
+          end
+          
+          if session_time
+            total_worked_minutes = (session_time / 60).to_i
+            worked_time = format("%d:%02d h", total_worked_minutes / 60, total_worked_minutes % 60)
+            
+            net_worked_minutes = total_worked_minutes - total_break_minutes
+            if net_worked_minutes >= 0
+              net_worked_time = format("%d:%02d h", net_worked_minutes / 60, net_worked_minutes % 60)
+            else
+              net_worked_time = "0:00 h"
+            end
+          else
+            worked_time = "0:00 h"
+            net_worked_time = "0:00 h"
           end
       %>
-      <p class="form-control select-leave checkin">Checked in<span style="float: inline-end;"> <%= current_user_attendance.present? ? current_user_attendance.check_in_time.strftime("%I:%M %p") : "00:00"%></span></p>
-      <p class="form-control select-leave">Worked Hours<span style="float: inline-end;"> <%= worked_time %></span></p>
-      <p class="form-control select-leave break">Break<span style="float: inline-end;"> <%= break_hours %></span></p>
+      <p class="form-control select-leave checkin"><strong>Checked in:</strong><span style="float: inline-end;"> <%= current_user_attendance.present? ? current_user_attendance.check_in_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "00:00"%></span></p>
+      <p class="form-control select-leave"><strong>Worked Hours:</strong><span style="float: inline-end;"> <%= net_worked_time %></span></p>
+      <p class="form-control select-leave break"><strong>Break:</strong><span style="float: inline-end;"> <%= break_hours %></span></p>
     </div>
 <% end %>
 <div class="content" style="margin-left: 220px;">
