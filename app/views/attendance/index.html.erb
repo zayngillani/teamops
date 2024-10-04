@@ -6,7 +6,7 @@
   }
   .attendance-detail {
   display: flex;
-  margin-right: 22%;
+  margin-right: 19%;
   gap: 8px;
 }
   .break{
@@ -14,7 +14,7 @@
   }
 
   .checkin{
-    width: 192px;
+    width: 195px;
   }
   
   
@@ -55,9 +55,9 @@
             net_worked_time = "0:00 h"
           end
       %>
-      <p class="form-control select-leave checkin">Checked in<span style="float: inline-end;"> <%= current_user_attendance.present? ? current_user_attendance.check_in_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "00:00"%></span></p>
-      <p class="form-control select-leave">Worked Hours<span style="float: inline-end;"> <%= net_worked_time  %></span></p>
-      <p class="form-control select-leave break">Break<span style="float: inline-end;"> <%= break_hours %></span></p>
+      <p class="form-control select-leave checkin"><strong>Checked in:</strong><span style="float: inline-end;"> <%= current_user_attendance.present? ? current_user_attendance.check_in_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "00:00"%></span></p>
+      <p class="form-control select-leave"><strong>Worked Hours:</strong><span style="float: inline-end;"> <%= net_worked_time %></span></p>
+      <p class="form-control select-leave break"><strong>Break:</strong><span style="float: inline-end;"> <%= break_hours %></span></p>
     </div>
 <% end %>
 <div class="content" style="margin-left: 220px;">
