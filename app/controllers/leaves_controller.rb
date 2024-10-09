@@ -41,25 +41,51 @@ class LeavesController < ApplicationController
     if !params[:leave_type].present?
       redirect_to leaves_path, flash: { error: "Please select leave type" }
       return
-    end
-    if Date.today < one_year_anniversary && params[:leave_type].to_i == 1
-      redirect_to leaves_path, flash: { error: "Leave requests are available only after 3 months of service." }
-      return
-    end
-    if leave_start.between?(Date.today, restricted_period_end) && params[:leave_type].to_i == 1
-      redirect_to leaves_path, flash: { error: "You can only apply for annual leaves starting 3 Days before." }
-      return
-    end
-    if Date.today < quarterly_restricted && params[:leave_type].to_i == 0
-      redirect_to leaves_path, flash: { error: "You must complete 3 months of employment before requesting quarterly leave." }
-      return
+    end  
+    if params[:leave_type].to_i == 2
+      unless leave_days == 10
+        redirect_to leaves_path, flash: { error: "Wedding leave must be exactly 10 consecutive days." }
+        return
+      end  
+      previous_wedding_leave = Leave.where(user_id: current_user.id, leave_type: 2).where.not(status: 'rejected').exists?
+      if previous_wedding_leave
+        redirect_to leaves_path, flash: { error: "You can only apply for wedding leave once." }
+        return
+      end
+    else
+      if params[:leave_type].to_i == 0 || params[:leave_type].to_i == 1
+        leave_months = [leave_start.month, leave_end.month].to_a.uniq
+        wedding_leave_exists = Leave.where(user_id: current_user.id)
+        .where(leave_type: 2)
+        .where("EXTRACT(YEAR FROM start_date) = ? AND (EXTRACT(MONTH FROM start_date) IN (?) OR EXTRACT(MONTH FROM end_date) IN (?))", leave_start.year, leave_months, leave_months).exists?
+        if wedding_leave_exists
+          redirect_to leaves_path, flash: { error: "You cannot apply for quarterly or annual leave in the same month as wedding leave." }
+          return
+        end
+      end
+      if Date.today < one_year_anniversary && params[:leave_type].to_i == 1
+        redirect_to leaves_path, flash: { error: "Leave requests are available only after 3 months of service." }
+        return
+      end
+      if leave_start.between?(Date.today, restricted_period_end) && params[:leave_type].to_i == 1
+        redirect_to leaves_path, flash: { error: "You can only apply for annual leaves starting 3 Days before." }
+        return
+      end
+      if Date.today < quarterly_restricted && params[:leave_type].to_i == 0
+        redirect_to leaves_path, flash: { error: "You must complete 3 months of employment before requesting quarterly leave." }
+        return
+      end
+      if !params[:leave_type].to_i == 2 && leave_includes_weekends?(leave_start, leave_end)
+        redirect_to leaves_path, flash: { error: "You cannot request leave including weekends." }
+        return
+      end
+      if holiday_on_leave?(leave_start, leave_end)
+        redirect_to leaves_path, flash: { error: "You can't request leave on a public holiday" }
+        return
+      end
     end
     if invalid_leave_dates?(leave_start, leave_end)
       redirect_to leaves_path, flash: { error: "Invalid leave dates" }
-      return
-    end
-    if leave_includes_weekends?(leave_start, leave_end)
-      redirect_to leaves_path, flash: { error: "You cannot request leave including weekends." }
       return
     end
     if leave_start == Date.today
@@ -70,30 +96,30 @@ class LeavesController < ApplicationController
       redirect_to leaves_path, flash: { error: "End date must be greater than or equal to start date" }
       return
     end
-    if holiday_on_leave?(leave_start, leave_end)
-      redirect_to leaves_path, flash: { error: "You can't request leave on a public holiday" }
-      return
-    end
     if overlapping_leave?(leave_start, leave_end)
       redirect_to leaves_path, flash: { error: "Leave already submitted for the selected dates" }
       return
     end
-    if exceeds_annual_leave_limit?(params[:leave_type].to_i, leave_days, current_year_start, current_year_end)
-      redirect_to leaves_path, flash: { error: "You have exceeded the maximum annual leave limit of 8 days per year" }
-      return
+    unless params[:leave_type].to_i == 2
+      if exceeds_annual_leave_limit?(params[:leave_type].to_i, leave_days, current_year_start, current_year_end)
+        redirect_to leaves_path, flash: { error: "You have exceeded the maximum annual leave limit of 8 days per year" }
+        return
+      end
+      if exceeds_quarterly_leave_limit?(params[:leave_type].to_i, leave_days, current_quarter_start, current_quarter_end)
+        redirect_to leaves_path, flash: { error: "You cannot request more than 3 days of leave per quarter." }
+        return
+      end
     end
-    if exceeds_quarterly_leave_limit?(params[:leave_type].to_i, leave_days, current_quarter_start, current_quarter_end)
-      redirect_to leaves_path, flash: { error: "You cannot request more than 3 days of leave per quarter." }
-      return
-    end
-    @leave = Leave.new
-    @leave.start_date = leave_start
-    @leave.end_date = leave_end
-    @leave.user_id = current_user.id
-    @leave.leave_type = params[:leave_type].to_i
-    @leave.reason = params[:reason]
+  
+    @leave = Leave.new(
+      start_date: leave_start,
+      end_date: leave_end,
+      user_id: current_user.id,
+      leave_type: params[:leave_type].to_i,
+      reason: params[:reason]
+    )
     if @leave.save
-      flash[:success] = 'Leave request submitted'
+      flash[:success] = 'Leave request submitted.'
       redirect_to leaves_path
     else
       flash[:error] = "Reason cannot be empty or contain only spaces."

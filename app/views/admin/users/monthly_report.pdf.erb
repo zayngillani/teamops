@@ -337,7 +337,10 @@
         <% elsif public_holidays.key?(date) %>
           <td style="text-align: center;" colspan=<%= colespan %>><strong><%= public_holidays[date] %></strong></td>
           <% elsif leaves.key?(date) %>
-            <td style="text-align: center;" colspan=<%= colespan %>><strong><%= leaves[date]&.emergency ? "Emergency Leave" : "On Leave" %></strong></td>
+          <% if date.saturday? || date.sunday? %>
+            <td><%= date.strftime("%A %b #{date.day.ordinalize}") %></td>
+          <% end %>
+            <td style="text-align: center;" colspan=<%= colespan %>><strong><%= leaves[date]&.emergency ? "Emergency Leave" : leaves[date].leave_type == 'wedding' ? "Wedding Leave" : "On Leave" %></strong></td>
           <% elsif session %>
               <td><%= session.check_in_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") %></td>
               <td><%= session.check_out_time.present? ? session.check_out_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A" %></td>
