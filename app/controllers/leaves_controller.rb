@@ -75,7 +75,7 @@ class LeavesController < ApplicationController
         redirect_to leaves_path, flash: { error: "You must complete 3 months of employment before requesting quarterly leave." }
         return
       end
-      if !params[:leave_type].to_i == 2 && leave_includes_weekends?(leave_start, leave_end)
+      if leave_includes_weekends?(leave_start, leave_end)
         redirect_to leaves_path, flash: { error: "You cannot request leave including weekends." }
         return
       end
