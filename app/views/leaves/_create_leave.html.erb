@@ -66,7 +66,7 @@
           <%= form_with url: leaves_path, method: :post, remote: true, id: "checkout_form" do |f| %>
                <div class="field">
                <%= f.label :leave_type, "Leave Type" %><br>
-               <%= f.select :leave_type, options_for_select([['Leave Type', '', { disabled: true, selected: true }], ['Quarterly (Casual / Sick)', 0], ['Annual', 1]]), 
+               <%= f.select :leave_type, options_for_select([['Leave Type', '', { disabled: true, selected: true }], ['Quarterly (Casual / Sick)', 0], ['Annual', 1], ['Wedding', 2]]), 
                 { required: true }, 
                 { style: "width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 3px; box-sizing: border-box; margin-bottom: 15px; font-size: 16px; background-color: white;" } %>
                </div>
