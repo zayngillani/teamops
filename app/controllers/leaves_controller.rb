@@ -52,17 +52,17 @@ class LeavesController < ApplicationController
         redirect_to leaves_path, flash: { error: "You can only apply for wedding leave once." }
         return
       end
-      wedding_leave_months = [leave_start.month, leave_end.month].uniq
-  
-      same_month_leaves = Leave.where(user_id: current_user.id)
-                               .where("EXTRACT(MONTH FROM start_date) IN (?) AND EXTRACT(YEAR FROM start_date) = ?", wedding_leave_months, leave_start.year)
-                               .where(leave_type: [0, 1])  # 0 for quarterly, 1 for annual
-                               .exists?
-      if same_month_leaves
-        redirect_to leaves_path, flash: { error: "You cannot apply for quarterly or annual leave in the same month as wedding leave." }
-        return
-      end
     else
+      if params[:leave_type].to_i == 0 || params[:leave_type].to_i == 1
+        leave_months = [leave_start.month, leave_end.month].to_a.uniq
+        wedding_leave_exists = Leave.where(user_id: current_user.id)
+        .where(leave_type: 2)
+        .where("EXTRACT(YEAR FROM start_date) = ? AND (EXTRACT(MONTH FROM start_date) IN (?) OR EXTRACT(MONTH FROM end_date) IN (?))", leave_start.year, leave_months, leave_months).exists?
+        if wedding_leave_exists
+          redirect_to leaves_path, flash: { error: "You cannot apply for quarterly or annual leave in the same month as wedding leave." }
+          return
+        end
+      end
       if Date.today < one_year_anniversary && params[:leave_type].to_i == 1
         redirect_to leaves_path, flash: { error: "Leave requests are available only after 3 months of service." }
         return
