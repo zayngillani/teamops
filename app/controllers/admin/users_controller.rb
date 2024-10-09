@@ -462,7 +462,7 @@ class Admin::UsersController < ApplicationController
                   sheet.add_row [
                     date.strftime("%A %b #{date.day.ordinalize}"),
                     "","","","",
-                    leaves[date]&.emergency ? "Emergency Leave" : "On Leave",
+                    leaves[date]&.emergency ? "Emergency Leave" : leaves[date].leave_type == 'wedding' ? "Wedding Leave" : "On Leave",
                     "","",
                   ], style: [nil, nil, nil, nil, nil, entry_style, nil, nil]
                 elsif attendance
