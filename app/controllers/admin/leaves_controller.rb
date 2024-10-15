@@ -1,4 +1,5 @@
 class Admin::LeavesController < ApplicationController
+  include AttendanceHelper
      before_action :set_month_and_year, only: [:index, :get_emergency_leaves]
      def index
           status = params[:status].present? ? params[:status].to_i : nil
@@ -20,8 +21,11 @@ class Admin::LeavesController < ApplicationController
           @user = @leave.user
           current_year_start, current_year_end = determine_leave_period(@leave.leave_type, @leave)
           leave_days = (@leave.end_date - @leave.start_date).to_i + 1
+          annual_leaves = calculate_annual_leaves_count(current_year_start, current_year_end)
+          unused_quarterly_leaves = calculate_unused_quarterly_leaves(current_year_start.year, @user)
+          allotted_annual_leaves = @user.join_date > 1.year.ago ? '0' : ENV['ANNUAL_LEAVE'].to_i
           if params[:leave][:action_type] == "approve"
-            if exceeds_leave_limit?(@leave.leave_type, leave_days, current_year_start, current_year_end, @user.id)
+            if exceeds_leave_limit?(@leave.leave_type, leave_days, current_year_start, current_year_end, @user.id, annual_leaves, unused_quarterly_leaves, allotted_annual_leaves)
               error_message = case @leave.leave_type
                               when 'annual'
                                 "#{@user.name} has exceeded the maximum annual leave limit of 8 days per year"
@@ -198,19 +202,19 @@ class Admin::LeavesController < ApplicationController
           false
         end
 
-        def exceeds_leave_limit?(leave_type, leave_days, year_start, year_end, user_id)
+        def exceeds_leave_limit?(leave_type, leave_days, year_start, year_end, user_id, annual_leaves, unused_quarterly_leaves, allotted_annual_leaves)
           leave_limits = {
             'annual' => ENV["ANNUAL_LEAVE"].to_i,
             'quarterly' => ENV["QUATER_LEAVE"].to_i
           }
-          return false unless leave_limits.keys.include?(leave_type)        
+          return false unless leave_limits.keys.include?(leave_type)   
           leaves_count = Leave.where(
             user_id: user_id,
             leave_type: leave_type,
             status: 1,
             start_date: year_start..year_end
           ).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }        
-          leaves_count + leave_days > leave_limits[leave_type]
+          leaves_count + leave_days > (unused_quarterly_leaves + allotted_annual_leaves.to_i) - annual_leaves
         end
 
         def determine_leave_period(leave_type, leave)

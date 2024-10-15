@@ -1,4 +1,5 @@
 class LeavesController < ApplicationController
+  include AttendanceHelper
   def index
     @month = params[:month].present? ? params[:month].to_i : Date.today.month
     @year = params[:year].present? ? params[:year].to_i : Date.today.year
@@ -12,13 +13,11 @@ class LeavesController < ApplicationController
                .paginate(page: params[:page], per_page: 10)
     current_year_start = Date.new(@start_date.year, 1, 1)
     current_year_end = Date.new(@end_date.year, 12, 31)
-    @annual_leaves = Leave.where(user_id: current_user.id, leave_type: 1, status: 1)
-    .where("start_date >= ? AND start_date <= ?", current_year_start, current_year_end)
-    @annual_leaves = @annual_leaves.sum do |leave|
-      (leave.end_date - leave.start_date).to_i + 1
-    end
+    @annual_leaves = calculate_annual_leaves_count(current_year_start, current_year_end)
     @quarterly_leaves = calculate_quarterly_leaves(@month , @year)
-    @unused_quarterly_leaves = calculate_unused_quarterly_leaves(@year)
+    @unused_quarterly_leaves = calculate_unused_quarterly_leaves(@year, current_user)
+    @allotted_annual_leaves = current_user.join_date > 1.year.ago ? '0' : ENV['ANNUAL_LEAVE'].to_i
+    @allotted_quarterly_leaves = current_user.join_date > 3.months.ago ? '0' : ENV['QUATER_LEAVE'].to_i
   end
 
   def new
@@ -133,29 +132,6 @@ class LeavesController < ApplicationController
     params.require(:leaves).permit(:start_date, :end_date, :reason)
   end
 
-  def calculate_quarterly_leaves(month , year)
-    current_year = year
-    current_month = month
-    case current_month
-    when 1..3
-      quarter_start = Date.new(current_year, 1, 1)
-      quarter_end = Date.new(current_year, 3, 31)
-    when 4..6
-      quarter_start = Date.new(current_year, 4, 1)
-      quarter_end = Date.new(current_year, 6, 30)
-    when 7..9
-      quarter_start = Date.new(current_year, 7, 1)
-      quarter_end = Date.new(current_year, 9, 30)
-    when 10..12
-      quarter_start = Date.new(current_year, 10, 1)
-      quarter_end = Date.new(current_year, 12, 31)
-    end
-    @quarterly = Leave.where(user_id: current_user.id, leave_type: 0, status: 1)
-                              .where("start_date >= ? AND start_date <= ?", quarter_start, quarter_end)
-    @quarterly_leaves = @quarterly.sum do |leave|
-      (leave.end_date - leave.start_date).to_i + 1
-    end
-  end
 
   def get_quarter_dates(date)
     case (date.month - 1) / 3
@@ -184,15 +160,12 @@ class LeavesController < ApplicationController
   
   def exceeds_annual_leave_limit?(leave_type, leave_days, year_start, year_end)
     return false unless leave_type == 1
-  
-    annual_leaves_count = Leave.where(
-      user_id: current_user.id,
-      leave_type: 1,
-      status: [0, 1],
-      start_date: year_start..year_end
-    ).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }
-  
-    annual_leaves_count + leave_days > ENV["ANNUAL_LEAVE"].to_i
+    annual_leave_limit = if current_user.join_date > 1.year.ago
+                          calculate_unused_quarterly_leaves(year_start.year, current_user) - calculate_annual_leaves_count(year_start, year_end)
+                         else
+                          ENV["ANNUAL_LEAVE"].to_i
+                         end
+    leave_days > annual_leave_limit
   end
   
   def exceeds_quarterly_leave_limit?(leave_type, leave_days, quarter_start, quarter_end)
@@ -206,23 +179,4 @@ class LeavesController < ApplicationController
     existing_quarterly_leave_days + leave_days > ENV["QUATER_LEAVE"].to_i
   end
 
-  def calculate_unused_quarterly_leaves(year)
-    unused_leaves = 0
-    quarters = {
-      Q1: { start: Date.new(year, 1, 1), end: Date.new(year, 3, 31) },
-      Q2: { start: Date.new(year, 4, 1), end: Date.new(year, 6, 30) },
-      Q3: { start: Date.new(year, 7, 1), end: Date.new(year, 9, 30) },
-      Q4: { start: Date.new(year, 10, 1), end: Date.new(year, 12, 31) }
-    }
-    quarters.each do |quarter, range|
-      next unless Date.today > range[:end]  
-      quarterly_leaves = Leave.where(user_id: current_user.id, leave_type: 0, status: 1)
-                             .where("start_date >= ? AND end_date <= ?", range[:start], range[:end])
-                             .sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }
-      if quarterly_leaves < 3
-        unused_leaves += (3 - quarterly_leaves)
-      end
-    end
-    unused_leaves
-  end
 end
