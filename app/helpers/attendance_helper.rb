@@ -2,7 +2,7 @@ module AttendanceHelper
   def calculate_annual_leaves_count(current_year_start, current_year_end)
     annual_leaves = Leave.where(user_id: current_user.id, leave_type: 1, status: 1)
                          .where("start_date >= ? AND start_date <= ?", current_year_start, current_year_end)
-    annual_leaves.sum do |leave|
+    annual_leaves&.sum do |leave|
       (leave.end_date - leave.start_date).to_i + 1
     end
   end
@@ -26,7 +26,7 @@ module AttendanceHelper
     end
     @quarterly = Leave.where(user_id: current_user.id, leave_type: 0, status: 1)
                               .where("start_date >= ? AND start_date <= ?", quarter_start, quarter_end)
-    @quarterly_leaves = @quarterly.sum do |leave|
+    @quarterly_leaves = @quarterly&.sum do |leave|
       (leave.end_date - leave.start_date).to_i + 1
     end
   end
@@ -34,6 +34,7 @@ module AttendanceHelper
   def calculate_unused_quarterly_leaves(year, user)
     unused_leaves = 0
     join_date = user.join_date
+    return if join_date.nil?
     three_months_from_join_date = join_date + 3.months  
     return unused_leaves if Date.today < three_months_from_join_date
     quarters = if year == 2024
