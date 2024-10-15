@@ -34,7 +34,7 @@ module AttendanceHelper
   def calculate_unused_quarterly_leaves(year, user)
     unused_leaves = 0
     join_date = user&.join_date
-    return if join_date.nil?
+    return if join_date.empty?
     three_months_from_join_date = join_date + 3.months  
     return unused_leaves if Date.today < three_months_from_join_date
     quarters = if year == 2024
