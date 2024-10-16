@@ -54,7 +54,7 @@ module AttendanceHelper
                end  
     quarters.each do |quarter, range|
       next if range[:end] < join_date   
-      if range[:end] < join_date || (range[:start]..range[:end]).cover?(Date.today)
+      if Date.today > range[:end]
         quarterly_leaves = Leave.where(user_id: current_user.id, leave_type: 0, status: 1)
                                 .where("start_date >= ? AND end_date <= ?", [range[:start], join_date].max, range[:end])
                                 .sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }  

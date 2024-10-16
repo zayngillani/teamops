@@ -218,7 +218,7 @@ class Admin::LeavesController < ApplicationController
         end
 
         def determine_leave_period(leave_type, leave)
-          if leave_type == 'annual'
+          if leave_type == 'annual' || leave_type == 'wedding'
             current_year_start = Date.new(Date.today.year, 1, 1)
             current_year_end = Date.new(Date.today.year, 12, 31)
           elsif leave_type == 'quarterly'
