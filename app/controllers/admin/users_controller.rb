@@ -520,7 +520,7 @@ class Admin::UsersController < ApplicationController
         @user_sessions = user.attendances.where(check_in_time: @start_date.beginning_of_day..@end_date.end_of_day).order(created_at: :asc)
         total_hrs = 0
         @user_sessions.each do |attendance|
-          if params[:selected_columns].include?("breaks")
+          if @selected_columns.include?("breaks")
             total_hrs += attendance.total_hours.to_i + attendance.total_break.to_i unless attendance.total_hours.nil?
           else
             total_hrs += attendance.total_hours.to_i unless attendance.total_hours.nil?
