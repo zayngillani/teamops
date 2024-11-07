@@ -51,8 +51,8 @@
           <label><%= check_box_tag 'under_time[]', 'under_time', true, class: 'columnCheckbox' %> Under Time</label><br>
           <label><%= check_box_tag 'leaves[]', 'leaves', true, class: 'columnCheckbox' %> Leaves</label><br>
           <label><%= check_box_tag 'absentees[]', 'absentees', true, class: 'columnCheckbox' %> Absentees</label><br>
-          <label><%= check_box_tag 'breaks[]', 'break', true, class: 'columnCheckbox', id: 'include_break' %> Include Break</label><br>
-          <label><%= check_box_tag 'ex_breaks[]', 'ex_break', false, class: 'columnCheckbox', id: 'exclude_break' %> Exclude Break</label>
+          <label><%= check_box_tag 'include_break[]', 'include_break', true, class: 'columnCheckbox', id: 'include_break' %> Include Break</label><br>
+          <label><%= check_box_tag 'exclude_break[]', 'exclude_break', false, class: 'columnCheckbox', id: 'exclude_break' %> Exclude Break</label>
           <%= submit_tag 'Download Excel', class: "excel-btn", onclick: "downloadExcel(event, this)" %>
         <% end %>
         <p style="text-align: center; margin-top: 10px;"></p>

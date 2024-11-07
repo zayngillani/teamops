@@ -232,7 +232,8 @@ class Admin::UsersController < ApplicationController
         @user_sessions = user.attendances.where(check_in_time: @start_date.beginning_of_day..@end_date.end_of_day).order(created_at: :asc)
         total_hrs = 0
         @user_sessions.each do |attendance|
-          if params[:selected_columns].include?("breaks")
+          selected_columns = params[:selected_columns].split(',')
+          if selected_columns.include?("include_break")
             total_hrs += attendance.total_hours.to_i + attendance.total_break.to_i unless attendance.total_hours.nil?
           else
             total_hrs += attendance.total_hours.to_i unless attendance.total_hours.nil?
@@ -254,10 +255,10 @@ class Admin::UsersController < ApplicationController
           xlsx_package.use_shared_strings = true
           wb = xlsx_package.workbook
           columns_to_include = params[:selected_columns].split(',') || []
-          if columns_to_include.include?("ex_break")
-            @break_column = columns_to_include.delete("ex_break")
+          if columns_to_include[7] == "include_break" || columns_to_include[7] == "exclude_break"
+            @break_column = columns_to_include.pop
           else
-            @break_column = columns_to_include.delete("break")
+            @break_column = "exclude_break"
           end
           wb.add_worksheet(name: "Monthly Report") do |sheet|
             styles = wb.styles
@@ -418,10 +419,10 @@ class Admin::UsersController < ApplicationController
               (@start_date..@end_date).each do |date|
                 is_weekend = date.saturday? || date.sunday?
                 attendance = user.attendances.find_by(check_in_time: date.beginning_of_day..date.end_of_day)
-                if @break_column.include?("ex_break")
-                  total_hours = attendance.present? ? (attendance.total_hours || 0) : 0
-                else
+                if @break_column.include?("include_break")
                   total_hours = attendance.present? ? (attendance.total_hours.to_i + attendance.total_break.to_i || 0) : 0
+                else
+                  total_hours = attendance.present? ? (attendance.total_hours || 0) : 0
                 end
                 total_break = attendance.present? ? (attendance.total_break || 0) : 0
                 if attendance.present?

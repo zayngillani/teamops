@@ -77,11 +77,14 @@
   <thead>
     <tr>
       <th>Name</th>
-      <% if @selected_columns.include?("ex_breaks") %>
-        <% @break_column = @selected_columns.delete("ex_breaks") %>
-      <% else %>
-        <% @break_column = @selected_columns.delete("breaks") %>
-      <% end %>
+      <%
+        columns_to_include = params[:selected_columns].split(',') || []
+          if columns_to_include[7] == "breaks" || columns_to_include[7] == "ex_breaks"
+            @break_column = columns_to_include.pop
+          else
+            @break_column = "ex_breaks"
+          end
+      %>
       <% @selected_columns.each do |column| %>
         <th><%= column.humanize %></th>
       <% end %>
