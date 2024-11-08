@@ -119,6 +119,7 @@ class LeavesController < ApplicationController
     )
     if @leave.save
       flash[:success] = 'Leave request submitted.'
+      SlackService.new(current_user, "Request Leave for", @leave).request_leave
       redirect_to leaves_path
     else
       flash[:error] = "Reason cannot be empty or contain only spaces."

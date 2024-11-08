@@ -28,7 +28,8 @@
           <label><%= check_box_tag 'under_time[]', 'under_time', true, class: 'PdfCheckbox' %> Under Time</label><br>
           <label><%= check_box_tag 'leaves[]', 'leaves', true, class: 'PdfCheckbox' %> Leaves</label><br>
           <label><%= check_box_tag 'absentees[]', 'absentees', true, class: 'PdfCheckbox' %> Absentees</label><br>
-          <label><%= check_box_tag 'breaks[]', 'breaks', false, class: 'PdfCheckbox' %> Break</label>
+          <label><%= check_box_tag 'breaks[]', 'breaks', true, class: 'PdfCheckbox', onclick: "toggleCheckbox('breaks[]', 'ex_breaks[]')" %>Include Break</label><br>
+          <label><%= check_box_tag 'ex_breaks[]', 'ex_breaks', false, class: 'PdfCheckbox', onclick: "toggleCheckbox('ex_breaks[]', 'breaks[]')" %>Exclude Break</label>
           <%= submit_tag 'Download PDF', class: "excel-btn", onclick: "generatePDF(event)" %>
         <% end %>
         <p style="text-align: center; margin-top: 10px;"></p>
@@ -50,7 +51,8 @@
           <label><%= check_box_tag 'under_time[]', 'under_time', true, class: 'columnCheckbox' %> Under Time</label><br>
           <label><%= check_box_tag 'leaves[]', 'leaves', true, class: 'columnCheckbox' %> Leaves</label><br>
           <label><%= check_box_tag 'absentees[]', 'absentees', true, class: 'columnCheckbox' %> Absentees</label><br>
-          <label><%= check_box_tag 'breaks[]', 'break', false, class: 'columnCheckbox' %> Break</label>
+          <label><%= check_box_tag 'include_break[]', 'include_break', true, class: 'columnCheckbox', id: 'include_break' %> Include Break</label><br>
+          <label><%= check_box_tag 'exclude_break[]', 'exclude_break', false, class: 'columnCheckbox', id: 'exclude_break' %> Exclude Break</label>
           <%= submit_tag 'Download Excel', class: "excel-btn", onclick: "downloadExcel(event, this)" %>
         <% end %>
         <p style="text-align: center; margin-top: 10px;"></p>
@@ -273,4 +275,32 @@ function downloadExcel(event, button) {
     location.reload();
   }, 5000); // Adjust delay as needed
 }
+
+function toggleCheckbox(selectedId, otherId) {
+  const selectedCheckbox = document.getElementsByName(selectedId)[0];
+  const otherCheckbox = document.getElementsByName(otherId)[0];
+  
+  if (selectedCheckbox.checked) {
+    otherCheckbox.checked = false;
+  }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  const includeBreak = document.getElementById('include_break');
+  const excludeBreak = document.getElementById('exclude_break');
+
+  includeBreak.addEventListener('change', function() {
+    if (includeBreak.checked) {
+      excludeBreak.checked = false;
+    }
+  });
+
+  excludeBreak.addEventListener('change', function() {
+    if (excludeBreak.checked) {
+      includeBreak.checked = false;
+    }
+  });
+});
+
+
 </script>

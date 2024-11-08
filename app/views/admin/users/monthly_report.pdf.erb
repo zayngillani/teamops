@@ -16,9 +16,16 @@
   }
 
   .attendance-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     background-color: #87CEEB;
     color: white;
     padding: 10px;
+  }
+
+  .supervisor-text {
+    margin-left:32%;
   }
 
   .timesheet-container {
@@ -65,14 +72,19 @@
   }
 </style>
 
-<h1 class="attendance-heading">Monthly Report</h1>
-<p style="float: right; margin: 5px;">Month: <strong><%= Date::MONTHNAMES[@month] %></strong> <span><strong><%= @year %></strong></span>
-</p>
+<h1 class="attendance-heading">Monthly Report - <strong><%= Date::MONTHNAMES[@month] %></strong> <span><%= @year %></h1>
 <table class="attendance-table user-data">
   <thead>
     <tr>
       <th>Name</th>
-      <% @break_column = @selected_columns.delete("breaks") %>
+      <%
+        columns_to_include = params[:selected_columns].split(',') || []
+          if columns_to_include[7] == "breaks" || columns_to_include[7] == "ex_breaks"
+            @break_column = columns_to_include.pop
+          else
+            @break_column = "ex_breaks"
+          end
+      %>
       <% @selected_columns.each do |column| %>
         <th><%= column.humanize %></th>
       <% end %>
@@ -180,7 +192,7 @@
           <% when 'regular_hours' %>
             <strong><%= total_regular_hours %></strong>
           <% when 'worked_hours' %>
-            <strong><%= "%02d:%02d" % [total_worked_hours.floor, (total_worked_hours % 1 * 60).round] %></strong>
+            <strong><%= "%02d:%02d" % [total_worked_hours.floor, (total_worked_hours % 1 * 60)] %></strong>
           <% when 'over_time' %>
             <strong><%= "%02d:%02d" % [total_overtime_hours.floor, (total_overtime_hours % 1 * 60).round] %></strong>
           <% when 'under_time' %>
@@ -199,34 +211,22 @@
 <% @users.each do |user| %>
   <% @current_user_leaves = Leave.where("start_date <= ? AND end_date >= ? AND status = ? AND user_id = ?", @end_date, @start_date, 1, user.id).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 } %>
   <div class="timesheet-container">
-    <h1 class="attendance-heading">Timesheet</h1>
-    <div class="timesheet-details">
-      <div class="left-section">
-        <p>Employee: <strong><%= user.name %></strong></p>
-        <p>Supervisor: <strong><%= user.supervisor.present? ? user.supervisor : "Fahad" %></strong></p>
-      </div>
-      <div class="right-section">
-        <p>Month: <strong><%= Date::MONTHNAMES[@month] %> <span><%= @year %></span></strong></p>
-        <p>Regular Hours: 8</p>
-      </div>
-    </div>
+    <h1 class="attendance-heading">
+      Timesheet - <%= user.name %>
+      <span class="supervisor-text">Supervisor: <%= user.supervisor %></span>
+    </h1>
   </div>
-
-
-  <br><br>
 <% total_on_call_hours = Hash.new(0) %>
 <% total_regular_hours = 0 %>
 <% total_break_time = 0 %>
 <% total_overtime_hours = 0 %>
+<% total_work_hours = 0%>
   <table class="attendance-table user-attendance">
     <thead>
       <tr>
         <th>Date</th>
         <th>Check In</th>
         <th>Check Out</th>
-        <% if @break_column.present? %>
-        <th>Break</th>
-        <% end %>
         <th>Regular Hours</th>
         <th>Overtime</th>
         <th>Leaves</th>
@@ -240,12 +240,7 @@
       <% public_holidays = {} %>
       <% leaves = {} %>
       <% on_calls = {} %>
-      <% if @break_column.present?
-          colespan = 8
-        else
-          colespan = 7
-        end
-      %>
+      <% colespan = 7 %>
       <% @user_on_calls = Oncall.where('(start_date <= ? AND end_date >= ?) OR (start_date >= ? AND start_date <= ?)', @end_date, @start_date, @start_date, @end_date).where(request_status: 1, user_id: user.id) %>
       <% @public_holidays.each do |holiday| %>
         <% (holiday.start_date..holiday.end_date).each do |date| %>
@@ -275,24 +270,13 @@
           <% end %>
             <td><%= session ? session.check_in_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A" %></td>
             <td><%= session && session.check_out_time ? session.check_out_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A" %></td>
-            <% if @break_column.present? %>
-            <td>
-            <% if session.present? && session.total_break.present? %>
-                  <% total_break_seconds = session.total_break %>
-                    <% if total_break_seconds >= 3600 %>
-                      <%= "#{total_break_seconds / 3600} hours #{total_break_seconds % 3600 / 60} minutes" %>
-                    <% else %>
-                      <%= "#{total_break_seconds / 60} minutes" %>
-                    <% end %>
-                    <% total_break_time += total_break_seconds %>
-                <% else %>
-                  N/A
-                <% end %>
-            <% end %>
-            </td>
           <td>
             <% if session && session.total_hours.present? %>
-              <% total_hours = session.total_hours %>
+              <% if @break_column.include?("ex_break") %>
+                <% total_hours = session.total_hours %>
+              <% else %>
+                <% total_hours = session.total_hours.to_i + session.total_break.to_i %>
+              <% end %>
               <% if total_hours > 28800 %> 
                 <% regular_hours = 28800 %>
               <% else %>
@@ -306,7 +290,11 @@
           </td>
           <td>
             <% if session && session.total_hours.present? %>
-              <% total_hours = session.total_hours %>
+              <% if @break_column.include?("ex_break") %>
+                <% total_hours = session.total_hours %>
+              <% else %>
+                <% total_hours = session.total_hours.to_i + session.total_break.to_i %>
+              <% end %>              
               <% if total_hours > 28800 %>
                 <% overtime_hours = total_hours - 28800 %>
               <% else %>
@@ -321,15 +309,28 @@
           <td></td>
           <td>
             <% if session && session.total_hours.present? %>
-              <% total_on_call_hours[date] += session.total_hours %>
-              <%= "#{session.total_hours / 3600} hours #{session.total_hours % 3600 / 60} minutes" %>
+             <% if @break_column.include?("ex_break") %>
+                <% total_on_call_hours[date] += session.total_hours.to_i %>
+                <%= "#{session.total_hours / 3600} hours #{session.total_hours % 3600 / 60} minutes" %>
+              <% else %>
+                <% oncall_total = session.total_hours.to_i + session.total_break.to_i
+                  total_on_call_hours[date] += oncall_total %>
+                <%= "#{oncall_total / 3600} hours #{oncall_total % 3600 / 60} minutes" %>
+              <% end %>  
             <% else %>
               <strong>On Call</strong>
             <% end %>
           </td>
           <td>
             <% if session && session.total_hours.present? %>
-              <%= "#{session.total_hours / 3600} hours #{session.total_hours % 3600 / 60} minutes" %>
+              <% if @break_column.include?("ex_break") %>
+                <% hours_work = session.total_hours.to_i  %>
+                <%= "#{hours_work / 3600} hours #{hours_work % 3600 / 60} minutes" %>
+              <% else %>
+                <% hours_work = session.total_hours.to_i + session.total_break.to_i %>
+                <%= "#{hours_work / 3600} hours #{hours_work % 3600 / 60} minutes" %>
+              <% end %>
+              <% total_work_hours += hours_work%>
             <% else %>
               N/A
             <% end %>
@@ -344,24 +345,13 @@
           <% elsif session %>
               <td><%= session.check_in_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") %></td>
               <td><%= session.check_out_time.present? ? session.check_out_time.in_time_zone("Asia/Karachi").strftime("%I:%M %p") : "N/A" %></td>
-              <% if @break_column.present? %>
-              <td>
-                <% if session.present? && session.total_break.present? %>
-                  <% total_break_seconds = session.total_break %>
-                    <% if total_break_seconds >= 3600 %>
-                      <%= "#{total_break_seconds / 3600} hours #{total_break_seconds % 3600 / 60} minutes" %>
-                    <% else %>
-                      <%= "#{total_break_seconds / 60} minutes" %>
-                    <% end %>
-                    <% total_break_time += total_break_seconds %>
-                <% else %>
-                  N/A
-                <% end %>
-              </td>
-              <% end %>
               <td>
                 <% if session.total_hours.present? %>
-                  <% total_hours = session.total_hours %>
+                  <% if @break_column.include?("ex_break") %>
+                    <% total_hours = session.total_hours %>
+                  <% else %>
+                    <% total_hours = session.total_hours.to_i + session.total_break.to_i %>
+                  <% end %>
                   <% if total_hours > 28800 %>
                     <% regular_hours = 28800 %>
                   <% else %>
@@ -375,7 +365,11 @@
               </td>
               <td>
                 <% if session.total_hours.present? %>
-                  <% total_hours = session.total_hours %>
+                  <% if @break_column.include?("ex_break") %>
+                    <% total_hours = session.total_hours %>
+                  <% else %>
+                    <% total_hours = session.total_hours.to_i + session.total_break.to_i %>
+                  <% end %>
                   <% if total_hours > 28800 %>
                     <% overtime_hours = total_hours - 28800 %>
                   <% else %>
@@ -391,7 +385,14 @@
               <td></td>
               <td>
                 <% if session.total_hours.present? %>
-                  <%= "#{session.total_hours / 3600} hours #{session.total_hours % 3600 / 60} minutes" %>
+                <% if @break_column.include?("ex_break") %>
+                  <% hours_work = session.total_hours.to_i  %>
+                  <%= "#{hours_work / 3600} hours #{hours_work % 3600 / 60} minutes" %>
+                <% else %>
+                  <% hours_work = session.total_hours.to_i + session.total_break.to_i %>
+                  <%= "#{hours_work / 3600} hours #{hours_work % 3600 / 60} minutes" %>
+                <% end %>
+                <% total_work_hours += hours_work%>
                 <% else %>
                   N/A
                 <% end %>
@@ -406,9 +407,6 @@
         <td><strong>Total</strong></td>
         <td></td>
         <td></td>
-        <% if @break_column.present? %>
-          <td><strong><%= "#{total_break_time / 3600} hours #{total_break_time % 3600 / 60} minutes" %></strong></td>
-          <% end %>
         <td><strong><%= "#{total_regular_hours / 3600} hours #{total_regular_hours % 3600 / 60} minutes" %></strong></td>
         <td><strong><%= "#{total_overtime_hours / 3600} hours #{total_overtime_hours % 3600 / 60} minutes" %></strong></td>
         <td><%= @current_user_leaves %></td>
@@ -416,7 +414,7 @@
           <% total_on_call_time = total_on_call_hours.values.sum %>
           <strong><%= "#{total_on_call_time / 3600} hours #{total_on_call_time % 3600 / 60} minutes" %></strong>
         </td>
-        <td><strong><%= "#{@total_hours[user.id] / 3600 || 0} hours #{@total_hours[user.id] % 3600 / 60 || 0} minutes" %></strong></td>
+        <td><strong><%= "#{total_work_hours / 3600} hours #{total_work_hours % 3600 / 60} minutes" %></strong></td>
       </tr>
     </tbody>
   </table>
