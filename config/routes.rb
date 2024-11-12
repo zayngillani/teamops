@@ -7,7 +7,7 @@ Rails.application.routes.draw do
   get 'change_password', to: 'home#change_password'
   patch 'update_password', to: 'home#update_password'
   get 'view_resume', to: 'home#view_resume'
-  
+  post 'slack/actions', to: 'slack#actions', defaults: { format: :json }
   
   namespace :admin do
     resources :users, only: [:new, :create, :index, :edit, :update, :destroy] do
