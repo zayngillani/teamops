@@ -24,13 +24,33 @@ class SlackService
                text: "<@#{@user.slack_member_id}> #{@message} at #{@time.in_time_zone('Asia/Karachi').strftime('%b %d, %I:%M%p %Z')}"
           )
      end
-
      def request_leave
-          @client.chat_postMessage(channel: @channel,
-               channel: @channel,
-               text: "<@#{@user.slack_member_id}> #{@message} #{@time.start_date.strftime("%d/%B/%Y")} to #{@time.end_date.strftime("%d/%B/%Y")}"
+          @client.chat_postMessage(
+            channel: @channel,
+            text: "<@#{@user.slack_member_id}> #{@message} #{@time.start_date.strftime('%d/%B/%Y')} to #{@time.end_date.strftime('%d/%B/%Y')}",
+            attachments: [
+              {
+                text: "Leave details: #{@time.reason}",
+                callback_id: @user.id.to_s,
+                actions: [
+                  {
+                    name: "approve",
+                    text: "Approve",
+                    type: "button",
+                    value: "approve_#{@time.id}"
+                  },
+                  {
+                    name: "reject",
+                    text: "Reject",
+                    type: "button",
+                    value: "reject_#{@time.id}"
+                  }
+                ]
+              }
+            ]
           )
-     end
+        end
+        
      
      def send_leave
           @request_user = User.find_by(id: @time.user_id)
