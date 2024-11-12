@@ -27,8 +27,8 @@ class SlackController < ApplicationController
       render status: :forbidden and return
     end
     action_type, leave = value.split('_', 2)
+    @leave =  Leave.find_by(id: leave)
     if @leave.status == 0
-      @leave =  Leave.find_by(id: leave)
       if action_type == "approve"
         @leave.update!(status: 1)
       elsif action_type == "reject"
