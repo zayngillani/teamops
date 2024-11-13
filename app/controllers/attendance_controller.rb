@@ -84,28 +84,41 @@ class AttendanceController < ApplicationController
      end
     
    
-     def break_session
+     def break_in
       @session = current_user.attendances.last
-          if @session && @session.check_out_time.nil?
-            last_break = @session.breaks.last
-            if last_break.nil? || (last_break.break_in_time.present? && last_break.break_out_time.present?)
-              @session.breaks.create!(break_in_time: Time.now.utc)
-              flash[:alert] = "On a break"
-              SlackService.new(current_user, "Break In", Time.now.utc).send_message
-            elsif last_break.break_in_time.present? && last_break.break_out_time.nil?
-              last_break.update!(break_out_time: Time.now.utc)
-              total_break_time = calculate_total_break_time(@session)
-              @session.update!(total_break: total_break_time)
-              flash[:alert] = "Back from break"
-              SlackService.new(current_user, "Break Out", Time.now.utc).send_message
-            else
-              flash[:error] = "Unable to mark break"
-            end
-          else
-            flash[:error] = "No active session or session already checked out"
-          end
-          redirect_to attendance_index_path
+      if @session && @session.check_out_time.nil?
+        last_break = @session.breaks.last
+        if last_break.nil? || (last_break.break_in_time.present? && last_break.break_out_time.present?)
+          @session.breaks.create!(break_in_time: Time.now.utc)
+          flash[:alert] = "On a break"
+          SlackService.new(current_user, "Break In", Time.now.utc).send_message
+        else
+          flash[:alert] = "You are already on a break"
         end
+      else
+        flash[:error] = "No active session or session already checked out"
+      end
+      redirect_to attendance_index_path
+     end
+    
+     def break_out
+      @session = current_user.attendances.last
+      if @session && @session.check_out_time.nil?
+        last_break = @session.breaks.last
+        if last_break&.break_in_time.present? && last_break.break_out_time.nil?
+          last_break.update!(break_out_time: Time.now.utc)
+          total_break_time = calculate_total_break_time(@session)
+          @session.update!(total_break: total_break_time)
+          flash[:alert] = "Back from break"
+          SlackService.new(current_user, "Break Out", Time.now.utc).send_message
+        else
+          flash[:alert] = "You are not on a break"
+        end
+      else
+        flash[:error] = "No active session or session already checked out"
+      end
+      redirect_to attendance_index_path
+     end
         
         def update_report
           @attendance = Attendance.find_by(id: params[:id])
