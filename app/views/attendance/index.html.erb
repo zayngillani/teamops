@@ -108,16 +108,16 @@
       <% if session.breaks.present? %>
         <% if session.breaks.last.break_out_time.nil? %>
           <% content_for :link_button do %>
-            <%= button_to "Break-Out", break_session_path, class: "sign-out-button check-btn", id: "checkOutButtonModal", data: { disable_with: "Processing..." } %>
+            <%= button_to "Break-Out", break_out_path, class: "sign-out-button check-btn", id: "checkOutButtonModal", data: { disable_with: "Processing..." } %>
           <% end %>
             <% else %>
           <% content_for :link_button do %>
-            <%= button_to "Break-In", break_session_path, class: "sign-out-button check-btn", id: "checkOutButtonModal", data: { disable_with: "Processing..." } %>
+            <%= button_to "Break-In", break_in_path, class: "sign-out-button check-btn", id: "checkOutButtonModal", data: { disable_with: "Processing..." } %>
         <% end %>
         <% end %>
       <% else %>
           <% content_for :link_button do %>
-            <%= button_to "Break-In", break_session_path, class: "sign-out-button check-btn", id: "checkOutButtonModal", data: { disable_with: "Processing..." } %>
+            <%= button_to "Break-In", break_in_path, class: "sign-out-button check-btn", id: "checkOutButtonModal", data: { disable_with: "Processing..." } %>
         <% end %>
         <% end %>
       <% end %>
