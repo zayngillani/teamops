@@ -73,7 +73,8 @@ Rails.application.routes.draw do
   resources :attendance, only: [:index]
   post '/create_session', :to => "attendance#create_session", as: 'create_session'
   post '/end_session', :to => "attendance#end_session", as: 'end_session'
-  post '/break_session', :to => "attendance#break_session", as: 'break_session'
+  post '/break_in', :to => "attendance#break_in", as: 'break_in'
+  post '/break_out', :to => "attendance#break_out", as: 'break_out'
   post '/create_user', :to => "attendance#create_user", as: 'create_user'
   put '/update_report', :to => "attendance#update_report", as: 'update_report'
   get '/show_report', :to => "attendance#show_report", as: 'show_report'
