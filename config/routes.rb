@@ -92,6 +92,10 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
+      devise_scope :user do
+        post 'login', to: 'sessions#create'
+        delete 'logout', to: 'sessions#destroy'
+      end
       resources :job_applications, only: [:create]
       resources :contact_details, only: [:create]
       get '/job_posts', :to => "job_applications#get_job_post_list", as: 'job_post_list'
