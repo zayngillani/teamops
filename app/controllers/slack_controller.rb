@@ -42,10 +42,10 @@ class SlackController < ApplicationController
     
     if @leave.status == "pending"
       if action_type == "approve"
-        @leave.update!(status: 1)
+        @leave.update!(status: 1, supervisor: "Admin")
         status_message = "approved"
       elsif action_type == "reject"
-        @leave.update!(status: 2)
+        @leave.update!(status: 2, supervisor: "Admin")
         status_message = "rejected"
       end
     else
