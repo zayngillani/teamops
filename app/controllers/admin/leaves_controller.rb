@@ -42,7 +42,7 @@ class Admin::LeavesController < ApplicationController
                end
                if supervisor.present? && @leave.status == "pending"
                     @leave.update!(supervisor: supervisor, status: 1 )
-                    SlackService.new(current_user, "Leave approved by", @leave).send_leave
+                    SlackService.new(current_user, "#{@leave.leave_type.capitalize} Leave approved by", @leave).send_leave
                     message = "#{@leave.leave_type.capitalize} Leave Approved"
                else
                     message = "Leave not found"
