@@ -118,7 +118,7 @@ class LeavesController < ApplicationController
       reason: params[:reason]
     )
     if @leave.save
-      flash[:success] = 'Leave request submitted.'
+      flash[:success] = "#{@leave.leave_type.capitalize} Leave request submitted."
       SlackService.new(current_user, "Requested #{@leave.leave_type.capitalize} Leave for", @leave).request_leave
       redirect_to leaves_path
     else
