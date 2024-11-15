@@ -56,6 +56,7 @@ class LeavesController < ApplicationController
         leave_months = [leave_start.month, leave_end.month].to_a.uniq
         wedding_leave_exists = Leave.where(user_id: current_user.id)
         .where(leave_type: 2)
+        .where(status: [0,1])
         .where("EXTRACT(YEAR FROM start_date) = ? AND (EXTRACT(MONTH FROM start_date) IN (?) OR EXTRACT(MONTH FROM end_date) IN (?))", leave_start.year, leave_months, leave_months).exists?
         if wedding_leave_exists
           redirect_to leaves_path, flash: { error: "You cannot apply for quarterly or annual leave in the same month as wedding leave." }
@@ -118,8 +119,8 @@ class LeavesController < ApplicationController
       reason: params[:reason]
     )
     if @leave.save
-      flash[:success] = 'Leave request submitted.'
-      SlackService.new(current_user, "Request Leave for", @leave).request_leave
+      flash[:success] = "#{@leave.leave_type.capitalize} Leave request submitted."
+      SlackService.new(current_user, "Requested #{@leave.leave_type.capitalize} Leave for", @leave).request_leave
       redirect_to leaves_path
     else
       flash[:error] = "Reason cannot be empty or contain only spaces."

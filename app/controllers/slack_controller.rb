@@ -53,7 +53,7 @@ class SlackController < ApplicationController
     end
   
     # Respond with success
-    render json: { status: "#{@leave.user.slack_member_id}'s Leave has been #{status_message} by Admin" }, status: :ok
+    render json: { status: "#{@leave.user.slack_member_id}'s #{@leave.leave_type.capitalize} Leave has been #{status_message} by Admin" }, status: :ok
   end
   
 end

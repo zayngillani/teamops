@@ -51,7 +51,8 @@ class Admin::UsersController < ApplicationController
           redirect_to edit_admin_user_path, flash: { error: "Joining date must be a weekday and not a holiday. Please choose another date." }
           return
         end
-        if params[:user][:password].present? && params[:user][:password] != params[:user][:password_confirmation]
+        if (params[:user][:password].present? && params[:user][:password_confirmation].present? && params[:user][:password] != params[:user][:password_confirmation]) ||
+          (params[:user][:password].present? ^ params[:user][:password_confirmation].present?)
           redirect_to edit_admin_user_path, flash: { error: "Password and confirmation password do not match." }
           return
         end
