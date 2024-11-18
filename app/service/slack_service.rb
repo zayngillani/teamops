@@ -56,7 +56,7 @@ class SlackService
           @request_user = User.find_by(id: @time.user_id)
           @client.chat_postMessage(
                channel: ENV["LEAVE_CHANNEL"],
-               text: "<@#{@request_user.slack_member_id}> #{ @time.leave_type == 'wedding' ? 'Wedding' : '' } #{@message} #{@time.supervisor} from #{@time.start_date.strftime('%d/%B/%Y')} to #{@time.end_date.strftime('%d/%B/%Y')}"
+               text: "<@#{@request_user.slack_member_id}> #{@message} #{@time.supervisor} from #{@time.start_date.strftime('%d/%B/%Y')} to #{@time.end_date.strftime('%d/%B/%Y')}"
           )
      end
      
