@@ -152,6 +152,7 @@ document.addEventListener("turbo:load", function () {
         .then((response) => response.json())
         .then((data) => {
           if (data.success) {
+            location.reload();
           } else {
             console.error("Failed to update individual IP restriction.");
           }

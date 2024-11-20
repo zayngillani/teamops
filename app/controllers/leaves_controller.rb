@@ -52,6 +52,12 @@ class LeavesController < ApplicationController
         return
       end
     else
+      if params[:leave_type].to_i == 1
+        unless leave_days == 2
+          redirect_to leaves_path, flash: { error: "Annual leave requests must be for at least 2 consecutive days. Please adjust your leave dates." }
+          return
+        end
+      end
       if params[:leave_type].to_i == 0 || params[:leave_type].to_i == 1
         leave_months = [leave_start.month, leave_end.month].to_a.uniq
         wedding_leave_exists = Leave.where(user_id: current_user.id)
