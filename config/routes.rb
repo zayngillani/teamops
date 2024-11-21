@@ -13,6 +13,12 @@ Rails.application.routes.draw do
     resources :users, only: [:new, :create, :index, :edit, :update, :destroy] do
       member do
         patch 'update_ip_restriction'
+        get 'complete_profile', to: 'users#complete_profile_step_one'
+        post 'complete_profile', to: 'users#complete_profile_step_two'
+        get 'complete_profile_instructions', to: 'users#complete_profile_step_three'
+        get 'submit_information', to: 'users#complete_profile_step_four'
+        post 'submit_information', to: 'users#complete_profile_step_five'
+        get 'final_confirmation', to: 'users#final_confirmation'
       end
       collection do
         patch 'update_all_ip_restrictions'

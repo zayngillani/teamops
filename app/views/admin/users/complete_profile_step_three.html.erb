@@ -1,0 +1,34 @@
+<div style="margin-left: 20px;">
+    <h1> Instructions </h1>
+    <h4>Your account has been successfully created, and you're almost ready to start. Please follow the instructions below to complete your setup and get started with your work tools.</h4>
+    <h2>1. Access Your Webmail Account</h2>
+    <p>Your webmail account has been successfully created! You can use the same password you entered earlier to log in. Follow these steps:</p>
+    <ul>
+        <li>Go to <a href="https://rc.ds.network/">https://rc.ds.network/.</a></li>
+        <li>Enter your email address (<%= @user.email %>) and the password you created earlier.</li>
+        <li>Click on the Login button.</li>
+        <li>Once logged in, check your inbox for important company updates and communications.</li>
+    </ul>
+    <h2>2. Find Your Slack ID</h2>
+    <p> Slack is where we communicate and collaborate across teams. To access your Slack ID:</p>
+    <ul>
+        <li>Open Slack (either the app or web version).</li>
+        <li>Sign in using your company email address.</li>
+        <li>Once logged in, go to your profile settings by clicking on your name or photo in the top left corner.</li>
+        <li>Your Slack ID is visible under your profile information.</li>
+    </ul>
+    <h2>3. Find Your GitHub Username</h2>
+    <p>GitHub is where we manage code repositories. To find your GitHub username:</p>
+    <ul>
+        <li>Visit [GitHub login page] (provide link).</li>
+        <li>Log in with your credentials.</li>
+        <li>Once logged in, click on your profile picture in the top right corner.</li>
+        <li>Your GitHub username will be displayed on your profile page.</li>
+    </ul>
+    <h2>Next Steps</h2>
+    <p>Once you have accessed and verified your Slack ID and GitHub username, click the Next button below to continue with your onboarding. </p>
+    <br>
+    <div>
+        <%= link_to "Next", submit_information_admin_user_path(@user) , class: "submit-button"  %>
+    </div>
+</div>

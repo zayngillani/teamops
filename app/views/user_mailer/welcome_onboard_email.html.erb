@@ -1,0 +1,17 @@
+<h1>Dear <%= @user.name %>,</h1>
+
+<p>Welcome to the <%= @company_name %> family! We are excited to have you join our team and look forward to working together.</p>
+
+<p>To help us complete your onboarding process, we need a few more details from you. Please click the link below to fill out the required information:</p>
+
+<p><a href="<%= @profile_completion_url %>">Complete Your Employee Profile</a></p>
+
+<p>If you have any questions or need assistance, feel free to reach out to our HR team at <a href="mailto:<%= @hr_email %>"><%= @hr_email %></a> or call us at <%= @hr_contact_number %>.</p>
+
+<p>Once again, welcome aboard!</p>
+
+<p>Best regards,<br>
+<%= @your_name %><br>
+<%= @your_job_title %><br>
+<%= @company_name %><br>
+Contact Information: <%= @contact_info %></p>

@@ -9,6 +9,10 @@ class User < ApplicationRecord
 
   enum role: [:user, :admin]
   enum status: [:active , :pending]
+  enum user_type: { dev: 0, qa: 1, designer: 2, devops: 3 }
+
+  validates :email, presence: false
+  validates :password, presence: false
 
   def self.ransackable_attributes(auth_object = nil)
     %w[id name email role created_at updated_at]
