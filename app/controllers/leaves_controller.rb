@@ -53,7 +53,7 @@ class LeavesController < ApplicationController
       end
     else
       if params[:leave_type].to_i == 1
-        unless leave_days == 2
+        if leave_days < 2
           redirect_to leaves_path, flash: { error: "Annual leave requests must be for at least 2 consecutive days. Please adjust your leave dates." }
           return
         end
