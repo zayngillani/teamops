@@ -37,6 +37,7 @@ class LeavesController < ApplicationController
     one_year_anniversary = current_user.join_date + 3.months
     restricted_period_end = Date.today + 3.days
     quarterly_restricted = current_user.join_date + 3.months
+    calculate_leave_data
     if !params[:leave_type].present?
       redirect_to leaves_path, flash: { error: "Please select leave type" }
       return
@@ -53,6 +54,10 @@ class LeavesController < ApplicationController
       end
     else
       if params[:leave_type].to_i == 1
+        if @pending_leaves >= @actual_leaves_count
+          redirect_to leaves_path, flash: { error: "Insufficient leave balance. You cannot request leave exceeding your balance." }
+          return
+        end 
         if leave_days < 2
           redirect_to leaves_path, flash: { error: "Annual leave requests must be for at least 2 consecutive days. Please adjust your leave dates." }
           return
@@ -140,6 +145,20 @@ class LeavesController < ApplicationController
     params.require(:leaves).permit(:start_date, :end_date, :reason)
   end
 
+  def calculate_leave_data
+    current_year_start = Date.current.beginning_of_year
+    current_year_end = Date.current.end_of_year
+    @annual_leaves = calculate_annual_leaves_count(current_year_start, current_year_end)
+    @allotted_annual_leaves = current_user.join_date > 1.year.ago ? 0 : ENV['ANNUAL_LEAVE'].to_i
+    @unused_quarterly_leaves = calculate_unused_quarterly_leaves(Date.current.year, current_user)
+    @actual_leaves_count = (@unused_quarterly_leaves + @allotted_annual_leaves.to_i) - @annual_leaves
+    p_leaves = Leave.where(user_id: current_user.id, leave_type: 1, status: 0)
+    @pending_leaves = 0
+    p_leaves&.each do |leave|
+      leave_days = (leave.end_date - leave.start_date).to_i + 1
+      @pending_leaves += leave_days
+    end
+  end
 
   def get_quarter_dates(date)
     case (date.month - 1) / 3
