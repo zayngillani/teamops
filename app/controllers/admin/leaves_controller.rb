@@ -82,8 +82,7 @@ class Admin::LeavesController < ApplicationController
           return if validate_emergency_leaves(selected_user, selected_date) ||
                     validate_existing_leaves(selected_user, selected_date) ||
                     validate_leave_limits(selected_user, leave_type) ||
-                    invalid_leave_request?(selected_date, leave_type, one_year_anniversary, quarterly_restricted) ||
-                    user_leaves_limit(@user)
+                    invalid_leave_request?(selected_date, leave_type, one_year_anniversary, quarterly_restricted)
         
           @leave = Leave.create(user_id: selected_user, status: 1, reason: reason, leave_type: leave_type, start_date: selected_date, end_date: selected_date, supervisor: "Admin", emergency: true)
           SlackService.new(@leave.user, "Emergency Leave Created by Admin from", @leave).emergency_leave
@@ -127,13 +126,6 @@ class Admin::LeavesController < ApplicationController
           end
         
           false
-        end
-
-        def user_leaves_limit(user)
-          if user.join_date > 1.year.ago
-            flash[:error] = "User is not eligible for annual leave as they have not completed one year of service."
-            redirect_to new_emergency_leaves_admin_leaves_path and return true
-          end
         end
         
         def validate_leave_limits(selected_user, leave_type)
