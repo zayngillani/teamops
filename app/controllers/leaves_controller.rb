@@ -54,7 +54,7 @@ class LeavesController < ApplicationController
       end
     else
       if params[:leave_type].to_i == 1
-        if @pending_leaves + leave_days >= @actual_leaves_count
+        if @pending_leaves + leave_days > @actual_leaves_count
           redirect_to leaves_path, flash: { error: "Insufficient leave balance. You cannot request leave exceeding your balance." }
           return
         end 
