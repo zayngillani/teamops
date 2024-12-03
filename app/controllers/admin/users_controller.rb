@@ -636,11 +636,8 @@ class Admin::UsersController < ApplicationController
       
       # Fetch the password from params and validate it
       password = params[:user][:password]
-      
-      if password.present? && password_valid?(password)
-        flash[:alert] = "Password can only contain letters, digits, and hyphens."
-        redirect_to complete_profile_admin_user_path
-      elsif @user.update(user_profile_params)
+      if password_valid?(password)
+        @user.update(user_profile_params)
         # Call On-Boarding procedure 
         onboard_accounts(@user.email, password) if Rails.env.production?
         redirect_to complete_profile_instructions_admin_user_path(@user), notice: "Profile updated successfully."
