@@ -17,6 +17,14 @@ class SlackService
           ENV["TEST_CHANNEL"]
        end
      end
+
+     def determine_leave
+       if @user.email.ends_with?("@techcreatix.com")
+          ENV["LEAVE_CHANNEL"]
+       else
+          ENV["TEST_CHANNEL"]
+       end
+     end
    
      def send_message
           @client.chat_postMessage(
@@ -54,8 +62,9 @@ class SlackService
      
      def send_leave
           @request_user = User.find_by(id: @time.user_id)
+          @channel = determine_leave
           @client.chat_postMessage(
-               channel: ENV["LEAVE_CHANNEL"],
+               channel:  @channel,
                text: "<@#{@request_user.slack_member_id}> #{@message} #{@time.supervisor} from #{@time.start_date.strftime('%d/%B/%Y')} to #{@time.end_date.strftime('%d/%B/%Y')}"
           )
      end
@@ -71,8 +80,9 @@ class SlackService
      end
 
      def emergency_leave
+          @channel = determine_leave
           @client.chat_postMessage(
-               channel: ENV["LEAVE_CHANNEL"],
+               channel:  @channel,
                text: "<@#{@user.slack_member_id}> #{@message} #{@time.start_date.strftime('%d/%B/%Y')} to #{@time.end_date.strftime('%d/%B/%Y')}"
           )
      end
