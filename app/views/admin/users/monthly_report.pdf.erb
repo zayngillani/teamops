@@ -85,7 +85,7 @@
             @break_column = "ex_breaks"
           end
       %>
-      <% @selected_columns.each do |column| %>
+      <% columns_to_include.each do |column| %>
         <th><%= column.humanize %></th>
       <% end %>
     </tr>
@@ -160,7 +160,7 @@
       %>
       <tr>
         <td><%= user.name %></td>
-        <% @selected_columns.each do |column| %>
+        <% columns_to_include.each do |column| %>
           <td>
             <% case column %>
             <% when 'expected_hours' %>
@@ -184,7 +184,7 @@
     <% end %>
     <tr>
       <td><strong>Total</strong></td>
-      <% @selected_columns.each do |column| %>
+      <% columns_to_include.each do |column| %>
         <td>
           <% case column %>
           <% when 'expected_hours' %>
