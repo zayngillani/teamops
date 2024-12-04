@@ -4,10 +4,12 @@ module Api
 
       def create
         contact_detail = ContactDetail.new(contact_detail_params)
+        identifier = params[:identifier]
 
         if contact_detail.save
-          ContactDetailSlackService.new(contact_detail).send_notification
-          render json: { status: 'success', message: 'Contact details created successfully', data: contact_detail }, status: :created
+          ContactDetailSlackService.new(contact_detail, identifier).send_notification
+          message = identifier_message(identifier)
+          render json: { status: 'success', message: message, data: contact_detail }, status: :created
         else
           render json: { status: 'error', message: 'Failed to create contact details', errors: contact_detail.errors.full_messages }, status: :unprocessable_entity
         end
@@ -16,8 +18,18 @@ module Api
       private
 
       def contact_detail_params
-        params.require(:contact_detail).permit(details: [:name, :email, :contact_no, :project_details])
+        params.require(:contact_detail).permit(details: [:name, :email, :contact_no, :project_details, :title])
       end
+
+      def identifier_message(identifier)
+        case identifier
+        when 'GetCallRequested', 'portfolioRequested'
+          'We got your information, we will be in touch shortly.'
+        else
+          'Contact details created successfully'
+        end
+      end
+
     end
   end
 end
