@@ -96,6 +96,8 @@ Rails.application.routes.draw do
       devise_scope :user do
         post 'login', to: 'sessions#create'
         delete 'logout', to: 'sessions#destroy'
+        post 'checkin_or_checkout', to: 'attendance#checkin_or_checkout'
+        post 'break_action', to: 'attendance#break_action'
       end
       resources :job_applications, only: [:create]
       resources :contact_details, only: [:create]

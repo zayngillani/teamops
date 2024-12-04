@@ -10,7 +10,8 @@ class Api::V1::SessionsController < Devise::SessionsController
       user.generate_authentication_token
       user.save
       sign_in(user)
-      render json: { success: true, message: "Logged in successfully", user: user, token: user.authentication_token }, status: :ok
+      attendance = Attendance.find_today_checkin(user)
+      render json: { success: true, message: "Logged in successfully", user: user, token: user.authentication_token , attendance: attendance }, status: :ok
     else
       render json: { success: false, message: "Invalid email or password" }, status: :unauthorized
     end
