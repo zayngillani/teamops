@@ -1,6 +1,10 @@
 class Attendance < ApplicationRecord
      belongs_to :user
      has_many :breaks, dependent: :destroy
+     scope :for_month, ->(user_id, month, year) {
+       where(user_id: user_id)
+      .where("DATE_PART('month', check_in_time) = ?", month)
+      .where("DATE_PART('year', check_in_time) = ?", year)}
 
      def self.find_today_checkin(user)
        where(user: user)
@@ -9,14 +13,13 @@ class Attendance < ApplicationRecord
      end
 
      def calculate_total_break_time
-          total_break_time_seconds = 0
-          self.breaks.each do |break_instance|
-            if break_instance.break_in_time.present? && break_instance.break_out_time.present?
-              break_duration_seconds = break_instance.break_out_time - break_instance.break_in_time
-              total_break_time_seconds += break_duration_seconds
-            end
-          end
-      
-          total_break_time_seconds
-        end
+       total_break_time_seconds = 0
+       self.breaks.each do |break_instance|
+         if break_instance.break_in_time.present? && break_instance.break_out_time.present?
+           break_duration_seconds = break_instance.break_out_time - break_instance.break_in_time
+           total_break_time_seconds += break_duration_seconds
+         end
+       end
+       total_break_time_seconds
+     end
 end
