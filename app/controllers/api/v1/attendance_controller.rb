@@ -1,5 +1,5 @@
 class Api::V1::AttendanceController < ApplicationController
-  before_action :authenticate_user_from_token!
+  include Authentication
 
   def checkin_or_checkout
     action_type = params[:action_type]
@@ -40,14 +40,6 @@ class Api::V1::AttendanceController < ApplicationController
   end
 
   private
-
-  def authenticate_user_from_token!
-    token = request.headers['Authorization']&.split(' ')&.last || params[:access_token]
-    @current_user = User.find_by(authentication_token: token)
-    unless @current_user
-      render json: {success: false, error: 'Invalid or missing token' }, status: :unauthorized
-    end
-  end
 
   def handle_checkin
     session = Attendance.find_today_checkin(@current_user)
