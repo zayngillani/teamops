@@ -1,4 +1,6 @@
 class JobPost < ApplicationRecord
+  extend FriendlyId
+  friendly_id :title, use: :slugged
   # Validations
   validates :title, presence: true
   validates :details, presence: true

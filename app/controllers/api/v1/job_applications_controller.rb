@@ -54,13 +54,14 @@ module Api
         cache_key = "job_post_#{params[:id]}"
       
         job_post = Rails.cache.fetch(cache_key) do
-          JobPost.find(params[:id])
+          JobPost.friendly.find(params[:id])
         end
-        
+
         if job_post.present?
           # Transform the requirements_and_qualification field
           formatted_requirements = job_post.requirements_and_qualification.split("\n")
           render json: job_post.as_json.merge(requirements_and_qualification: formatted_requirements)
+          return
         else
           render json: { error: 'Job post not found' }, status: :not_found
         end
