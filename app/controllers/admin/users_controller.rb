@@ -24,7 +24,7 @@ class Admin::UsersController < ApplicationController
           redirect_to root_path
         else
           @user = User.new(user_params)
-          @user.email = @user.personal_email
+          @user.email = @user.generate_email
           @user.ip_address = "#{request.headers['X-Forwarded-For']&.split(',')&.last&.strip || request.ip || request.remote_ip}"
           @user.role = "user"
           if @user.save(validate: false)
@@ -823,6 +823,7 @@ class Admin::UsersController < ApplicationController
         raise StandardError, "Failed to create cPanel email: #{cpanel_response.body}" unless cpanel_response.is_a?(Net::HTTPSuccess)
       rescue => e
         puts "Error during cPanel email creation: #{e.message}"
+
         return { success: false, error: "Webmail creation failed: #{e.message}" }
       end
   

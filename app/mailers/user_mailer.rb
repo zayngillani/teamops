@@ -12,7 +12,7 @@ class UserMailer < ApplicationMailer
     @profile_completion_url = "#{root_url}admin/users/#{@user.id}/complete_profile"
 
     mail(
-      to: @user.email,
+      to: @user.personal_email,
       subject: "Welcome to #{@company_name}!"
     )
   end

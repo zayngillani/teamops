@@ -24,6 +24,19 @@ class User < ApplicationRecord
     end
   end
 
+  def generate_email
+    domain = "techcreatix.com"
+    base_email = name.downcase.strip.gsub(/\s+/, ".").gsub(/[^a-z.]/, "")
+    new_email = "#{base_email}@#{domain}"
+    count = ".tx"
+  
+    while User.exists?(email: new_email)
+      new_email = "#{base_email}#{count}@#{domain}"
+    end
+  
+    self.email = new_email
+  end
+
   def self.ransackable_attributes(auth_object = nil)
     %w[id name email role created_at updated_at]
   end
