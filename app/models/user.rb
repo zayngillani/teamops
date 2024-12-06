@@ -41,4 +41,8 @@ class User < ApplicationRecord
       super(notification, *args)
     end
   end
+
+  def report_channel
+    email.ends_with?("@techcreatix.com") ? ENV["REPORT_CHANNEL"] : ENV["TEST_CHANNEL"]
+  end
 end
