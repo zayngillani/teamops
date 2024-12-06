@@ -14,6 +14,16 @@ class User < ApplicationRecord
   validates :email, presence: false
   validates :password, presence: false
 
+  before_create :generate_authentication_token
+
+
+  def generate_authentication_token
+    loop do
+      self.authentication_token = Devise.friendly_token
+      break unless User.exists?(authentication_token: authentication_token)
+    end
+  end
+
   def self.ransackable_attributes(auth_object = nil)
     %w[id name email role created_at updated_at]
   end

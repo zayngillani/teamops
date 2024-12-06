@@ -1,7 +1,7 @@
 class ApplicationController < ActionController::Base
     #  before_action :authenticate_ip!
-     protect_from_forgery with: :null_session
-     before_action :authenticate_user!
+    protect_from_forgery with: :null_session, if: -> { request.format.json? }
+    before_action :authenticate_user!
     #  http_basic_authenticate_with name: "#{ENV["BASIC_HTTP_NAME"]}", password: "#{ENV["BASIC_HTTP_PASSWORD"]}", if: ->{ENV['BASIC_HTTP_AUTH'] == "true"}
      before_action :set_cache_buster
 
