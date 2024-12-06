@@ -1740,3 +1740,56 @@ input:checked + .slider:before {
     text-align: left; /* Ensure this column text is aligned left */
     width: 20%; /* Adjust width as needed */
   }
+
+  /* contact details page for admin */
+  .card {
+    height: auto;
+    display: block;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 16px;
+    max-width: 600px;
+    margin: 20px auto;
+    margin-left: 500px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+  }
+  
+  .card-header {
+    text-align: center;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+  }
+  
+  .card-header h2 {
+    margin: 0;
+    font-size: 1.5em;
+    color: #333;
+  }
+  
+  .card-body p {
+    margin: 12px 0; 
+    font-size: 1em;
+    color: #555;
+    line-height: 1.6; 
+  }
+  
+  .card-body p strong {
+    color: #000;
+  }
+  
+  @media (max-width: 768px) {
+    .card {
+      padding: 12px;
+      max-width: 95%;
+    }
+  
+    .card-header h2 {
+      font-size: 1.3em;
+    }
+  
+    .card-body p {
+      font-size: 0.9em;
+    }
+  }

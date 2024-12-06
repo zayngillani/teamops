@@ -1,4 +1,5 @@
-<div class="main-content" style="margin-left: 260px;">
+<%= render partial: 'search' %>
+<div style="margin-left: 260px; overflow-x: auto; height: 695px;">
   <table class="dashboard-table-container">
     <thead>
       <tr class="dashboard-table-lines">
@@ -6,17 +7,12 @@
         <th>Email</th>
         <th>Contact Number</th>
         <th>Project Details</th>
+        <th>Type</th>
+        <th>Action</th>
       </tr>
     </thead>
-    <tbody>
-      <% @contact_details.each do |contact_detail| %>
-        <tr class="dashboard-table-lines">
-          <td class="table-first-column"><%= contact_detail.details['name'] %></td>
-          <td class="table-first-column"><%= contact_detail.details['email'] %></td>
-          <td class="table-first-column"><%= contact_detail.details['contact_no'] %></td>
-          <td class="table-first-column"><%= contact_detail.details['project_details'] %></td>
-        </tr>
-      <% end %>
+    <tbody id="contact-details-table">
+      <%= render partial: 'admin/contact_details/contact_detail', collection: @contact_details, as: :contact_detail %>
     </tbody>
   </table>
 </div>
