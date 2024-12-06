@@ -23,9 +23,9 @@ class ContactDetailSlackService
     when 'portfolioRequested'
       <<~MESSAGE
       *Portfolio Requested:*
+      *Portfolio Title:* #{@contact_detail.details['title']}
       *Name:* #{@contact_detail.details['name']}
       *Email:* #{@contact_detail.details['email']}
-      *Portfolio Title:* #{@contact_detail.details['title']}
     MESSAGE
     when 'contactDetail'
       <<~MESSAGE

@@ -1,10 +1,11 @@
 module Api
   module V1
     class ContactDetailsController < Api::BaseController
-
+      
       def create
         contact_detail = ContactDetail.new(contact_detail_params)
         identifier = params[:identifier]
+        contact_detail.contact_type = identifier
 
         if contact_detail.save
           ContactDetailSlackService.new(contact_detail, identifier).send_notification

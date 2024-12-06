@@ -59,7 +59,7 @@ Rails.application.routes.draw do
     end
 
     resources :job_posts
-    resources :contact_details, only: [:index]
+    resources :contact_details, only: [:index, :show]
     #Users
     get '/generate_pdf', :to => "users#generate_pdf", as: 'generate_pdf'
     get '/user_profile', :to => "users#user_profile", as: 'user_profile'
@@ -104,6 +104,8 @@ Rails.application.routes.draw do
         delete 'logout', to: 'sessions#destroy'
         post 'checkin_or_checkout', to: 'attendance#checkin_or_checkout'
         post 'break_action', to: 'attendance#break_action'
+        get 'user_monthly_record', to: 'attendance#user_monthly_record'
+        get 'user_leaves_record', to: 'leaves#user_leaves_record'
       end
       resources :job_applications, only: [:create]
       resources :contact_details, only: [:create]

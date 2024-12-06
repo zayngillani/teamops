@@ -2,12 +2,21 @@ class Admin::ContactDetailsController < ApplicationController
   before_action :authorize_admin!
 
   def index
-    @contact_details = ContactDetail.order(Arel.sql("details->>'name' ASC"))
+    @contact_details = ContactDetail.all
+
+    if params[:q].present?
+      search_query = params[:q]
+      @contact_details = ContactDetail.search_by_contact_type(search_query)
+    end
 
     respond_to do |format|
       format.html
-      format.json { render json: @contact_details }
+      format.js { render json: @contact_details }
     end
+  end
+
+  def show
+    @contact_detail = ContactDetail.find(params[:id])
   end
 
   private
