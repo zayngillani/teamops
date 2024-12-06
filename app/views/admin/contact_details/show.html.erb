@@ -1,0 +1,16 @@
+<div class="card">
+  <div class="card-header">
+    <h2>Contact Detail</h2>
+  </div>
+  <div class="card-body">
+    <p><strong>Type:</strong> <%= @contact_detail.contact_type.present? ? @contact_detail.contact_type : 'N/A' %></p>
+
+    <p><strong>Name:</strong> <%= @contact_detail.details['name'].present? ? @contact_detail.details['name'] : 'N/A' %></p>
+
+    <p><strong>Email:</strong> <%= @contact_detail.details['email'].present? ? @contact_detail.details['email'] : 'N/A' %></p>
+
+    <p><strong>Contact:</strong> <%= @contact_detail.details['contact_no'].present? ? @contact_detail.details['contact_no'] : 'N/A' %></p>
+
+    <p><strong>Project Details:</strong> <%= @contact_detail.details['project_details'].present? ? @contact_detail.details['project_details'] : 'N/A' %></p>
+  </div>
+</div>

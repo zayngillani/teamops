@@ -53,7 +53,7 @@ Rails.application.routes.draw do
     end
 
     resources :job_posts
-    resources :contact_details, only: [:index]
+    resources :contact_details, only: [:index, :show]
     #Users
     get '/generate_pdf', :to => "users#generate_pdf", as: 'generate_pdf'
     get '/user_profile', :to => "users#user_profile", as: 'user_profile'

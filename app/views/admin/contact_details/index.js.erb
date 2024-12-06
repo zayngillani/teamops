@@ -1,0 +1,2 @@
+// app/views/admin/contact_details/index.js.erb
+$("#contact-details-table").html("<%= j(render 'admin/contact_details/contact_detail', collection: @contact_details, as: :contact_detail) %>");
