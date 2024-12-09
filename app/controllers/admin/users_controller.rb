@@ -821,7 +821,7 @@ class Admin::UsersController < ApplicationController
         # end
   
         # raise StandardError, "Failed to create cPanel email: #{cpanel_response.body}" unless cpanel_response.is_a?(Net::HTTPSuccess)
-      webmail_response = enable_email(user,password)
+      webmail_response = enable_email(email,password)
       if webmail_response[:success] == false
         puts "Failed to disable Webmail for user #{email}: #{webmail_response[:error]}"
         return { success: false, error: "Failed to create Webmail", details: webmail_response[:error] }
@@ -985,9 +985,9 @@ class Admin::UsersController < ApplicationController
       end
     end
 
-    def enable_email(user,password)
+    def enable_email(email,password)
       # Define the cPanel URI and make the GET request with HTTParty
-      cpanel_uri = "https://techcreatix.com:2083/execute/Email/add_pop?email=#{user.email}&password=#{password}"
+      cpanel_uri = "https://techcreatix.com:2083/execute/Email/add_pop?email=#{email}&password=#{password}"
   
       begin
         # Use HTTParty to send the request
@@ -1007,7 +1007,7 @@ class Admin::UsersController < ApplicationController
               puts "Error: #{response_body['errors']}"
               return { success: false, error: response_body['errors'] }
             else
-              puts "Successfully disabled email for #{user.email}"
+              puts "Successfully disabled email for #{email}"
               return { success: true }
             end
           rescue JSON::ParserError => e
