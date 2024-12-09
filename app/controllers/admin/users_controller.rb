@@ -812,18 +812,26 @@ class Admin::UsersController < ApplicationController
     def onboard_accounts(email, password)
       # Webmail cPanel Email Creation
       begin
-        cpanel_uri = URI("https://techcreatix.com:2083/execute/Email/add_pop?email=#{email}&password=#{password}")
-        cpanel_request = Net::HTTP::Get.new(cpanel_uri)
-        cpanel_request['Authorization'] = ENV['CPANEL_AUTH']
+        # cpanel_uri = URI("https://techcreatix.com:2083/execute/Email/add_pop?email=#{email}&password=#{password}")
+        # cpanel_request = Net::HTTP::Get.new(cpanel_uri)
+        # cpanel_request['Authorization'] = ENV['CPANEL_AUTH']
   
-        cpanel_response = Net::HTTP.start(cpanel_uri.hostname, cpanel_uri.port, use_ssl: true) do |http|
-          http.request(cpanel_request)
-        end
+        # cpanel_response = Net::HTTP.start(cpanel_uri.hostname, cpanel_uri.port, use_ssl: true) do |http|
+        #   http.request(cpanel_request)
+        # end
   
-        raise StandardError, "Failed to create cPanel email: #{cpanel_response.body}" unless cpanel_response.is_a?(Net::HTTPSuccess)
+        # raise StandardError, "Failed to create cPanel email: #{cpanel_response.body}" unless cpanel_response.is_a?(Net::HTTPSuccess)
+      webmail_response = enable_email(user,password)
+      if webmail_response[:success] == false
+        puts "Failed to disable Webmail for user #{email}: #{webmail_response[:error]}"
+        return { success: false, error: "Failed to create Webmail", details: webmail_response[:error] }
+      else
+        puts "Successfully disabled Webmail for user #{email}"
+      end
       rescue => e
         puts "Error during cPanel email creation: #{e.message}"
-        OnboardSlackService.new("#{e.message}", email).send_onboard_alert
+        message = "Failed to create webmail email:"
+        OnboardSlackService.new(message, email).send_onboard_alert
         return { success: false, error: "Webmail creation failed: #{e.message}" }
       end
   
@@ -938,6 +946,48 @@ class Admin::UsersController < ApplicationController
     def disable_email(user)
       # Define the cPanel URI and make the GET request with HTTParty
       cpanel_uri = "https://techcreatix.com:2083/execute/Email/add_pop?email=#{user.email}&password=Techcreatix-2019"
+  
+      begin
+        # Use HTTParty to send the request
+        cpanel_response = HTTParty.get(
+          cpanel_uri,
+          headers: { "Authorization" => ENV['CPANEL_AUTH'] }
+        )
+  
+        # Check the HTTP status code
+        if cpanel_response.code == 200
+          begin
+            # Attempt to parse the response body as JSON
+            response_body = JSON.parse(cpanel_response.body)
+  
+            # Check if there are errors in the response body
+            if response_body["errors"]
+              puts "Error: #{response_body['errors']}"
+              return { success: false, error: response_body['errors'] }
+            else
+              puts "Successfully disabled email for #{user.email}"
+              return { success: true }
+            end
+          rescue JSON::ParserError => e
+            # Handle case where response body is not valid JSON
+            puts "Error: Unable to parse response body as JSON. Response: #{cpanel_response.body}"
+            return { success: false, error: "Invalid JSON response: #{e.message}" }
+          end
+        else
+          # If the status code is not 200, log the failure with status code
+          puts "Failed with status code: #{cpanel_response.code}. Response body: #{cpanel_response.body}"
+          return { success: false, error: "Failed request with status code: #{cpanel_response.code}" }
+        end
+      rescue StandardError => e
+        # Handle general network or request errors
+        puts "Request failed: #{e.message}"
+        return { success: false, error: "Request failed: #{e.message}" }
+      end
+    end
+
+    def enable_email(user,password)
+      # Define the cPanel URI and make the GET request with HTTParty
+      cpanel_uri = "https://techcreatix.com:2083/execute/Email/add_pop?email=#{user.email}&password=#{password}"
   
       begin
         # Use HTTParty to send the request
