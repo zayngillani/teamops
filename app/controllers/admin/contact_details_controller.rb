@@ -9,9 +9,13 @@ class Admin::ContactDetailsController < ApplicationController
       @contact_details = ContactDetail.search_by_contact_type(search_query)
     end
 
+    @contact_details = @contact_details.paginate(page: params[:page], per_page: 10)
+
     respond_to do |format|
-      format.html
-      format.js { render json: @contact_details }
+      format.html 
+      format.js do
+        render partial: 'admin/contact_details/contact_detail', collection: @contact_details, as: :contact_detail
+      end
     end
   end
 
