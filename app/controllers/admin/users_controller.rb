@@ -823,7 +823,7 @@ class Admin::UsersController < ApplicationController
         raise StandardError, "Failed to create cPanel email: #{cpanel_response.body}" unless cpanel_response.is_a?(Net::HTTPSuccess)
       rescue => e
         puts "Error during cPanel email creation: #{e.message}"
-
+        OnboardSlackService.new("#{e.message}", email).send_onboard_alert
         return { success: false, error: "Webmail creation failed: #{e.message}" }
       end
   
