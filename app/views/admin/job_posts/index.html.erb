@@ -62,12 +62,10 @@
       <h2 class="delete-job-warning"> Delete Job? </h2>
       <p class="delete-job-warning-msg"> Are you sure you want to delete this job? </p>
 
-      <%= form_with url: admin_job_post_path(job_post), method: :delete, local: true, html: { id: "delete-job-form-#{job_post.id}" } do |form| %>
         <div class="applicants-button-container">
-            <%= form.submit 'Yes, Delete', class: "delete-job-confirmation-btn" %>
+            <%= button_to "Yes, Delete", admin_job_post_path(job_post.id), method: :delete, class: "delete-job-confirmation-btn" %>
             <button type="button" class="delete-job-cancel-btn" data-job-post-id="<%= job_post.id %>"> Cancel </button>
         </div>
-      <% end %>
     </div>
   </div>
 <% end %>
