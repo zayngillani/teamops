@@ -4,9 +4,13 @@ class Admin::ContactDetailsController < ApplicationController
   def index
     @contact_details = ContactDetail.all
 
+    if params[:filter_by].present?
+      @contact_details = @contact_details.where(contact_type: params[:filter_by])
+    end
+
     if params[:q].present?
       search_query = params[:q]
-      @contact_details = ContactDetail.search_by_contact_type(search_query)
+      @contact_details = ContactDetail.search(search_query)
     end
 
     @contact_details = @contact_details.paginate(page: params[:page], per_page: 10)

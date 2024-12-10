@@ -1,12 +1,153 @@
-<% content_for :link_button do %>
-  <div style="margin-left: 294px; position: absolute;">
-    <div class="search-container" style="width: 400px">
+<%= content_for :link_button do %>
+  <!-- Container for the search and filter elements -->
+  <div style="margin-left: 294px; position: absolute; display: flex; gap: 10px;">
+    <!-- Search Section -->
+    <div class="search-container" style="width: 400px;">
       <%= form_with url: admin_contact_details_path, method: :get, local: false, id: 'search-form', data: { controller: 'contact-search', action: 'input->contact-search#performSearch' } do |form| %>
-        <%= form.text_field :q, placeholder: 'Search by type', id: 'search-query', data: { target: 'contact-search.query' } %>
+        <%= form.text_field :q, placeholder: 'Search...', id: 'search-query', data: { target: 'contact-search.query' } %>
       <% end %>
       <svg class="search-icon" viewBox="0 0 24 24">
         <path d="M10 2a8 8 0 1 0 4.9 14.4l5.6 5.6 1.4-1.4-5.6-5.6A8 8 0 0 0 10 2zm0 2a6 6 0 1 1 0 12 6 6 0 0 1 0-12z"/>
       </svg>
     </div>
+    <!-- Filter Dropdown Section -->
+    <div class="filter-container" style="width: 220px;">
+      <%= form_tag admin_contact_details_path, method: :get, id: "filterForm", class: "header-action-filters me-auto" do %>
+        <%= hidden_field_tag 'filter_by', params[:filter_by].presence || 'contactDetail', id: 'selectedFilter' %>
+        <div class="select-menu w-100">
+          <div class="select-btn" onclick="toggleDropdown(event, this)">
+            <span class="sBtn-text">
+              <%= params[:filter_by].presence || 'Select Type' %>
+            </span>
+            <i class="fa fa-chevron-down"></i>
+          </div>
+          <ul class="options">
+            <li class="option <%= 'active' if params[:filter_by].blank? %>" data-value="" onclick="selectOption(this)">
+              <span class="option-text">Select All</span>
+            </li>
+            <hr>
+            <li class="option <%= 'active' if params[:filter_by] == 'contactDetail' %>" data-value="contactDetail" onclick="selectOption(this)">
+              <span class="option-text">Contact Detail</span>
+            </li>
+            <hr>
+            <li class="option <%= 'active' if params[:filter_by] == 'portfolioRequested' %>" data-value="portfolioRequested" onclick="selectOption(this)">
+              <span class="option-text">Portfolio Requested</span>
+            </li>
+            <hr>
+            <li class="option <%= 'active' if params[:filter_by] == 'GetCallRequested' %>" data-value="GetCallRequested" onclick="selectOption(this)">
+              <span class="option-text">Call Requested</span>
+            </li>
+          </ul>
+        </div>
+      <% end %>
+    </div>
   </div>
 <% end %>
+
+<script>
+  function toggleDropdown(event, element) {
+    const dropdown = element.closest('.select-menu').querySelector('.options');
+    dropdown.classList.toggle('visible');
+    const expanded = dropdown.classList.contains('visible');
+    element.setAttribute('aria-expanded', expanded);
+  }
+
+  function selectOption(optionElement) {
+    const value = optionElement.dataset.value;
+    const selectText = optionElement.closest('.select-menu').querySelector('.sBtn-text');
+
+    if (value === "") {
+      selectText.textContent = "Select Type";
+    } else {
+      selectText.textContent = optionElement.textContent;
+    }
+
+    document.getElementById('selectedFilter').value = value;
+
+    optionElement.closest('.select-menu').querySelector('.options').classList.remove('visible');
+    optionElement.closest('.select-menu').querySelector('.select-btn').setAttribute('aria-expanded', 'false');
+
+    document.getElementById('filterForm').submit();
+  }
+
+  document.addEventListener('click', function(event) {
+    const dropdowns = document.querySelectorAll('.select-menu');
+    dropdowns.forEach(function(dropdown) {
+      if (!dropdown.contains(event.target)) {
+        dropdown.querySelector('.options').classList.remove('visible');
+        dropdown.querySelector('.select-btn').setAttribute('aria-expanded', 'false');
+      }
+    });
+  });
+</script>
+
+<style>
+  .filter-container {
+    position: relative;
+    width: 220px;
+  }
+
+  .select-menu {
+    position: relative;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 10px
+  }
+
+  .select-btn {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #ccc;
+  }
+
+  .select-btn .fa-chevron-down {
+    transition: transform 0.3s ease;
+  }
+
+  .select-menu .options {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    border: 1px solid #ccc;
+    background-color: white;
+    border-radius: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 10;
+    margin-top: 5px;
+  }
+
+  .select-menu .options.visible {
+    display: block;
+  }
+
+  .option {
+    padding: 10px;
+    cursor: pointer;
+  }
+
+  .option:hover {
+    background-color: #f1f1f1;
+  }
+
+  .option.active {
+    background-color: #e6f7ff;
+  }
+
+  .option-text {
+    display: inline-block;
+  }
+
+  hr {
+    margin: 0;
+    border: 0;
+    border-top: 1px solid #ccc;
+  }
+</style>

@@ -54,7 +54,7 @@ module Api
         cache_key = "job_post_#{params[:id]}"
       
         job_post = Rails.cache.fetch(cache_key) do
-          JobPost.friendly.find(params[:id])
+          JobPost.find(params[:id])
         end
 
         if job_post.present?
