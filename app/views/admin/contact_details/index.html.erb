@@ -11,9 +11,13 @@
         <th>Action</th>
       </tr>
     </thead>
+    <% if @contact_details.present?%>
     <tbody id="contact-details-table">
       <%= render partial: 'admin/contact_details/contact_detail', collection: @contact_details, as: :contact_detail %>
     </tbody>
+    <%else%>
+      <tr><td colspan="4" style="text-align: center;">No Daily Reports Present</td></tr>
+    <% end %>
   </table>
 </div>
 
