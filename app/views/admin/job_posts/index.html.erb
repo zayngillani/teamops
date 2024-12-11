@@ -35,7 +35,7 @@
             <div class="dropdown">
               <%= image_tag("more.png", width: "20", height: "20", alt: "More Actions", class: "dropdown-toggle") %>
               <div class="dropdown-menu">
-                <%= link_to 'Details', admin_job_post_path(job_post) %>
+                <%= link_to 'Details', admin_job_post_path(job_post.id) %>
                 <button data-job-post-id="<%= job_post.id %>">Delete</button>
               </div>
             </div>
