@@ -9,7 +9,7 @@
 <div class="main-content">
   <div class="dashboard-form-container">
     <div class="job-form">
-      <%= form_with(model: @job_post, url: admin_job_post_path(@job_post), method: :patch, local: true) do |form| %>
+      <%= form_with(model: @job_post, url: admin_job_post_path(@job_post.id), method: :patch, local: true) do |form| %>
         <div class="job-title-field">
           <%= form.text_field :title, class: 'form-control', placeholder: 'Job Title' %>
         </div>

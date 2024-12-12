@@ -17,7 +17,18 @@
         <div class="select-menu w-100">
           <div class="select-btn" onclick="toggleDropdown(event, this)">
             <span class="sBtn-text">
-              <%= params[:filter_by].presence || 'Select Type' %>
+              <%= 
+                case params[:filter_by]
+                when 'contactDetail'
+                  'Contact Detail'
+                when 'portfolioRequested'
+                  'Portfolio Requested'
+                when 'GetCallRequested'
+                  'Call Requested'
+                else
+                  'Select Type'
+                end
+              %>
             </span>
             <i class="fa fa-chevron-down"></i>
           </div>
