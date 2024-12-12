@@ -22,5 +22,5 @@
 </div>
 
 <div class="pagination-container">
-  <%= will_paginate @contact_details %>
+   <%= will_paginate @contact_details, renderer: PaginationHelper::DailyReportsRenderer, remote: true %>  
 </div>

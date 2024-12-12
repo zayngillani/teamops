@@ -26,6 +26,14 @@ export default class extends Controller {
     event.preventDefault();
 
     clearTimeout(this.debounceTimeout);
+    const query = this.queryTarget.value;
+
+    // If the query is empty, redirect to page 1
+    if (!query.trim()) {
+      // Redirect to page 1 when query is empty
+      window.location.href = `${this.element.action}?page=1`;
+      return;
+    }
 
     this.debounceTimeout = setTimeout(() => {
       const query = this.queryTarget.value;

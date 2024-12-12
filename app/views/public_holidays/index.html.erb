@@ -11,6 +11,7 @@
       </tr>
     </thead>
     <tbody>
+      <% if @holidays.present? %>
       <% @holidays.each do |item| %>
         <tr>
           <td><%= item.start_date.present? ? item.start_date : "N/A" %></td>
@@ -38,6 +39,9 @@
           </td>
         </tr>
         <tr><td colspan="5" style="border-bottom: 1px solid black;"></td></tr>
+      <% end %>
+      <% else %>
+      <tr><td colspan="3" style="text-align: center;">No Holidays Present</td></tr>
       <% end %>
     </tbody>
   </table>
