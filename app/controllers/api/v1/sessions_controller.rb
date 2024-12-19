@@ -18,8 +18,7 @@ class Api::V1::SessionsController < Devise::SessionsController
   end
 
   def destroy
-    return render json: { success: false, message: "Invalid access token" }, status: :unauthorized unless params[:access_token].present?
-    if current_user && params[:access_token] == current_user.authentication_token
+    if current_user
       current_user.update(authentication_token: nil)
       sign_out(current_user)
       render json: { success: true, message: "Logged out successfully" }, status: :ok
