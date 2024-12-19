@@ -1,4 +1,6 @@
 class OncallSupportController < ApplicationController
+     include OncallHelper
+
      def show_oncalls
           @month = params[:month].present? ? params[:month].to_i : Date.today.month
           @year = params[:year].present? ? params[:year].to_i : Date.today.year
@@ -15,39 +17,37 @@ class OncallSupportController < ApplicationController
      end
 
      def create_oncall
-          @oncall = Oncall.new
-          @oncall.start_date = params[:start_date]
-          @oncall.end_date = params[:end_date]
-          @oncall.reason = params[:reason]
-          @oncall.user_id = current_user.id
+          @oncall = Oncall.new(
+            start_date: params[:start_date],
+            end_date: params[:end_date],
+            reason: params[:reason],
+            user_id: current_user.id,
+            status: "pending"
+          )
           start_date = Date.parse(params[:start_date])
           end_date = Date.parse(params[:end_date])
-          if params[:start_date] > params[:end_date]
-               redirect_to show_oncalls_path, flash: { error: "End date must be greater than or equal to start date" }
-               return
+          unless valid_date_range?(start_date, end_date)
+            redirect_to show_oncalls_path, flash: { error: "End date must be greater than or equal to start date" }
+            return
           end
-          if Oncall.exists?(user_id: current_user.id, request_status: [0, 1], start_date: start_date..end_date, end_date: start_date..end_date)
-               redirect_to show_oncalls_path, flash: { error: "Oncall Already Submitted" }
-               return
+          if oncall_exists?(current_user.id, start_date, end_date)
+            redirect_to show_oncalls_path, flash: { error: "Oncall Already Submitted" }
+            return
           end
-          approved_leaves = Leave.where(user_id: current_user.id, status: 'approved')
-               .where("start_date <= ? AND end_date >= ?", params[:end_date], params[:start_date])
-          public_holidays = PublicHoliday.where("start_date <= ? AND end_date >= ?", params[:end_date], params[:start_date])
-          (Date.parse(params[:start_date])..Date.parse(params[:end_date])).each do |date|
-          is_weekend = date.saturday? || date.sunday?
-          is_public_holiday = public_holidays.any? { |holiday| date.between?(holiday.start_date, holiday.end_date) }
-          is_approved_leave = approved_leaves.any? { |leave| date.between?(leave.start_date, leave.end_date) }
-            unless is_weekend || is_public_holiday || is_approved_leave
+          leaves = approved_leaves(current_user.id, start_date, end_date)
+          holidays = public_holidays(start_date, end_date)
+      
+          (start_date..end_date).each do |date|
+            unless valid_oncall_date?(date, holidays, leaves)
               redirect_to show_oncalls_path, flash: { error: "On-call requests are only allowed on holidays, weekends, or during approved leave." }
               return
             end
           end
           if @oncall.save
             flash[:success] = 'On Call Support Request Submitted'
-            redirect_to show_oncalls_path
           else
             flash[:error] = "Reason cannot be empty or contain only spaces."
-            redirect_to show_oncalls_path
           end
+          redirect_to show_oncalls_path
      end
 end
