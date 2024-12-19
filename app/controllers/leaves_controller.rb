@@ -58,10 +58,10 @@ class LeavesController < ApplicationController
           redirect_to leaves_path, flash: { error: "Insufficient leave balance. You cannot request leave exceeding your balance." }
           return
         end 
-        if leave_days < 2
-          redirect_to leaves_path, flash: { error: "Annual leave requests must be for at least 2 consecutive days. Please adjust your leave dates." }
-          return
-        end
+        # if leave_days < 2
+        #   redirect_to leaves_path, flash: { error: "Annual leave requests must be for at least 2 consecutive days. Please adjust your leave dates." }
+        #   return
+        # end
       end
       if params[:leave_type].to_i == 0 || params[:leave_type].to_i == 1
         leave_months = [leave_start.month, leave_end.month].to_a.uniq
@@ -78,10 +78,10 @@ class LeavesController < ApplicationController
         redirect_to leaves_path, flash: { error: "Leave requests are available only after 3 months of service." }
         return
       end
-      if leave_start.between?(Date.today, restricted_period_end) && params[:leave_type].to_i == 1
-        redirect_to leaves_path, flash: { error: "You can only apply for annual leaves starting 3 Days before." }
-        return
-      end
+      # if leave_start.between?(Date.today, restricted_period_end) && params[:leave_type].to_i == 1
+      #   redirect_to leaves_path, flash: { error: "You can only apply for annual leaves starting 3 Days before." }
+      #   return
+      # end
       if Date.today < quarterly_restricted && params[:leave_type].to_i == 0
         redirect_to leaves_path, flash: { error: "You must complete 3 months of employment before requesting quarterly leave." }
         return
