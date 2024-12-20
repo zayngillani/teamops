@@ -1,23 +1,18 @@
 class LeavesController < ApplicationController
   include AttendanceHelper
+  include LeavesHelper 
   def index
-    @month = params[:month].present? ? params[:month].to_i : Date.today.month
-    @year = params[:year].present? ? params[:year].to_i : Date.today.year
-    @start_date = Date.new(@year, @month, 1)
-    @end_date = @start_date.end_of_month
-    current_month_start = @start_date.beginning_of_month
-    current_month_end = @end_date.end_of_month
-    @leaves = Leave.where(user_id: current_user.id)
-               .where("extract(year from start_date) = ? AND extract(month from start_date) = ?", @year, @month)
-               .order(created_at: :desc)
-               .paginate(page: params[:page], per_page: 10)
+    @month, @year = get_month_and_year(params)
+    @start_date, @end_date = get_date_range(@year, @month)
+    @leaves = fetch_leaves(current_user.id, @year, @month, params[:page])
     current_year_start = Date.new(@start_date.year, 1, 1)
     current_year_end = Date.new(@end_date.year, 12, 31)
-    @annual_leaves = calculate_annual_leaves_count(current_year_start, current_year_end)
-    @quarterly_leaves = calculate_quarterly_leaves(@month , @year)
-    @unused_quarterly_leaves = calculate_unused_quarterly_leaves(@year, current_user)
-    @allotted_annual_leaves = current_user.join_date > 1.year.ago ? '0' : ENV['ANNUAL_LEAVE'].to_i
-    @allotted_quarterly_leaves = current_user.join_date > 3.months.ago ? '0' : ENV['QUATER_LEAVE'].to_i
+
+    @annual_leaves = annual_leaves(current_year_start, current_year_end)
+    @quarterly_leaves = quarterly_leaves(@month, @year)
+    @unused_quarterly_leaves = unused_quarterly_leaves(@year, current_user)
+
+    @allotted_annual_leaves, @allotted_quarterly_leaves = allotted_leaves(current_user.join_date)
   end
 
   def new
@@ -25,106 +20,19 @@ class LeavesController < ApplicationController
   end
   
   def create
-    start_date = params[:start_date]
-    end_date = params[:end_date]
-    leave_start = Date.parse(start_date)
-    leave_end = Date.parse(end_date)
-    current_date = Date.today
-    current_year_start = Date.new(current_date.year, 1, 1)
-    current_year_end = Date.new(current_date.year, 12, 31)
-    leave_days = (leave_end - leave_start).to_i + 1
-    current_quarter_start, current_quarter_end = get_quarter_dates(leave_start)
-    one_year_anniversary = current_user.join_date + 3.months
-    restricted_period_end = Date.today + 3.days
-    quarterly_restricted = current_user.join_date + 3.months
-    calculate_leave_data
-    if !params[:leave_type].present?
-      redirect_to leaves_path, flash: { error: "Please select leave type" }
-      return
-    end  
-    if params[:leave_type].to_i == 2
-      unless leave_days == 10
-        redirect_to leaves_path, flash: { error: "Wedding leave must be exactly 10 consecutive days." }
-        return
-      end  
-      previous_wedding_leave = Leave.where(user_id: current_user.id, leave_type: 2).where.not(status: 'rejected').exists?
-      if previous_wedding_leave
-        redirect_to leaves_path, flash: { error: "You can only apply for wedding leave once." }
-        return
-      end
-    else
-      if params[:leave_type].to_i == 1
-        if @pending_leaves + leave_days > @actual_leaves_count
-          redirect_to leaves_path, flash: { error: "Insufficient leave balance. You cannot request leave exceeding your balance." }
-          return
-        end 
-        # if leave_days < 2
-        #   redirect_to leaves_path, flash: { error: "Annual leave requests must be for at least 2 consecutive days. Please adjust your leave dates." }
-        #   return
-        # end
-      end
-      if params[:leave_type].to_i == 0 || params[:leave_type].to_i == 1
-        leave_months = [leave_start.month, leave_end.month].to_a.uniq
-        wedding_leave_exists = Leave.where(user_id: current_user.id)
-        .where(leave_type: 2)
-        .where(status: [0,1])
-        .where("EXTRACT(YEAR FROM start_date) = ? AND (EXTRACT(MONTH FROM start_date) IN (?) OR EXTRACT(MONTH FROM end_date) IN (?))", leave_start.year, leave_months, leave_months).exists?
-        if wedding_leave_exists
-          redirect_to leaves_path, flash: { error: "You cannot apply for quarterly or annual leave in the same month as wedding leave." }
-          return
-        end
-      end
-      if Date.today < one_year_anniversary && params[:leave_type].to_i == 1
-        redirect_to leaves_path, flash: { error: "Leave requests are available only after 3 months of service." }
-        return
-      end
-      # if leave_start.between?(Date.today, restricted_period_end) && params[:leave_type].to_i == 1
-      #   redirect_to leaves_path, flash: { error: "You can only apply for annual leaves starting 3 Days before." }
-      #   return
-      # end
-      if Date.today < quarterly_restricted && params[:leave_type].to_i == 0
-        redirect_to leaves_path, flash: { error: "You must complete 3 months of employment before requesting quarterly leave." }
-        return
-      end
-      if leave_includes_weekends?(leave_start, leave_end)
-        redirect_to leaves_path, flash: { error: "You cannot request leave including weekends." }
-        return
-      end
-      if holiday_on_leave?(leave_start, leave_end)
-        redirect_to leaves_path, flash: { error: "You can't request leave on a public holiday" }
-        return
-      end
-    end
-    if invalid_leave_dates?(leave_start, leave_end)
-      redirect_to leaves_path, flash: { error: "Invalid leave dates" }
+    start_date = Date.parse(params[:start_date])
+    end_date = Date.parse(params[:end_date])
+
+    leave_data = calculate_leave_data(current_user)
+    validation_error = validate_leave_params(params, start_date, end_date, current_user, leave_data)
+
+    if validation_error
+      redirect_to leaves_path, flash: { error: validation_error[:error] }
       return
     end
-    if leave_start == Date.today
-      redirect_to leaves_path, flash: { error: "You cannot request leave for today. Please select a future date." }
-      return
-    end
-    if leave_start > leave_end
-      redirect_to leaves_path, flash: { error: "End date must be greater than or equal to start date" }
-      return
-    end
-    if overlapping_leave?(leave_start, leave_end)
-      redirect_to leaves_path, flash: { error: "Leave already submitted for the selected dates" }
-      return
-    end
-    unless params[:leave_type].to_i == 2
-      if exceeds_annual_leave_limit?(params[:leave_type].to_i, leave_days, current_year_start, current_year_end)
-        redirect_to leaves_path, flash: { error: "You have exceeded the maximum annual leave limit of 8 days per year" }
-        return
-      end
-      if exceeds_quarterly_leave_limit?(params[:leave_type].to_i, leave_days, current_quarter_start, current_quarter_end)
-        redirect_to leaves_path, flash: { error: "You cannot request more than 3 days of leave per quarter." }
-        return
-      end
-    end
-  
     @leave = Leave.new(
-      start_date: leave_start,
-      end_date: leave_end,
+      start_date: start_date,
+      end_date: end_date,
       user_id: current_user.id,
       leave_type: params[:leave_type].to_i,
       reason: params[:reason]
@@ -143,67 +51,6 @@ class LeavesController < ApplicationController
 
   def leave_params
     params.require(:leaves).permit(:start_date, :end_date, :reason)
-  end
-
-  def calculate_leave_data
-    current_year_start = Date.current.beginning_of_year
-    current_year_end = Date.current.end_of_year
-    @annual_leaves = calculate_annual_leaves_count(current_year_start, current_year_end)
-    @allotted_annual_leaves = current_user.join_date > 1.year.ago ? 0 : ENV['ANNUAL_LEAVE'].to_i
-    @unused_quarterly_leaves = calculate_unused_quarterly_leaves(Date.current.year, current_user)
-    @actual_leaves_count = (@unused_quarterly_leaves + @allotted_annual_leaves.to_i) - @annual_leaves
-    p_leaves = Leave.where(user_id: current_user.id, leave_type: 1, status: 0)
-    @pending_leaves = 0
-    p_leaves&.each do |leave|
-      leave_days = (leave.end_date - leave.start_date).to_i + 1
-      @pending_leaves += leave_days
-    end
-  end
-
-  def get_quarter_dates(date)
-    case (date.month - 1) / 3
-    when 0 then [Date.new(date.year, 1, 1), Date.new(date.year, 3, 31)]
-    when 1 then [Date.new(date.year, 4, 1), Date.new(date.year, 6, 30)]
-    when 2 then [Date.new(date.year, 7, 1), Date.new(date.year, 9, 30)]
-    when 3 then [Date.new(date.year, 10, 1), Date.new(date.year, 12, 31)]
-    end
-  end
-  
-  def invalid_leave_dates?(start_date, end_date)
-    start_date.nil? || end_date.nil?
-  end
-  
-  def leave_includes_weekends?(start_date, end_date)
-    (start_date..end_date).any? { |date| date.saturday? || date.sunday? }
-  end
-  
-  def holiday_on_leave?(start_date, end_date)
-    PublicHoliday.exists?(start_date: start_date..end_date)
-  end
-  
-  def overlapping_leave?(start_date, end_date)
-    Leave.exists?(user_id: current_user.id, status: [0, 1], start_date: ..end_date, end_date: start_date..)
-  end
-  
-  def exceeds_annual_leave_limit?(leave_type, leave_days, year_start, year_end)
-    return false unless leave_type == 1
-    annual_leave_limit = if current_user.join_date > 1.year.ago
-                          calculate_unused_quarterly_leaves(year_start.year, current_user) - calculate_annual_leaves_count(year_start, year_end)
-                         else
-                          ENV["ANNUAL_LEAVE"].to_i
-                         end
-    leave_days > annual_leave_limit
-  end
-  
-  def exceeds_quarterly_leave_limit?(leave_type, leave_days, quarter_start, quarter_end)
-    return false unless leave_type == 0
-    existing_quarterly_leave_days = Leave.where(
-      user_id: current_user.id,
-      leave_type: 0,
-      status: [0, 1],
-      start_date: quarter_start..quarter_end
-    ).sum { |leave| (leave.end_date - leave.start_date).to_i + 1 }
-    existing_quarterly_leave_days + leave_days > ENV["QUATER_LEAVE"].to_i
   end
 
 end
