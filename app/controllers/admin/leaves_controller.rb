@@ -1,5 +1,5 @@
 class Admin::LeavesController < ApplicationController
-  include AttendanceHelper
+  include LeavesHelper
      before_action :set_month_and_year, only: [:index, :get_emergency_leaves]
      def index
           status = params[:status].present? ? params[:status].to_i : nil

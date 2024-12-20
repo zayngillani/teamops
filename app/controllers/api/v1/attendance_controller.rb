@@ -39,6 +39,23 @@ class Api::V1::AttendanceController < ApplicationController
     end
   end
 
+  def user_daily_reports
+    month = params[:month] || Time.zone.now.month
+    year = params[:year] || Time.zone.now.year
+    records = Attendance.for_month(@current_user.id, month, year)
+    if records.present?
+      reports = records.map do |record|
+        {
+          date: record.created_at,
+          daily_report: record.report
+        }
+      end
+      render json: {success: true, message: 'Daily Report records fetched successfully', reports: reports }, status: :ok
+    else
+      render json: {success: false, message: 'No records found for the selected month' }, status: :not_found
+    end
+  end
+
   private
 
   def handle_checkin

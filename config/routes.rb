@@ -99,7 +99,11 @@ Rails.application.routes.draw do
         post 'checkin_or_checkout', to: 'attendance#checkin_or_checkout'
         post 'break_action', to: 'attendance#break_action'
         get 'user_monthly_record', to: 'attendance#user_monthly_record'
+        get 'user_daily_reports', to: 'attendance#user_daily_reports'
+        post 'create_leave', to: 'leaves#create_leave'
         get 'user_leaves_record', to: 'leaves#user_leaves_record'
+        post 'create_oncall', to: 'oncall_support#create_oncall'
+        get 'user_oncalls_record', to: 'oncall_support#user_oncalls_record'
       end
       resources :job_applications, only: [:create]
       resources :contact_details, only: [:create]
