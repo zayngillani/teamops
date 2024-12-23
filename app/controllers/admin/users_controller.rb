@@ -879,13 +879,13 @@ class Admin::UsersController < ApplicationController
   
     def offboard_accounts(user)
       # Function to disable Webmail for a specific User
-      #webmail_response = disable_email(user)
-      #if webmail_response[:success] == false
-       # puts "Failed to disable Webmail for user #{user.email}: #{webmail_response[:error]}"
-       # return { success: false, error: "Failed to disable Webmail", details: webmail_response[:error] }
-      #else
-       # puts "Successfully disabled Webmail for user #{user.email}"
-      #end
+      webmail_response = disable_email(user)
+      if webmail_response[:success] == false
+        puts "Failed to disable Webmail for user #{user.email}: #{webmail_response[:error]}"
+        return { success: false, error: "Failed to disable Webmail", details: webmail_response[:error] }
+      else
+        puts "Successfully disabled Webmail for user #{user.email}"
+      end
   
       # Function to disable GitHub for a specific User
       collaborator = user.github_user_name
@@ -952,7 +952,7 @@ end
   
     def disable_email(user)
       # Define the cPanel URI and make the GET request with HTTParty
-      cpanel_uri = "https://techcreatix.com:2083/execute/Email/add_pop?email=#{user.email}&password=Techcreatix-2019"
+      cpanel_uri = "https://techcreatix.com:2083/execute/Email/passwd_pop?email=#{user.email}&password=newSecurePassword123"
   
       begin
         # Use HTTParty to send the request
