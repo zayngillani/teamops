@@ -912,7 +912,6 @@ class Admin::UsersController < ApplicationController
   
     # Function to get all repositories
     def get_repos(base_url, github_token, github_user, per_page, page)
-if github_user == "techcreatix"
 
       response = HTTParty.get("#{base_url}/user/repos", query: { per_page: per_page, page: page }, headers: {
         "Authorization" => "Bearer #{github_token}",
@@ -920,11 +919,9 @@ if github_user == "techcreatix"
       })
       response.parsed_response
 end
-end
   
     # Function to get collaborators for a specific repository
     def get_collaborators(base_url, github_token, github_user, owner, repo)
-      if github_user == "techcreatix"
       response = HTTParty.get("#{base_url}/repos/#{owner}/#{repo}/collaborators", headers: {
         "Authorization" => "Bearer #{github_token}",
         "User-Agent" => github_user
@@ -936,18 +933,15 @@ end
       else
         response.parsed_response
       end
-      end
     end
   
     # Function to remove a collaborator from a repository
     def remove_collaborator(base_url, github_token, github_user, owner, repo, collaborator)
-      if github_user == "techcreatix"
       response = HTTParty.delete("#{base_url}/repos/#{owner}/#{repo}/collaborators/#{collaborator}", headers: {
         "Authorization" => "Bearer #{github_token}",
         "User-Agent" => github_user
       })
       response
-      end
     end
   
     def disable_email(user)
@@ -1070,11 +1064,7 @@ end
           puts "Found #{collaborator} in #{repo_name}. Removing..."
   
           # Remove the collaborator from the repository
-          if repo_name == "techcreatix-portfolio"
-            next
-          else
-          remove_response = remove_collaborator(base_url, github_token, github_user, owner, repo_name, collaborator) if github_user == "techcreatix"
-          end
+          remove_response = remove_collaborator(base_url, github_token, github_user, owner, repo_name, collaborator)
   
           # Handle successful and failed removal
           if remove_response.code == 204
