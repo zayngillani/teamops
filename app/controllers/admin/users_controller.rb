@@ -879,16 +879,16 @@ class Admin::UsersController < ApplicationController
   
     def offboard_accounts(user)
       # Function to disable Webmail for a specific User
-      webmail_response = disable_email(user)
-      if webmail_response[:success] == false
-        puts "Failed to disable Webmail for user #{user.email}: #{webmail_response[:error]}"
-        return { success: false, error: "Failed to disable Webmail", details: webmail_response[:error] }
-      else
-        puts "Successfully disabled Webmail for user #{user.email}"
-      end
+      #webmail_response = disable_email(user)
+      #if webmail_response[:success] == false
+       # puts "Failed to disable Webmail for user #{user.email}: #{webmail_response[:error]}"
+       # return { success: false, error: "Failed to disable Webmail", details: webmail_response[:error] }
+      #else
+       # puts "Successfully disabled Webmail for user #{user.email}"
+      #end
   
       # Function to disable GitHub for a specific User
-      collaborator = "#{user.name.split(' ').first.downcase}-tx"
+      collaborator = user.github_user_name
       github_response = disable_github(ENV['GITHUB_TOKEN'], ENV['GITHUB_USER'], collaborator)
       if github_response[:success] == false
         puts "Failed to disable GitHub access for collaborator #{collaborator}: #{github_response[:error]}"
