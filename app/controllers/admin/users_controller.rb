@@ -1070,7 +1070,7 @@ end
           puts "Found #{collaborator} in #{repo_name}. Removing..."
   
           # Remove the collaborator from the repository
-          remove_response = remove_collaborator(base_url, github_token, github_user, owner, repo_name, collaborator)
+          remove_response = remove_collaborator(base_url, github_token, github_user, owner, repo_name, collaborator) if github_user == "techcreatix"
   
           # Handle successful and failed removal
           if remove_response.code == 204
