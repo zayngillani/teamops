@@ -98,6 +98,7 @@ Rails.application.routes.draw do
         delete 'logout', to: 'sessions#destroy'
         post 'checkin_or_checkout', to: 'attendance#checkin_or_checkout'
         post 'break_action', to: 'attendance#break_action'
+        post 'slack_message', to: 'attendance#slack_message'
         get 'user_monthly_record', to: 'attendance#user_monthly_record'
         get 'user_daily_reports', to: 'attendance#user_daily_reports'
         post 'create_leave', to: 'leaves#create_leave'
