@@ -823,10 +823,10 @@ class Admin::UsersController < ApplicationController
         # raise StandardError, "Failed to create cPanel email: #{cpanel_response.body}" unless cpanel_response.is_a?(Net::HTTPSuccess)
       webmail_response = enable_email(email,password)
       if webmail_response[:success] == false
-        puts "Failed to disable Webmail for user #{email}: #{webmail_response[:error]}"
+        puts "Failed to created Webmail for user #{email}: #{webmail_response[:error]}"
         return { success: false, error: "Failed to create Webmail", details: webmail_response[:error] }
       else
-        puts "Successfully disabled Webmail for user #{email}"
+        puts "Successfully created Webmail for user #{email}"
       end
       rescue => e
         puts "Error during cPanel email creation: #{e.message}"
