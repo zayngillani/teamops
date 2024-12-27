@@ -856,6 +856,7 @@ class Admin::UsersController < ApplicationController
       end
   
       # Slack Invitation
+      sleep 30
       begin
         slack_uri = URI("https://slack.com/api/users.admin.invite")
         slack_request = Net::HTTP::Post.new(slack_uri)
