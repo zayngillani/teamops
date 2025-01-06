@@ -97,9 +97,10 @@ module LeavesHelper
     if leave_type == 0 && Date.today < (current_user.join_date + 3.months)
       return { error: "You must complete 3 months of employment before requesting quarterly leave." }
     end
-
-    if leave_includes_weekends?(leave_start, leave_end)
-      return { error: "You cannot request leave including weekends." }
+    if !params[:leave_type] == 2
+      if leave_includes_weekends?(leave_start, leave_end)
+        return { error: "You cannot request leave including weekends." }
+      end
     end
 
     if holiday_on_leave?(leave_start, leave_end)
