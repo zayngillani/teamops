@@ -1,7 +1,7 @@
 class SystemAlert
   def initialize(message)
     @message = message
-    @channel = ENV["TEST_CHANNEL"]
+    @channel = ENV["SERVER_ALERTS"]
     @client = Slack::Web::Client.new
   end
 
