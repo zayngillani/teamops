@@ -1,5 +1,6 @@
 class Admin::UsersController < ApplicationController
   before_action :validate_email_format, only: [:create, :update]
+  skip_before_action :authenticate_user!, only: [:complete_profile_step_one, :complete_profile_step_two, :complete_profile_step_three, :complete_profile_step_four, :complete_profile_step_five, :final_confirmation ]
 
     def index
       session = User.where(role: "user", deleted: false)
@@ -13,10 +14,6 @@ class Admin::UsersController < ApplicationController
     end
    
     def create
-      unless params[:user][:password] == params[:user][:password_confirmation]
-        flash[:error] = "Passwords don't match. Please check and re-type your confirm password."
-        redirect_to new_admin_user_path and return
-      end
       if validate_join_date(params[:user][:join_date])
         redirect_to new_admin_user_path, flash: { error: "Joining date must be a weekday and not a holiday. Please choose another date." }
         return
@@ -27,11 +24,11 @@ class Admin::UsersController < ApplicationController
           redirect_to root_path
         else
           @user = User.new(user_params)
+          @user.email = @user.generate_email
           @user.ip_address = "#{request.headers['X-Forwarded-For']&.split(',')&.last&.strip || request.ip || request.remote_ip}"
           @user.role = "user"
-          @user.password = params[:user][:password]
-          @user.password_confirmation = params[:user][:password_confirmation]
-          if @user.save
+          if @user.save(validate: false)
+            UserMailer.welcome_onboard_email(@user).deliver_now
             flash[:success] = "Employee added successfully"
             redirect_to root_path and return
           else
@@ -629,11 +626,53 @@ class Admin::UsersController < ApplicationController
         render json: { success: false }, status: :unprocessable_entity
       end
     end
+
+    def complete_profile_step_one
+      @user = User.find(params[:id])
+    end
+
+    def complete_profile_step_two
+      @user = User.find(params[:id])
+      
+      # Fetch the password from params and validate it
+      password = params[:user][:password]
+      if password_valid?(password)
+        @user.update(user_profile_params)
+        # Call On-Boarding procedure 
+        onboard_accounts(@user.email, password) if Rails.env.production?
+        redirect_to complete_profile_instructions_admin_user_path(@user), notice: "Profile updated successfully."
+      else
+        redirect_to complete_profile_admin_user_path
+      end
+    end
+    
+    def complete_profile_step_three
+      @user = User.find(params[:id])
+    end
+  
+    def complete_profile_step_four
+      @user = User.find(params[:id])
+    end
+  
+    def complete_profile_step_five
+      @user = User.find(params[:id])
+      if @user.update(slack_member_id: params[:user][:slack_member_id], github_user_name: params[:user][:github_user_name])
+        flash[:alert] = "Your slack id and github username has been submitted successfully"
+        redirect_to final_confirmation_admin_user_path
+      else
+        flash[:alert] = "Something  went wrong!"
+        redirect_to submit_information_admin_user_path
+      end
+    end
+  
+    def final_confirmation
+      @user = User.find(params[:id])
+    end
     
     private
    
     def user_params
-      params.require(:user).permit(:email, :name, :slack_member_id, :supervisor, :join_date)
+      params.require(:user).permit(:personal_email, :name, :supervisor, :join_date, :is_github_required)
     end
 
     def disable_attendance(user)
@@ -675,7 +714,7 @@ class Admin::UsersController < ApplicationController
     end
 
     def validate_email_format
-      unless params[:user][:email] =~ /\A[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]+\z/
+      unless params[:user][:personal_email] =~ /\A[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]+\z/
         flash[:error] = "Invalid Email Format"
         redirect_to root_path
       end
@@ -705,6 +744,343 @@ class Admin::UsersController < ApplicationController
       else
         User.active.where(role: "user", deleted: false).where('join_date <= ?', @end_date.end_of_day).order(name: :asc)
       end
+    end
+
+    def user_profile_params
+      params.require(:user).permit(:address, :phone_number, :emergency_phone_number, :cnic, :date_of_birth, :password, :password_confirmation)
+    end
+  
+    def password_valid?(password)
+      password.match?(/\A[a-zA-Z0-9-]+\z/)
+    end
+  
+    def disable_attendance(user)
+      # Attempt to offboard the user
+      deactivate = offboard_accounts(user)
+  
+      # Check if the offboarding process was successful
+      if deactivate[:success] == false
+        puts "Offboarding failed for user #{user.email}: #{deactivate[:error]}"
+        return deactivate
+      else
+        begin
+          # Update user's status to 1 (assuming '1' means deactivated)
+          user.update!(status: 1)
+          puts "User status updated to deactivated"
+  
+          # Get the last attendance record for the user
+          attendance = user.attendances.last
+  
+          if attendance.present?
+            # Check if the user hasn't checked out yet
+            if attendance.check_out_time.nil?
+              attendance.update!(check_out_time: Time.now.utc)
+              total_duration_seconds = attendance.check_out_time - attendance.check_in_time
+  
+              # Calculate the total break time if applicable
+              if attendance.break_in_time.present? && attendance.break_out_time.present?
+                total_break = attendance.break_out_time - attendance.break_in_time
+                total_duration_seconds -= total_break
+              end
+  
+              # Update the total worked hours
+              attendance.update!(total_hours: total_duration_seconds)
+              puts "Attendance updated with total hours"
+  
+              # Send Slack notification about checkout
+              SlackService.new(user, "Checked Out", attendance.check_out_time).send_message
+              puts "Slack notification sent"
+            else
+              puts "User has already checked out"
+            end
+          else
+            puts "No attendance record found for user #{user.email}"
+            return { success: false, error: "No attendance record found" }
+          end
+  
+          # If everything goes well, return success
+          return { success: true }
+  
+          # Handle any exceptions that may occur during the process
+        rescue StandardError => e
+          puts "Error occurred while processing attendance: #{e.message}"
+          return { success: false, error: "Error occurred while processing attendance", details: e.message }
+        end
+      end
+    end
+
+    def onboard_accounts(email, password)
+      # Webmail cPanel Email Creation
+      begin
+        # cpanel_uri = URI("https://techcreatix.com:2083/execute/Email/add_pop?email=#{email}&password=#{password}")
+        # cpanel_request = Net::HTTP::Get.new(cpanel_uri)
+        # cpanel_request['Authorization'] = ENV['CPANEL_AUTH']
+  
+        # cpanel_response = Net::HTTP.start(cpanel_uri.hostname, cpanel_uri.port, use_ssl: true) do |http|
+        #   http.request(cpanel_request)
+        # end
+  
+        # raise StandardError, "Failed to create cPanel email: #{cpanel_response.body}" unless cpanel_response.is_a?(Net::HTTPSuccess)
+      webmail_response = enable_email(email,password)
+      if webmail_response[:success] == false
+        puts "Failed to created Webmail for user #{email}: #{webmail_response[:error]}"
+        return { success: false, error: "Failed to create Webmail", details: webmail_response[:error] }
+      else
+        puts "Successfully created Webmail for user #{email}"
+      end
+      rescue => e
+        puts "Error during cPanel email creation: #{e.message}"
+        message = "Failed to create webmail email:"
+        OnboardSlackService.new(message, email).send_onboard_alert
+        return { success: false, error: "Webmail creation failed: #{e.message}" }
+      end
+  
+      # GitHub Invitation
+      if @user.is_github_required?
+        begin
+          github_uri = URI("https://api.github.com/orgs/techcreatix-team/invitations")
+          github_request = Net::HTTP::Post.new(github_uri)
+          github_request['Authorization'] = "Bearer #{ENV['GITHUB_TOKEN']}"
+          github_request['Accept'] = 'application/vnd.github.v3+json'
+          github_request.body = { email: email }.to_json
+  
+          github_response = Net::HTTP.start(github_uri.hostname, github_uri.port, use_ssl: true) do |http|
+            http.request(github_request)
+          end
+  
+          raise StandardError, "Failed to send GitHub invite: #{github_response.body}" unless github_response.is_a?(Net::HTTPSuccess)
+        rescue => e
+          puts "Error during GitHub invitation: #{e.message}"
+          return { success: false, error: "GitHub invitation failed: #{e.message}" }
+        end
+      end
+  
+      # Slack Invitation
+      sleep 30
+      begin
+        slack_uri = URI("https://slack.com/api/users.admin.invite")
+        slack_request = Net::HTTP::Post.new(slack_uri)
+        slack_request['Authorization'] = "Bearer #{ENV['SLACK_TOKEN']}"
+        slack_request['Content-Type'] = 'application/x-www-form-urlencoded'
+        slack_request.set_form_data(email: email)
+  
+        slack_response = Net::HTTP.start(slack_uri.hostname, slack_uri.port, use_ssl: true) do |http|
+          http.request(slack_request)
+        end
+  
+        raise StandardError, "Failed to send Slack invite: #{slack_response.body}" unless slack_response.is_a?(Net::HTTPSuccess)
+      rescue => e
+        puts "Error during Slack invitation: #{e.message}"
+        return { success: false, error: "Slack invitation failed: #{e.message}" }
+      end
+  
+      # If all processes succeeded
+      return { success: true, message: "All invitations sent successfully." }
+    end
+  
+    def offboard_accounts(user)
+      # Function to disable Webmail for a specific User
+      webmail_response = disable_email(user)
+      if webmail_response[:success] == false
+        puts "Failed to disable Webmail for user #{user.email}: #{webmail_response[:error]}"
+        return { success: false, error: "Failed to disable Webmail", details: webmail_response[:error] }
+      else
+        puts "Successfully disabled Webmail for user #{user.email}"
+      end
+  
+      # Function to disable GitHub for a specific User
+      collaborator = user.github_user_name
+      github_response = disable_github(ENV['GITHUB_TOKEN'], ENV['GITHUB_USER'], collaborator)
+      if github_response[:success] == false
+        puts "Failed to disable GitHub access for collaborator #{collaborator}: #{github_response[:error]}"
+        return { success: false, error: "Failed to disable GitHub", details: github_response[:error] }
+      else
+        puts "Successfully disabled GitHub access for collaborator #{collaborator}"
+      end
+  
+      # Function to disable Slack for a specific User (if implemented)
+      # slack_response = remove_user_from_channels(user.slack_member_id)
+      # if slack_response[:success] == false
+      #   puts "Failed to remove user from Slack channels: #{slack_response[:error]}"
+      #   return { success: false, error: "Failed to disable Slack", details: slack_response[:error] }
+      # else
+      #   puts "Successfully removed user from Slack channels"
+      # end
+  
+      # If all operations succeed
+      return { success: true, message: "User offboarding completed successfully" }
+    end
+  
+    # Function to get all repositories
+    def get_repos(base_url, github_token, github_user, per_page, page)
+
+      response = HTTParty.get("#{base_url}/user/repos", query: { per_page: per_page, page: page }, headers: {
+        "Authorization" => "Bearer #{github_token}",
+        "User-Agent" => github_user
+      })
+      response.parsed_response
+end
+  
+    # Function to get collaborators for a specific repository
+    def get_collaborators(base_url, github_token, github_user, owner, repo)
+      response = HTTParty.get("#{base_url}/repos/#{owner}/#{repo}/collaborators", headers: {
+        "Authorization" => "Bearer #{github_token}",
+        "User-Agent" => github_user
+      })
+      if response.code == 404
+        # Repository or collaborators not found
+        puts "Repository or collaborators not found for #{owner}/#{repo}"
+        return []
+      else
+        response.parsed_response
+      end
+    end
+  
+    # Function to remove a collaborator from a repository
+    def remove_collaborator(base_url, github_token, github_user, owner, repo, collaborator)
+      response = HTTParty.delete("#{base_url}/repos/#{owner}/#{repo}/collaborators/#{collaborator}", headers: {
+        "Authorization" => "Bearer #{github_token}",
+        "User-Agent" => github_user
+      })
+      response
+    end
+  
+    def disable_email(user)
+      # Define the cPanel URI and make the GET request with HTTParty
+      cpanel_uri = "https://techcreatix.com:2083/execute/Email/passwd_pop?email=#{user.email}&password=newSecurePassword123"
+  
+      begin
+        # Use HTTParty to send the request
+        cpanel_response = HTTParty.get(
+          cpanel_uri,
+          headers: { "Authorization" => ENV['CPANEL_AUTH'] }
+        )
+  
+        # Check the HTTP status code
+        if cpanel_response.code == 200
+          begin
+            # Attempt to parse the response body as JSON
+            response_body = JSON.parse(cpanel_response.body)
+  
+            # Check if there are errors in the response body
+            if response_body["errors"]
+              puts "Error: #{response_body['errors']}"
+              return { success: false, error: response_body['errors'] }
+            else
+              puts "Successfully disabled email for #{user.email}"
+              return { success: true }
+            end
+          rescue JSON::ParserError => e
+            # Handle case where response body is not valid JSON
+            puts "Error: Unable to parse response body as JSON. Response: #{cpanel_response.body}"
+            return { success: false, error: "Invalid JSON response: #{e.message}" }
+          end
+        else
+          # If the status code is not 200, log the failure with status code
+          puts "Failed with status code: #{cpanel_response.code}. Response body: #{cpanel_response.body}"
+          return { success: false, error: "Failed request with status code: #{cpanel_response.code}" }
+        end
+      rescue StandardError => e
+        # Handle general network or request errors
+        puts "Request failed: #{e.message}"
+        return { success: false, error: "Request failed: #{e.message}" }
+      end
+    end
+
+    def enable_email(email,password)
+      # Define the cPanel URI and make the GET request with HTTParty
+      cpanel_uri = "https://techcreatix.com:2083/execute/Email/add_pop?email=#{email}&password=#{password}"
+  
+      begin
+        # Use HTTParty to send the request
+        cpanel_response = HTTParty.get(
+          cpanel_uri,
+          headers: { "Authorization" => ENV['CPANEL_AUTH'] }
+        )
+  
+        # Check the HTTP status code
+        if cpanel_response.code == 200
+          begin
+            # Attempt to parse the response body as JSON
+            response_body = JSON.parse(cpanel_response.body)
+  
+            # Check if there are errors in the response body
+            if response_body["errors"]
+              puts "Error: #{response_body['errors']}"
+              return { success: false, error: response_body['errors'] }
+            else
+              puts "Successfully disabled email for #{email}"
+              return { success: true }
+            end
+          rescue JSON::ParserError => e
+            # Handle case where response body is not valid JSON
+            puts "Error: Unable to parse response body as JSON. Response: #{cpanel_response.body}"
+            return { success: false, error: "Invalid JSON response: #{e.message}" }
+          end
+        else
+          # If the status code is not 200, log the failure with status code
+          puts "Failed with status code: #{cpanel_response.code}. Response body: #{cpanel_response.body}"
+          return { success: false, error: "Failed request with status code: #{cpanel_response.code}" }
+        end
+      rescue StandardError => e
+        # Handle general network or request errors
+        puts "Request failed: #{e.message}"
+        return { success: false, error: "Request failed: #{e.message}" }
+      end
+    end
+  
+    def disable_github(github_token, github_user, collaborator)
+      base_url = "https://api.github.com"
+      page = 1
+      per_page = 100
+      puts "Checking collaborator: #{collaborator}"
+  
+      # Fetch repositories for the user
+      repos_response = get_repos(base_url, github_token, github_user, per_page, page)
+  
+      # Handle case where repositories are not found or error occurred
+      if repos_response.nil? || repos_response.empty?
+        puts "Error: No repositories found for user #{github_user}."
+        return { success: false, error: "No repositories found for user #{github_user}." }
+      end
+  
+      repos_response.each do |repo|
+        owner = repo['owner']['login']
+        repo_name = repo['name']
+        puts "Checking collaborators for repo: #{repo_name}"
+  
+        # Fetch collaborators for the repo
+        collaborators_response = get_collaborators(base_url, github_token, github_user, owner, repo_name)
+  
+        # Handle case where collaborators are not found or error occurred
+        if collaborators_response.nil?
+          puts "Error: Could not fetch collaborators for #{repo_name}. Skipping this repo."
+          next
+        end
+  
+        collaborator_names = collaborators_response.map { |collab| collab['login'] }
+  
+        # Check if the collaborator is present in the repo
+        if collaborator_names.include?(collaborator)
+          puts "Found #{collaborator} in #{repo_name}. Removing..."
+  
+          # Remove the collaborator from the repository
+          remove_response = remove_collaborator(base_url, github_token, github_user, owner, repo_name, collaborator)
+  
+          # Handle successful and failed removal
+          if remove_response.code == 204
+            puts "Successfully removed #{collaborator} from #{repo_name}"
+          else
+            puts "Failed to remove #{collaborator} from #{repo_name}. Error: #{remove_response.message}"
+            return { success: false, error: "Failed to remove #{collaborator} from #{repo_name}. Error: #{remove_response.message}" }
+          end
+        else
+          puts "#{collaborator} not found in #{repo_name}. Skipping..."
+        end
+      end
+  
+      # Return success if all repos were processed without any errors
+      { success: true, message: "Successfully processed all repositories." }
     end
    end
    

@@ -9,6 +9,10 @@ class User < ApplicationRecord
 
   enum role: [:user, :admin]
   enum status: [:active , :pending]
+  enum user_type: { dev: 0, qa: 1, designer: 2, devops: 3 }
+
+  validates :email, presence: false
+  validates :password, presence: false
 
   before_create :generate_authentication_token
 
@@ -18,6 +22,19 @@ class User < ApplicationRecord
       self.authentication_token = Devise.friendly_token
       break unless User.exists?(authentication_token: authentication_token)
     end
+  end
+
+  def generate_email
+    domain = "techcreatix.com"
+    base_email = name.downcase.strip.gsub(/\s+/, ".").gsub(/[^a-z.]/, "")
+    new_email = "#{base_email}@#{domain}"
+    count = ".tx"
+  
+    while User.exists?(email: new_email)
+      new_email = "#{base_email}#{count}@#{domain}"
+    end
+  
+    self.email = new_email
   end
 
   def self.ransackable_attributes(auth_object = nil)
