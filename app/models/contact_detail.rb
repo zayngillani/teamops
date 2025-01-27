@@ -2,9 +2,14 @@ class ContactDetail < ApplicationRecord
   validates :details, presence: true
   before_save :extract_email_and_contact
 
-  scope :search_by_contact_type, -> (contact_type) { 
-    where("contact_type ILIKE ?", "%#{contact_type}%") if contact_type.present? 
-  }
+  scope :search, -> (query) {
+  if query.present?
+    where(
+      "contact_type ILIKE :query OR details->>'name' ILIKE :query OR details->>'email' ILIKE :query OR details->>'contact_no' ILIKE :query",
+      query: "%#{query}%"
+    )
+  end
+}
 
   def name
     details['name']

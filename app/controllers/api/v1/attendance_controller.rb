@@ -1,5 +1,6 @@
 class Api::V1::AttendanceController < ApplicationController
   include Authentication
+  skip_before_action :authenticate_user!, only: [:slack_message]
 
   def checkin_or_checkout
     action_type = params[:action_type]
@@ -37,6 +38,28 @@ class Api::V1::AttendanceController < ApplicationController
     else
       render json: {success: false, message: 'No records found for the selected month' }, status: :not_found
     end
+  end
+
+  def user_daily_reports
+    month = params[:month] || Time.zone.now.month
+    year = params[:year] || Time.zone.now.year
+    records = Attendance.for_month(@current_user.id, month, year)
+    if records.present?
+      reports = records.map do |record|
+        {
+          date: record.created_at,
+          daily_report: record.report
+        }
+      end
+      render json: {success: true, message: 'Daily Report records fetched successfully', reports: reports }, status: :ok
+    else
+      render json: {success: false, message: 'No records found for the selected month' }, status: :not_found
+    end
+  end
+
+  def slack_message
+    message = params[:message] || "No Text"
+    SystemAlert.new(message).send_message
   end
 
   private

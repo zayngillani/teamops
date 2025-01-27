@@ -3,7 +3,7 @@
     <div class="dashboard-heading-position">
       <div class="dashboard-heading">
         <%= truncate_with_ellipsis(@job_post.title, 50) %>
-        <%= link_to edit_admin_job_post_path(@job_post) do %>
+        <%= link_to edit_admin_job_post_path(@job_post.id) do %>
           <img src="<%= asset_path('edit-icon.svg') %>" alt="Lock Icon" class="edit-icon-style">
         <% end %>
       </div>
