@@ -28,10 +28,11 @@ class User < ApplicationRecord
     domain = "techcreatix.com"
     base_email = name.downcase.strip.gsub(/\s+/, ".").gsub(/[^a-z.]/, "")
     new_email = "#{base_email}@#{domain}"
-    count = ".tx"
+    # count = ".tx"
   
-    while User.exists?(email: new_email)
-      new_email = "#{base_email}#{count}@#{domain}"
+    if User.exists?(email: new_email)
+      # new_email = "#{base_email}#{count}@#{domain}"
+      new_email = "#{base_email}@#{domain}"
     end
   
     self.email = new_email

@@ -11,6 +11,7 @@
   <% end %>
 
   <%= form_with(model: @user, url: admin_user_path, method: :patch) do |form| %>
+    <input type="hidden" name="user[personal_email]" value="<%= @user.present? ? @user.personal_email : "" %>">
     <div class="form-group">
       <%= form.label :email, class: "label" %>
       <%= form.email_field :email, class: "email-field", required: true %>
