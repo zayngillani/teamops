@@ -57,6 +57,9 @@ class Admin::UsersController < ApplicationController
         if params[:user][:password].present?
           @user.update!(password: params[:user][:password], password_confirmation: params[:user][:password_confirmation])
         end
+        if params[:user][:slack_member_id].present?
+          @user.update!(slack_member_id: params[:user][:slack_member_id])
+        end
         flash[:success] = "User updated successfully"
         redirect_to root_path and return
       else
