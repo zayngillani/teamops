@@ -129,20 +129,33 @@ export async function updateAttendanceStatus(action: "BREAK" | "RESUME" | "FINIS
       Math.max(0, breakDuration), record.id
     );
   } else if (action === "FINISH") {
-    const totalDuration = now.getTime() - startTime.getTime();
-    let finalBreakMs = record.totalBreakMs || 0;
-    
+    // Calculate final break adjustment if finishing while on break
+    let breakAdjustment = 0;
     if (record.status === "ON_BREAK" && record.lastBreakStartTime) {
       const lastBreakStart = parseDbDate(record.lastBreakStartTime);
-      finalBreakMs += (now.getTime() - lastBreakStart.getTime());
+      breakAdjustment = Math.max(0, now.getTime() - lastBreakStart.getTime());
     }
-    
-    const totalWorkMs = Math.max(0, totalDuration - finalBreakMs);
-    
-    await prisma.$executeRawUnsafe(
-      `UPDATE "Attendance" SET "status" = 'COMPLETED', "endTime" = $1::timestamp, "totalBreakMs" = $2::int, "totalWorkMs" = $3::int, "report" = $4::text, "updatedAt" = NOW() WHERE "id" = $5::text`,
-      now, Math.max(0, finalBreakMs), totalWorkMs, report || "", record.id
-    );
+
+    // Use SQL to calculate the final totalWorkMs to avoid any JS timezone issues
+    // We update totalBreakMs first, then calculate workMs as (TotalTime - TotalBreak)
+    await prisma.$executeRawUnsafe(`
+      UPDATE "Attendance" 
+      SET 
+        "totalBreakMs" = "totalBreakMs" + $1::int,
+        "lastBreakStartTime" = NULL,
+        "status" = 'COMPLETED',
+        "endTime" = NOW(),
+        "report" = $2::text,
+        "updatedAt" = NOW()
+      WHERE "id" = $3::text
+    `, breakAdjustment, report || "", record.id);
+
+    // Now calculate and set totalWorkMs based on the final endTime and totalBreakMs
+    await prisma.$executeRawUnsafe(`
+      UPDATE "Attendance"
+      SET "totalWorkMs" = GREATEST(0, (EXTRACT(EPOCH FROM ("endTime" - "startTime")) * 1000)::int - "totalBreakMs")
+      WHERE "id" = $1::text
+    `, record.id);
   }
 
   // Slack Notifications
@@ -156,7 +169,21 @@ export async function updateAttendanceStatus(action: "BREAK" | "RESUME" | "FINIS
 
   revalidatePath("/dashboard/attendance");
   revalidatePath("/dashboard/reports");
-  return { id: record.id, status: action === "FINISH" ? "COMPLETED" : (action === "BREAK" ? "ON_BREAK" : "WORKING") };
+  
+  // Return the updated record for client state sync
+  const updatedRecords = await prisma.$queryRawUnsafe<any[]>(
+    `SELECT * FROM "Attendance" WHERE "id" = $1::text`, 
+    record.id
+  );
+  const updated = updatedRecords[0];
+
+  return { 
+    id: updated.id, 
+    status: updated.status,
+    startTime: parseDbDate(updated.startTime),
+    totalBreakMs: updated.totalBreakMs,
+    lastBreakStartTime: updated.lastBreakStartTime ? parseDbDate(updated.lastBreakStartTime) : null
+  };
 }
 
 export async function getActiveAttendance() {

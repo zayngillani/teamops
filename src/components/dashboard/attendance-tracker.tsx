@@ -9,11 +9,19 @@ import { startAttendance, updateAttendanceStatus, getActiveAttendance } from "@/
 export function AttendanceTracker() {
   const [status, setStatus] = useState<"IDLE" | "WORKING" | "ON_BREAK">("IDLE");
   const [startTime, setStartTime] = useState<number | null>(null);
+  const [totalBreakMs, setTotalBreakMs] = useState(0);
+  const [lastBreakStartTime, setLastBreakStartTime] = useState<number | null>(null);
   const [elapsed, setElapsed] = useState(0);
   const [loading, setLoading] = useState(true);
   const [report, setReport] = useState("");
   const [showReportInput, setShowReportInput] = useState(false);
   const [completedToday, setCompletedToday] = useState(false);
+
+  const parseDateToMs = (date: any) => {
+    if (!date) return null;
+    const dateStr = typeof date === 'string' ? date : date.toISOString();
+    return new Date(dateStr.includes('Z') ? dateStr : dateStr + 'Z').getTime();
+  };
 
   // Sync with database on load
   useEffect(() => {
@@ -22,7 +30,9 @@ export function AttendanceTracker() {
         const active = await getActiveAttendance();
         if (active) {
           setStatus(active.status as any);
-          setStartTime(new Date(active.startTime).getTime());
+          setStartTime(parseDateToMs(active.startTime));
+          setTotalBreakMs(active.totalBreakMs || 0);
+          setLastBreakStartTime(parseDateToMs(active.lastBreakStartTime));
         } else {
           // Check if already completed a session today
           const res = await fetch("/api/attendance/check-today");
@@ -41,20 +51,28 @@ export function AttendanceTracker() {
   // Update timer
   useEffect(() => {
     let interval: NodeJS.Timeout;
-    if (status !== "IDLE" && startTime) {
+    if (status !== "IDLE") {
       interval = setInterval(() => {
-        setElapsed(Date.now() - startTime);
+        const now = Date.now();
+        if (status === "WORKING" && startTime) {
+          // Work timer = Total time passed - Accumulated break time
+          setElapsed(Math.max(0, (now - startTime) - totalBreakMs));
+        } else if (status === "ON_BREAK" && lastBreakStartTime) {
+          // Break timer = Time passed since current break started
+          setElapsed(Math.max(0, now - lastBreakStartTime));
+        }
       }, 1000);
     } else {
       setElapsed(0);
     }
     return () => clearInterval(interval);
-  }, [status, startTime]);
+  }, [status, startTime, totalBreakMs, lastBreakStartTime]);
 
   const formatTime = (ms: number) => {
-    const seconds = Math.floor((ms / 1000) % 60);
-    const minutes = Math.floor((ms / (1000 * 60)) % 60);
-    const hours = Math.floor(ms / (1000 * 60 * 60));
+    const absMs = Math.max(0, ms);
+    const seconds = Math.floor((absMs / 1000) % 60);
+    const minutes = Math.floor((absMs / (1000 * 60)) % 60);
+    const hours = Math.floor((absMs / (1000 * 60 * 60)));
     return `${hours.toString().padStart(2, "0")}:${minutes
       .toString()
       .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
@@ -71,17 +89,24 @@ export function AttendanceTracker() {
       if (action === "CHECK_IN") {
         const res = await startAttendance();
         setStatus("WORKING");
-        setStartTime(new Date(res.startTime).getTime());
+        setStartTime(parseDateToMs(res.startTime));
+        setTotalBreakMs(0);
+        setLastBreakStartTime(null);
       } else if (action === "BREAK") {
-        await updateAttendanceStatus("BREAK");
+        const res = await updateAttendanceStatus("BREAK");
         setStatus("ON_BREAK");
+        setLastBreakStartTime(parseDateToMs(res.lastBreakStartTime));
       } else if (action === "RESUME") {
-        await updateAttendanceStatus("RESUME");
+        const res = await updateAttendanceStatus("RESUME");
         setStatus("WORKING");
+        setTotalBreakMs(res.totalBreakMs || 0);
+        setLastBreakStartTime(null);
       } else if (action === "CHECK_OUT") {
         await updateAttendanceStatus("FINISH", report || undefined);
         setStatus("IDLE");
         setStartTime(null);
+        setTotalBreakMs(0);
+        setLastBreakStartTime(null);
         setElapsed(0);
         setReport("");
         setShowReportInput(false);

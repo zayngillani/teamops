@@ -77,10 +77,12 @@ export default async function AttendancePage({
   }).reverse();
 
   const formatDuration = (ms: number) => {
-    if (!ms || ms <= 0) return "—";
-    const hours = Math.floor(ms / 3600000);
-    const minutes = Math.floor((ms % 3600000) / 60000);
-    const seconds = Math.floor((ms % 60000) / 1000);
+    const absMs = Math.max(0, Math.floor(ms));
+    if (absMs === 0) return "0s";
+    
+    const hours = Math.floor(absMs / 3600000);
+    const minutes = Math.floor((absMs % 3600000) / 60000);
+    const seconds = Math.floor((absMs % 60000) / 1000);
     
     if (hours > 0) return `${hours}h ${minutes}m`;
     if (minutes > 0) return `${minutes}m ${seconds}s`;

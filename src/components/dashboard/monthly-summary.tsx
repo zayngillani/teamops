@@ -18,7 +18,7 @@ export function MonthlySummary({ userId }: { userId?: string }) {
   if (!summary) return null;
 
   const formatValue = (ms: number) => {
-    const absMs = Math.max(0, ms);
+    const absMs = Math.max(0, Math.floor(ms || 0));
     const h = Math.floor(absMs / 3600000);
     const m = Math.floor((absMs % 3600000) / 60000);
     return `${h}h ${m}m`;
