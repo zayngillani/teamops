@@ -1,0 +1,200 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  admin
+  developer
+  content_creator
+  outreach_specialist
+  devops
+}
+
+enum UserStatus {
+  active
+  pending
+  suspended
+}
+
+enum UserType {
+  CONTENT_CREATOR
+  OUTREACH
+  DEVOPS
+  QA
+  DEVELOPER
+  HR
+  INTERN
+}
+
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum PostStatus {
+  draft
+  pending_approval
+  approved
+  scheduled
+  publishing
+  published
+  rejected
+  failed
+}
+
+enum AppStatus {
+  NEW
+  REVIEWING
+  INTERVIEWING
+  OFFERED
+  REJECTED
+}
+
+model User {
+  id               String             @id @default(cuid())
+  name             String?
+  email            String?            @unique
+  password         String?
+  emailVerified    DateTime?
+  image            String?
+  role             Role               @default(developer)
+  status           UserStatus         @default(active)
+  userType         UserType?
+  joinDate         DateTime?          @default(now())
+  canOutsideAccess Boolean            @default(false)
+  githubUser       String?
+  slackId          String?
+  featureToggles   UserFeatureToggle?
+  attendance       Attendance[]
+  reports          DailyReport[]
+  leaves           LeaveRequest[]
+  posts            LinkedInPost[]
+  applications     Application[]
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+}
+
+model UserFeatureToggle {
+  id                     String   @id @default(cuid())
+  userId                 String   @unique
+  user                   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  githubEnabled          Boolean  @default(false)
+  linkedinEnabled        Boolean  @default(false)
+  apiKeysEnabled         Boolean  @default(false)
+  verificationEnabled    Boolean  @default(false)
+  breakTrackingEnabled   Boolean  @default(true)
+  reportRemindersEnabled Boolean  @default(true)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+}
+
+model Attendance {
+  id                 String    @id @default(cuid())
+  userId             String
+  user               User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  startTime          DateTime  @default(now())
+  endTime            DateTime?
+  status             String    @default("WORKING") // WORKING, ON_BREAK, COMPLETED
+  totalWorkMs        Int       @default(0)
+  totalBreakMs       Int       @default(0)
+  lastBreakStartTime DateTime?
+  report             String?   @db.Text // Daily report provided at checkout
+  createdAt          DateTime  @default(now())
+  updatedAt          DateTime  @updatedAt
+}
+
+model IpManagement {
+  id          String   @id @default(cuid())
+  ipAddress   String   @unique
+  status      Boolean  @default(true) // true = enabled, false = disabled
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model JobPost {
+  id           String        @id @default(cuid())
+  title        String
+  description  String        @db.Text
+  department   String
+  status       String        @default("OPEN") // OPEN, CLOSED
+  applications Application[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model Application {
+  id          String    @id @default(cuid())
+  jobId       String
+  job         JobPost   @relation(fields: [jobId], references: [id])
+  userId      String?   // Optional if internal candidate
+  user        User?     @relation(fields: [userId], references: [id])
+  name        String
+  email       String
+  resumeUrl   String?
+  status      AppStatus @default(NEW)
+  publicToken String?   @unique // For external access
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model DailyReport {
+  id                String   @id @default(cuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content           String   @db.Text
+  date              DateTime @default(now())
+  verificationScore Float?   // 0-100 percentage from Claude
+  verificationLogs  String?  @db.Text
+  isVerified        Boolean  @default(false)
+  createdAt         DateTime @default(now())
+}
+
+model LeaveRequest {
+  id         String      @id @default(cuid())
+  userId     String
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  startDate  DateTime
+  endDate    DateTime
+  leaveType  String?     // Sick, Casual, Annual
+  reason     String      @db.Text
+  status     LeaveStatus @default(PENDING)
+  approvedBy String?
+  createdAt  DateTime    @default(now())
+}
+
+model LinkedInPost {
+  id              String     @id @default(cuid())
+  userId          String
+  user            User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  content         String     @db.Text
+  mediaUrl        String?
+  scheduledAt     DateTime?
+  status          PostStatus @default(draft)
+  approvedBy      String?    // admin user id
+  approvedAt      DateTime?
+  rejectionReason String?    @db.Text
+  linkedInPostId  String?    // ID from LinkedIn API
+  postedAt        DateTime?
+  linkedinUrl     String?
+  error           String?    @db.Text
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+}
+
+model SystemConfig {
+  id           String    @id @default("config")
+  claudeToken  String?   @db.Text
+  tokenExpiry  DateTime?
+  lastRotation DateTime?
+  updatedAt    DateTime  @updatedAt
+}
